@@ -16,7 +16,11 @@ set(ABIVER 5.1)
 set(NODOTABIVER 51)
 
 set(CMAKE_OSX_SYSROOT "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk")
-set(LUAJIT_DIR ${CMAKE_SOURCE_DIR}/Externals/LuaJIT/src CACHE PATH "Location of luajit sources")
+if (ANDROID)
+    set(LUAJIT_DIR ${CMAKE_SOURCE_DIR}/app/src/main/jni/xray-16/Externals/LuaJIT/src CACHE PATH "Location of luajit sources")
+else ()
+    set(LUAJIT_DIR ${CMAKE_SOURCE_DIR}/Externals/LuaJIT/src CACHE PATH "Location of luajit sources")
+endif ()
 
 option(LUAJIT_BUILD_STATIC_LIB "Build as static library" OFF)
 option(LUAJIT_BUILD_APP "Build application" OFF)
@@ -145,6 +149,7 @@ set(CCOPTIONS "${CCOPT};${XCFLAGS}")
 
 target_compile_options(xrLuaJIT PRIVATE ${CCOPTIONS})
 
+if (NOT ANDROID)
 execute_process(
     COMMAND ${CMAKE_C_COMPILER} ${CCOPTIONS} -E lj_arch.h -dM
     WORKING_DIRECTORY "${LUAJIT_DIR}"
@@ -186,6 +191,23 @@ else()
     message("${TESTARCH_OUTPUT}")
     message(FATAL_ERROR "Unsupported luajit target architecture (see output above)")
 endif()
+else ()
+    message("CURRENT_ANDROID_ARCH=${ANDROID_ABI}")
+
+    if ("${ANDROID_ABI}" STREQUAL "x86_64")
+        set(TARGET_LJARCH "x64")
+    elseif ("${ANDROID_ABI}" STREQUAL "x86")
+        set(TARGET_LJARCH "x86")
+        string(APPEND TARGET_XCFLAGS " -march=i686 -msse -msse2 -mfpmath=sse")
+    elseif ("${ANDROID_ABI}" STREQUAL "arm64-v8a")
+        set(TARGET_LJARCH "arm64")
+    elseif ("${ANDROID_ABI}" STREQUAL "armeabi-v7a")
+        set(TARGET_LJARCH "arm")
+    else()
+        message("${ANDROID_ABI}")
+        message(FATAL_ERROR "Unsupported luajit target architecture (see output above)")
+    endif()
+endif ()
 
 string(APPEND TARGET_ARCH "-DLUAJIT_TARGET=LUAJIT_ARCH_${TARGET_LJARCH}")
 

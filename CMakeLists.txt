@@ -230,35 +230,50 @@ add_compile_definitions(
 )
 
 if (NOT WIN32)
-    find_package(SDL2 2.0.18 REQUIRED)
-    # Fix to support older SDL2
-    # https://github.com/OpenXRay/xray-16/issues/1595
-    if (NOT TARGET SDL2::SDL2 AND DEFINED SDL2_LIBRARIES)
+    if (NOT ANDROID)
+        find_package(SDL2 2.0.18 REQUIRED)
+        # Fix to support older SDL2
+        # https://github.com/OpenXRay/xray-16/issues/1595
+        if (NOT TARGET SDL2::SDL2 AND DEFINED SDL2_LIBRARIES)
+            add_library(SDL2::SDL2 UNKNOWN IMPORTED)
+            set_target_properties(
+                SDL2::SDL2 PROPERTIES
+                IMPORTED_LOCATION "${SDL2_LIBRARIES}"
+                INTERFACE_INCLUDE_DIRECTORIES "${SDL2_INCLUDE_DIRS}"
+            )
+        endif()
+    else ()
         add_library(SDL2::SDL2 UNKNOWN IMPORTED)
         set_target_properties(
-            SDL2::SDL2 PROPERTIES
-            IMPORTED_LOCATION "${SDL2_LIBRARIES}"
-            INTERFACE_INCLUDE_DIRECTORIES "${SDL2_INCLUDE_DIRS}"
+                SDL2::SDL2 PROPERTIES
+                IMPORTED_LOCATION "${SDL2_LIBRARIES}"
+                INTERFACE_INCLUDE_DIRECTORIES "${SDL2_INCLUDE_DIRS}"
         )
-    endif()
+    endif ()
     find_package(OpenAL REQUIRED)
     find_package(JPEG)
     find_package(Ogg REQUIRED)
     find_package(Vorbis REQUIRED)
     find_package(Theora REQUIRED)
     find_package(LZO REQUIRED)
-    find_package(mimalloc NAMES mimalloc2 mimalloc2.0 mimalloc)
+    if (NOT ANDROID)
+        find_package(mimalloc NAMES mimalloc2 mimalloc2.0 mimalloc)
+    endif ()
 endif()
 
+if (ANDROID)
+    set(MEMORY_ALLOCATOR "mimalloc" CACHE STRING "Use specific memory allocator (mimalloc/standard)")
+else ()
 # Memory allocator option
 if (mimalloc_FOUND)
     set(MEMORY_ALLOCATOR "mimalloc" CACHE STRING "Use specific memory allocator (mimalloc/standard)")
 else()
     set(MEMORY_ALLOCATOR "standard" CACHE STRING "Use specific memory allocator (mimalloc/standard)")
 endif()
+endif ()
 set_property(CACHE MEMORY_ALLOCATOR PROPERTY STRINGS "mimalloc" "standard")
 
-if (MEMORY_ALLOCATOR STREQUAL "mimalloc" AND NOT mimalloc_FOUND)
+if (NOT ANDROID AND MEMORY_ALLOCATOR STREQUAL "mimalloc" AND NOT mimalloc_FOUND)
     message(FATAL_ERROR "mimalloc allocator requested but not found. Please, install mimalloc package or select standard allocator.")
 endif()
 

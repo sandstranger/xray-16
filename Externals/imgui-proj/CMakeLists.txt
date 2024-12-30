@@ -1,7 +1,10 @@
 add_library(xrImGui STATIC)
 
-set(IMGUI_DIR "${CMAKE_SOURCE_DIR}/Externals/imgui")
-
+if (ANDROID)
+    set(IMGUI_DIR "${CMAKE_SOURCE_DIR}/app/src/main/jni/xray-16/Externals/imgui")
+else ()
+    set(IMGUI_DIR "${CMAKE_SOURCE_DIR}/Externals/imgui")
+endif ()
 target_sources(xrImGui PRIVATE
     "${IMGUI_DIR}/imconfig.h"
     "${IMGUI_DIR}/imgui.cpp"
