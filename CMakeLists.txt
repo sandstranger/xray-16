@@ -20,7 +20,7 @@ project(OpenXRay
 
 message(STATUS "CMAKE_PROJECT_VERSION: ${CMAKE_PROJECT_VERSION}")
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(CMAKE_VERBOSE_MAKEFILE "Verbose build output" OFF)
@@ -45,7 +45,6 @@ if (ANDROID)
     set(XRAY16_SOURCE_DIR ${CMAKE_SOURCE_DIR}/app/src/main/jni/xray-16)
     include_directories(PUBLIC "${LUA_INCLUDE_DIR}")
     include_directories(PUBLIC ${mimalloc_include})
-    include_directories(PUBLIC ${GLOB_INCLUDE})
 else ()
     set(XRAY16_SOURCE_DIR ${CMAKE_SOURCE_DIR})
 endif ()
@@ -131,7 +130,7 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     )
 endif()
 
-if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND NOT XRAY_USE_DEFAULT_CXX_LIB)
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND NOT XRAY_USE_DEFAULT_CXX_LIB AND NOT ANDROID)
     if (NOT XRAY_CXX_LIB)
         include(CheckCXXCompilerFlag)
         CHECK_CXX_COMPILER_FLAG("-stdlib=libc++" LIBCPP_AVAILABLE)
@@ -159,6 +158,7 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND NOT XRAY_USE_DEFAULT_CXX_LIB)
 endif()
 
 add_compile_options(-Wno-attributes)
+
 if (APPLE)
     add_compile_options(-Wl,-undefined,error)
 else()
