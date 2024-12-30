@@ -30,8 +30,8 @@ target_sources_grouped(
 
 target_include_directories(xrParticles
     PRIVATE
-    "${CMAKE_SOURCE_DIR}/src"
-    "${CMAKE_SOURCE_DIR}/Externals"
+    "${XRAY16_SOURCE_DIR}/src"
+    "${XRAY16_SOURCE_DIR}/Externals"
 )
 
 target_link_libraries(xrParticles
@@ -50,6 +50,7 @@ set_target_properties(xrParticles PROPERTIES
     PREFIX ""
 )
 
+if (NOT ANDROID)
 target_precompile_headers(xrParticles
     PRIVATE
     stdafx.h
@@ -58,3 +59,4 @@ target_precompile_headers(xrParticles
 install(TARGETS xrParticles LIBRARY
     DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )
+endif ()

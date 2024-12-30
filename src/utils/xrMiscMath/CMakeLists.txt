@@ -12,14 +12,16 @@ target_sources(xrMiscMath PRIVATE
 
 target_include_directories(xrMiscMath
     PRIVATE
-    "${CMAKE_SOURCE_DIR}/src"
+    "${XRAY16_SOURCE_DIR}/src"
 )
 
 set_target_properties(xrMiscMath PROPERTIES
     POSITION_INDEPENDENT_CODE ON
 )
 
+if (NOT ANDROID)
 target_precompile_headers(xrMiscMath
     PRIVATE
     pch.hpp
 )
+endif ()

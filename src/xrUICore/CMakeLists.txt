@@ -140,7 +140,7 @@ target_sources(xrUICore PRIVATE
 target_include_directories(xrUICore
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${CMAKE_SOURCE_DIR}/src"
+    "${XRAY16_SOURCE_DIR}/src"
 )
 
 target_link_libraries(xrUICore
@@ -169,6 +169,7 @@ set_target_properties(xrUICore PROPERTIES
     PREFIX ""
 )
 
+if (NOT ANDROID)
 target_precompile_headers(xrUICore
     PRIVATE
     pch.hpp
@@ -177,3 +178,4 @@ target_precompile_headers(xrUICore
 install(TARGETS xrUICore LIBRARY
     DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )
+endif ()

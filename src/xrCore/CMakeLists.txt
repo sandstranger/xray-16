@@ -437,16 +437,30 @@ target_sources_grouped(
 
 target_include_directories(xrCore
     PUBLIC
-    "${CMAKE_SOURCE_DIR}/Externals/tracy/public"
+    "${XRAY16_SOURCE_DIR}/Externals/tracy/public"
 
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${CMAKE_SOURCE_DIR}/src"
-    "${CMAKE_SOURCE_DIR}/Externals"
-    "${CMAKE_SOURCE_DIR}/Externals/mimalloc/include"
+    "${XRAY16_SOURCE_DIR}/src"
+    "${XRAY16_SOURCE_DIR}/Externals"
+    "${XRAY16_SOURCE_DIR}/Externals/mimalloc/include"
 )
 
-target_link_libraries(xrCore
+if (ANDROID)
+    target_link_libraries(xrCore
+            PUBLIC
+#            pthread
+            $<$<PLATFORM_ID:FreeBSD,OpenBSD,NetBSD,DragonFlyBSD>:execinfo>
+            SDL2::SDL2
+
+            PRIVATE
+            xrMiscMath
+            ${mimalloc}
+            $<$<BOOL:${JPEG_FOUND}>:JPEG::JPEG>
+            LZO::LZO
+    )
+else ()
+    target_link_libraries(xrCore
     PUBLIC
     pthread
     $<$<PLATFORM_ID:FreeBSD,OpenBSD,NetBSD,DragonFlyBSD>:execinfo>
@@ -458,6 +472,7 @@ target_link_libraries(xrCore
     $<$<BOOL:${JPEG_FOUND}>:JPEG::JPEG>
     LZO::LZO
 )
+endif ()
 
 if (NOT CMAKE_SYSTEM_NAME STREQUAL "OpenBSD" AND NOT CMAKE_SYSTEM_NAME STREQUAL "NetBSD" AND NOT WIN32)
     target_link_libraries(xrCore
@@ -491,6 +506,7 @@ set_target_properties(xrCore PROPERTIES
     PREFIX ""
 )
 
+if (NOT ANDROID)
 target_precompile_headers(xrCore
     PRIVATE
     stdafx.h
@@ -499,3 +515,4 @@ target_precompile_headers(xrCore
 install(TARGETS xrCore LIBRARY
     DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )
+endif ()

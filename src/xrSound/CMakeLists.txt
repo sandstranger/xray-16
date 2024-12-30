@@ -118,8 +118,8 @@ target_sources_grouped(
 
 target_include_directories(xrSound
     PRIVATE
-    "${CMAKE_SOURCE_DIR}/src"
-    "${CMAKE_SOURCE_DIR}/src/xrEngine"
+    "${XRAY16_SOURCE_DIR}/src"
+    "${XRAY16_SOURCE_DIR}/src/xrEngine"
     "${OPENAL_INCLUDE_DIR}"
 )
 
@@ -145,6 +145,7 @@ set_target_properties(xrSound PROPERTIES
     PREFIX ""
 )
 
+if (NOT ANDROID)
 target_precompile_headers(xrSound
     PRIVATE
     stdafx.h
@@ -153,3 +154,4 @@ target_precompile_headers(xrSound
 install(TARGETS xrSound LIBRARY
     DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )
+endif ()

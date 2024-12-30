@@ -2486,12 +2486,13 @@ target_sources(xrGame PRIVATE
 target_include_directories(xrGame
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${CMAKE_SOURCE_DIR}/src"
-    "${CMAKE_SOURCE_DIR}/src/xrServerEntities"
-    "${CMAKE_SOURCE_DIR}/Externals/GameSpy/src"
-    "${CMAKE_SOURCE_DIR}/Externals/ode/include"
-    "${CMAKE_SOURCE_DIR}/Externals/OpenAutomate/inc"
-    "${CMAKE_SOURCE_DIR}/sdk/include"
+    "${XRAY16_SOURCE_DIR}/src"
+    "${XRAY16_SOURCE_DIR}/src/xrCore"
+    "${XRAY16_SOURCE_DIR}/src/xrServerEntities"
+    "${XRAY16_SOURCE_DIR}/Externals/GameSpy/src"
+    "${XRAY16_SOURCE_DIR}/Externals/ode/include"
+    "${XRAY16_SOURCE_DIR}/Externals/OpenAutomate/inc"
+    "${XRAY16_SOURCE_DIR}/sdk/include"
 )
 
 target_link_libraries(xrGame
@@ -2540,12 +2541,13 @@ set_target_properties(xrGame PROPERTIES
     UNITY_BUILD_BATCH_SIZE 50
 )
 
+if (NOT ANDROID)
 target_precompile_headers(xrGame
     PRIVATE
     $<$<COMPILE_LANGUAGE:CXX>:StdAfx.h>
-    $<$<COMPILE_LANGUAGE:CXX>:pch_script.h>
 )
 
 install(TARGETS xrGame LIBRARY
     DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )
+endif()

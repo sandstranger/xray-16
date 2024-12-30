@@ -26,7 +26,7 @@ endfunction()
 
 macro(set_git_info)
     execute_process(COMMAND git rev-parse --verify HEAD
-        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+        WORKING_DIRECTORY "${XRAY16_SOURCE_DIR}"
         OUTPUT_VARIABLE GIT_SHA1
         ERROR_QUIET
         OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -34,7 +34,7 @@ macro(set_git_info)
     message(STATUS "git commit: ${GIT_SHA1}")
 
     execute_process(COMMAND git rev-parse --abbrev-ref HEAD
-        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+        WORKING_DIRECTORY "${XRAY16_SOURCE_DIR}"
         OUTPUT_VARIABLE GIT_BRANCH
         ERROR_QUIET
         OUTPUT_STRIP_TRAILING_WHITESPACE

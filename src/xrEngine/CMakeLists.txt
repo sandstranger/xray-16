@@ -402,9 +402,9 @@ target_sources_grouped(
 target_include_directories(xrEngine
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${CMAKE_SOURCE_DIR}/src"
-    "${CMAKE_SOURCE_DIR}/Externals/imgui"
-    "${CMAKE_SOURCE_DIR}/Externals/OpenAutomate/inc"
+    "${XRAY16_SOURCE_DIR}/src"
+    "${XRAY16_SOURCE_DIR}/Externals/imgui"
+    "${XRAY16_SOURCE_DIR}/Externals/OpenAutomate/inc"
 )
 
 target_link_libraries(xrEngine
@@ -434,7 +434,7 @@ target_compile_definitions(xrEngine
 set_target_properties(xrEngine PROPERTIES
     PREFIX ""
 )
-
+if (NOT ANDROID)
 target_precompile_headers(xrEngine
     PRIVATE
     stdafx.h
@@ -443,3 +443,4 @@ target_precompile_headers(xrEngine
 install(TARGETS xrEngine LIBRARY
     DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )
+endif ()

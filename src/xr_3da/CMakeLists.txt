@@ -1,4 +1,8 @@
-add_executable(xr_3da)
+if (ANDROID)
+    add_library(xr_3da SHARED)
+else ()
+    add_executable(xr_3da)
+endif ()
 
 target_sources(xr_3da PRIVATE
     entry_point.cpp
@@ -13,7 +17,7 @@ set_property(
 
 target_include_directories(xr_3da
     PRIVATE
-    "${CMAKE_SOURCE_DIR}/src"
+    "${XRAY16_SOURCE_DIR}/src"
 )
 
 target_link_libraries(xr_3da

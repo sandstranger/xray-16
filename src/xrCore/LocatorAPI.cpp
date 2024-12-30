@@ -700,7 +700,7 @@ bool CLocatorAPI::Recurse(pcstr path)
     intptr_t handle = _findfirst(scanPath, &findData);
     if (handle == -1)
         return false;
-#elif defined(XR_PLATFORM_LINUX) || defined(XR_PLATFORM_BSD) || defined(XR_PLATFORM_APPLE)
+#elif defined(XR_PLATFORM_LINUX) || defined(XR_PLATFORM_BSD) || defined(XR_PLATFORM_APPLE) || defined(ANDROID)
     glob_t globbuf;
 
     globbuf.gl_offs = 256;

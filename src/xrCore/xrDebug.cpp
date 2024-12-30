@@ -38,7 +38,7 @@
 #   include "Debug/MiniDump.h"
 #endif
 
-#if defined(XR_PLATFORM_LINUX) || defined(XR_PLATFORM_APPLE) || defined(XR_PLATFORM_BSD)
+#if (defined(XR_PLATFORM_LINUX) || defined(XR_PLATFORM_APPLE) || defined(XR_PLATFORM_BSD)) && !defined(ANDROID)
 #   if __has_include(<execinfo.h>)
 #       include <execinfo.h>
 #       define BACKTRACE_AVAILABLE

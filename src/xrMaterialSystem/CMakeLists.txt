@@ -12,7 +12,7 @@ target_sources_grouped(
 target_include_directories(xrMaterialSystem
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${CMAKE_SOURCE_DIR}/src"
+    "${XRAY16_SOURCE_DIR}/src"
 )
 
 target_link_libraries(xrMaterialSystem
@@ -33,6 +33,7 @@ set_target_properties(xrMaterialSystem PROPERTIES
     PREFIX ""
 )
 
+if (NOT ANDROID)
 target_precompile_headers(xrMaterialSystem
     PRIVATE
     stdafx.h
@@ -41,3 +42,4 @@ target_precompile_headers(xrMaterialSystem
 install(TARGETS xrMaterialSystem LIBRARY
     DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )
+endif ()

@@ -41,7 +41,16 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
 endif()
 
-# Redirecting the default installation path /usr/local to /usr no need to use -DCMAKE_INSTALL_PREFIX =/usr
+if (ANDROID)
+    set(XRAY16_SOURCE_DIR ${CMAKE_SOURCE_DIR}/app/src/main/jni/xray-16)
+    include_directories(PUBLIC "${LUA_INCLUDE_DIR}")
+    include_directories(PUBLIC ${mimalloc_include})
+    include_directories(PUBLIC ${GLOB_INCLUDE})
+else ()
+    set(XRAY16_SOURCE_DIR ${CMAKE_SOURCE_DIR})
+endif ()
+
+    # Redirecting the default installation path /usr/local to /usr no need to use -DCMAKE_INSTALL_PREFIX =/usr
 if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set(CMAKE_INSTALL_PREFIX "/usr")
 endif()
@@ -52,7 +61,7 @@ include(packaging)
 set_git_info()
 
 # Output all libraries and executable to one folder
-set(COMPILE_OUTPUT_FOLDER "${CMAKE_SOURCE_DIR}/bin/${CMAKE_SYSTEM_PROCESSOR}/${CMAKE_BUILD_TYPE}")
+set(COMPILE_OUTPUT_FOLDER "${XRAY16_SOURCE_DIR}/bin/${CMAKE_SYSTEM_PROCESSOR}/${CMAKE_BUILD_TYPE}")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${COMPILE_OUTPUT_FOLDER}")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${COMPILE_OUTPUT_FOLDER}")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${COMPILE_OUTPUT_FOLDER}")

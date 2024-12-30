@@ -78,7 +78,7 @@ target_sources(xrOPCODE PRIVATE
 
 target_include_directories(xrOPCODE
     PRIVATE
-    "${CMAKE_SOURCE_DIR}/src"
+    "${XRAY16_SOURCE_DIR}/src"
 )
 
 target_link_libraries(xrOPCODE
@@ -96,6 +96,7 @@ set_target_properties(xrOPCODE PROPERTIES
     POSITION_INDEPENDENT_CODE ON
 )
 
+if (NOT ANDROID)
 target_precompile_headers(xrOPCODE
     PRIVATE
     pch.hpp
@@ -106,3 +107,4 @@ if (NOT STATIC_BUILD)
         DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     )
 endif()
+endif ()

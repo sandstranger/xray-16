@@ -106,8 +106,8 @@ target_sources_grouped(
 target_include_directories(xrScriptEngine
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${CMAKE_SOURCE_DIR}/src"
-    "${CMAKE_SOURCE_DIR}/Externals"
+    "${XRAY16_SOURCE_DIR}/src"
+    "${XRAY16_SOURCE_DIR}/Externals"
 )
 
 target_link_libraries(xrScriptEngine
@@ -132,6 +132,7 @@ set_target_properties(xrScriptEngine PROPERTIES
     PREFIX ""
 )
 
+if (NOT ANDROID)
 target_precompile_headers(xrScriptEngine
     PRIVATE
     pch.hpp
@@ -140,3 +141,4 @@ target_precompile_headers(xrScriptEngine
 install(TARGETS xrScriptEngine LIBRARY
     DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )
+endif ()

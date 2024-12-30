@@ -392,13 +392,13 @@ target_sources_grouped(
 
 target_include_directories(xrPhysics
     PUBLIC
-    "${CMAKE_SOURCE_DIR}/Externals"
+    "${XRAY16_SOURCE_DIR}/Externals"
 
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${CMAKE_SOURCE_DIR}/src"
-    "${CMAKE_SOURCE_DIR}/Externals/imgui"
-    "${CMAKE_SOURCE_DIR}/Externals/ode/include"
+    "${XRAY16_SOURCE_DIR}/src"
+    "${XRAY16_SOURCE_DIR}/Externals/imgui"
+    "${XRAY16_SOURCE_DIR}/Externals/ode/include"
 )
 
 target_link_libraries(xrPhysics
@@ -425,6 +425,7 @@ set_target_properties(xrPhysics PROPERTIES
     PREFIX ""
     POSITION_INDEPENDENT_CODE ON
 )
+if (NOT ANDROID)
 
 target_precompile_headers(xrPhysics
     PRIVATE
@@ -436,3 +437,4 @@ if (NOT STATIC_BUILD)
         DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     )
 endif()
+endif ()

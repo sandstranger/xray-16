@@ -8,7 +8,7 @@ target_sources(xrAPI PRIVATE
 
 target_include_directories(xrAPI
     PRIVATE
-    "${CMAKE_SOURCE_DIR}/src"
+    "${XRAY16_SOURCE_DIR}/src"
 )
 
 target_compile_definitions(xrAPI
@@ -20,6 +20,7 @@ set_target_properties(xrAPI PROPERTIES
     PREFIX ""
 )
 
+if (NOT ANDROID)
 target_precompile_headers(xrAPI
     PRIVATE
     stdafx.h
@@ -28,3 +29,4 @@ target_precompile_headers(xrAPI
 install(TARGETS xrAPI LIBRARY
     DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )
+endif ()

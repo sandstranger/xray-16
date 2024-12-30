@@ -45,11 +45,11 @@ target_sources_grouped(
 
 target_include_directories(xrGameSpy
     PRIVATE
-    "${CMAKE_SOURCE_DIR}/src"
-    "${CMAKE_SOURCE_DIR}/src/xrServerEntities"
-    "${CMAKE_SOURCE_DIR}/Externals/GameSpy/src"
-    "${CMAKE_SOURCE_DIR}/Externals/ode/include"
-    "${CMAKE_SOURCE_DIR}/Externals/OpenAutomate/inc"
+    "${XRAY16_SOURCE_DIR}/src"
+    "${XRAY16_SOURCE_DIR}/src/xrServerEntities"
+    "${XRAY16_SOURCE_DIR}/Externals/GameSpy/src"
+    "${XRAY16_SOURCE_DIR}/Externals/ode/include"
+    "${XRAY16_SOURCE_DIR}/Externals/OpenAutomate/inc"
 )
 
 target_link_libraries(xrGameSpy
@@ -70,6 +70,7 @@ set_target_properties(xrGameSpy PROPERTIES
     POSITION_INDEPENDENT_CODE ON
 )
 
+if (NOT ANDROID)
 target_precompile_headers(xrGameSpy
     PRIVATE
     stdafx.h
@@ -80,3 +81,4 @@ if (NOT STATIC_BUILD)
         DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     )
 endif()
+endif ()

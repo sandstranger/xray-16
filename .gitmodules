@@ -3,7 +3,7 @@
 	url = https://github.com/OpenXRay/LuaJIT.git
 [submodule "Externals/luabind"]
 	path = Externals/luabind
-	url = https://github.com/OpenXRay/luabind-deboostified.git
+url=https://github.com/sandstranger/luabind-deboostified.git
 [submodule "Externals/GameSpy"]
 	path = Externals/GameSpy
 url=https://github.com/sandstranger/GameSpy.git
@@ -12,7 +12,7 @@ url=https://github.com/sandstranger/GameSpy.git
 	url = https://github.com/GPUOpen-LibrariesAndSDKs/AGS_SDK.git
 [submodule "Externals/zlib"]
 	path = Externals/zlib
-	url = https://github.com/madler/zlib.git
+url=https://github.com/sandstranger/zlib-xray16.git
 [submodule "Externals/BugTrap"]
 	path = Externals/BugTrap
 	url = https://github.com/OpenXRay/BugTrap.git
@@ -27,7 +27,7 @@ url=https://github.com/sandstranger/GameSpy.git
 	url = https://github.com/ocornut/imgui.git
 [submodule "Externals/xrLuaFix"]
 	path = Externals/xrLuaFix
-	url = https://github.com/OpenXRay/xrLuaFix.git
+url=https://github.com/sandstranger/xrLuaFix.git
 [submodule "Externals/sse2rvv"]
 	path = Externals/sse2rvv
 	url = https://github.com/pattonkan/sse2rvv.git

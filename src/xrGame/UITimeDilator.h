@@ -1,4 +1,5 @@
 #pragma once
+#include "_flags.h"
 class UITimeDilator
 {
 public:
