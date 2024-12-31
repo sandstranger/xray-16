@@ -132,12 +132,11 @@ set_target_properties(xrScriptEngine PROPERTIES
     PREFIX ""
 )
 
-if (NOT ANDROID)
 target_precompile_headers(xrScriptEngine
     PRIVATE
     pch.hpp
 )
-
+if (NOT ANDROID)
 install(TARGETS xrScriptEngine LIBRARY
     DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )

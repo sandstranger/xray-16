@@ -47,12 +47,11 @@ set_target_properties(xrNetServer PROPERTIES
     PREFIX ""
 )
 
-if (NOT ANDROID)
 target_precompile_headers(xrNetServer
     PRIVATE
     stdafx.h
 )
-
+if (NOT ANDROID)
 install(TARGETS xrNetServer LIBRARY
     DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )

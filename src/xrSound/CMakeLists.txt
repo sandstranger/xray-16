@@ -145,12 +145,11 @@ set_target_properties(xrSound PROPERTIES
     PREFIX ""
 )
 
-if (NOT ANDROID)
 target_precompile_headers(xrSound
     PRIVATE
     stdafx.h
 )
-
+if (NOT ANDROID)
 install(TARGETS xrSound LIBRARY
     DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )

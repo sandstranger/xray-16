@@ -70,12 +70,11 @@ set_target_properties(xrGameSpy PROPERTIES
     POSITION_INDEPENDENT_CODE ON
 )
 
-if (NOT ANDROID)
 target_precompile_headers(xrGameSpy
     PRIVATE
     stdafx.h
 )
-
+if (NOT ANDROID)
 if (NOT STATIC_BUILD)
     install(TARGETS xrGameSpy LIBRARY
         DESTINATION "${CMAKE_INSTALL_LIBDIR}"

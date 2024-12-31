@@ -20,12 +20,11 @@ set_target_properties(xrAPI PROPERTIES
     PREFIX ""
 )
 
-if (NOT ANDROID)
 target_precompile_headers(xrAPI
     PRIVATE
     stdafx.h
 )
-
+if (NOT ANDROID)
 install(TARGETS xrAPI LIBRARY
     DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )

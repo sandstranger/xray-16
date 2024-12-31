@@ -2541,12 +2541,11 @@ set_target_properties(xrGame PROPERTIES
     UNITY_BUILD_BATCH_SIZE 50
 )
 
-if (NOT ANDROID)
 target_precompile_headers(xrGame
     PRIVATE
     $<$<COMPILE_LANGUAGE:CXX>:StdAfx.h>
 )
-
+if (NOT ANDROID)
 install(TARGETS xrGame LIBRARY
     DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )

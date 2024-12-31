@@ -61,12 +61,12 @@ set_target_properties(xrCDB PROPERTIES
     PREFIX ""
 )
 
-if (NOT ANDROID)
 target_precompile_headers(xrCDB
     PRIVATE
     stdafx.h
 )
 
+if (NOT ANDROID)
 install(TARGETS xrCDB LIBRARY
     DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )

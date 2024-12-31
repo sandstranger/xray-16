@@ -96,12 +96,12 @@ set_target_properties(xrOPCODE PROPERTIES
     POSITION_INDEPENDENT_CODE ON
 )
 
-if (NOT ANDROID)
 target_precompile_headers(xrOPCODE
     PRIVATE
     pch.hpp
 )
 
+if (NOT ANDROID)
 if (NOT STATIC_BUILD)
     install(TARGETS xrOPCODE LIBRARY
         DESTINATION "${CMAKE_INSTALL_LIBDIR}"

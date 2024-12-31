@@ -452,7 +452,8 @@ if (ANDROID)
 #            pthread
             $<$<PLATFORM_ID:FreeBSD,OpenBSD,NetBSD,DragonFlyBSD>:execinfo>
             SDL2::SDL2
-
+			${SDL2_LIBRARIES}
+			${LUA_LIBRARIES}
             PRIVATE
             xrMiscMath
             ${mimalloc}
@@ -506,12 +507,12 @@ set_target_properties(xrCore PROPERTIES
     PREFIX ""
 )
 
-if (NOT ANDROID)
 target_precompile_headers(xrCore
     PRIVATE
     stdafx.h
 )
 
+if (NOT ANDROID)
 install(TARGETS xrCore LIBRARY
     DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )

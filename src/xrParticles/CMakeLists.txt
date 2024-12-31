@@ -50,11 +50,11 @@ set_target_properties(xrParticles PROPERTIES
     PREFIX ""
 )
 
-if (NOT ANDROID)
 target_precompile_headers(xrParticles
     PRIVATE
     stdafx.h
 )
+if (NOT ANDROID)
 
 install(TARGETS xrParticles LIBRARY
     DESTINATION "${CMAKE_INSTALL_LIBDIR}"

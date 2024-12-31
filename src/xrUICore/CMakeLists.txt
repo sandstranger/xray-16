@@ -169,12 +169,11 @@ set_target_properties(xrUICore PROPERTIES
     PREFIX ""
 )
 
-if (NOT ANDROID)
 target_precompile_headers(xrUICore
     PRIVATE
     pch.hpp
 )
-
+if (NOT ANDROID)
 install(TARGETS xrUICore LIBRARY
     DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )

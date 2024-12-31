@@ -407,10 +407,12 @@ target_include_directories(xrEngine
     "${XRAY16_SOURCE_DIR}/Externals/OpenAutomate/inc"
 )
 
+
 target_link_libraries(xrEngine
     PUBLIC
     xrMiscMath
-
+	${OPENGL_opengl_LIBRARY}
+	
     PRIVATE
     xrAPI
     xrCDB
@@ -434,12 +436,11 @@ target_compile_definitions(xrEngine
 set_target_properties(xrEngine PROPERTIES
     PREFIX ""
 )
-if (NOT ANDROID)
 target_precompile_headers(xrEngine
     PRIVATE
     stdafx.h
 )
-
+if (NOT ANDROID)
 install(TARGETS xrEngine LIBRARY
     DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )

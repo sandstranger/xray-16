@@ -424,12 +424,11 @@ target_compile_definitions(xrRender_GL
 set_target_properties(xrRender_GL PROPERTIES
     PREFIX ""
 )
-if (NOT ANDROID)
 target_precompile_headers(xrRender_GL
     PRIVATE
     $<$<COMPILE_LANGUAGE:CXX>:stdafx.h>
 )
-
+if (NOT ANDROID)
 install(TARGETS xrRender_GL LIBRARY
     DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )

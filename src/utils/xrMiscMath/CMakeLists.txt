@@ -19,9 +19,7 @@ set_target_properties(xrMiscMath PROPERTIES
     POSITION_INDEPENDENT_CODE ON
 )
 
-if (NOT ANDROID)
 target_precompile_headers(xrMiscMath
     PRIVATE
     pch.hpp
 )
-endif ()

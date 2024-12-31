@@ -311,12 +311,11 @@ set_target_properties(xrAICore PROPERTIES
     PREFIX ""
 )
 
-if (NOT ANDROID)
 target_precompile_headers(xrAICore
     PRIVATE
     pch.hpp
 )
-
+if (NOT ANDROID)
 install(TARGETS xrAICore LIBRARY
     DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )

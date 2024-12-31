@@ -33,12 +33,11 @@ set_target_properties(xrMaterialSystem PROPERTIES
     PREFIX ""
 )
 
-if (NOT ANDROID)
 target_precompile_headers(xrMaterialSystem
     PRIVATE
     stdafx.h
 )
-
+if (NOT ANDROID)
 install(TARGETS xrMaterialSystem LIBRARY
     DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )

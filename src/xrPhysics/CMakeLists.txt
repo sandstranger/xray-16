@@ -425,13 +425,12 @@ set_target_properties(xrPhysics PROPERTIES
     PREFIX ""
     POSITION_INDEPENDENT_CODE ON
 )
-if (NOT ANDROID)
 
 target_precompile_headers(xrPhysics
     PRIVATE
     StdAfx.h
 )
-
+if (NOT ANDROID)
 if (NOT STATIC_BUILD)
     install(TARGETS xrPhysics LIBRARY
         DESTINATION "${CMAKE_INSTALL_LIBDIR}"

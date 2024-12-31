@@ -46,12 +46,11 @@ target_compile_definitions(xrRenderPC_R4
 set_target_properties(xrRenderPC_R4 PROPERTIES
     PREFIX ""
 )
-if (NOT ANDROID)
 target_precompile_headers(xrRenderPC_R4
     PRIVATE
     stdafx.h
 )
-
+if (NOT ANDROID)
 install(TARGETS xrRenderPC_R4 LIBRARY
     DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )
