@@ -20,7 +20,7 @@ project(OpenXRay
 
 message(STATUS "CMAKE_PROJECT_VERSION: ${CMAKE_PROJECT_VERSION}")
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(CMAKE_VERBOSE_MAKEFILE "Verbose build output" OFF)
@@ -260,7 +260,16 @@ if (NOT WIN32)
         )
     endif ()
     find_package(OpenAL REQUIRED)
-    find_package(JPEG)
+    if (NOT ANDROID)
+        find_package(JPEG)
+    else ()
+        add_library(JPEG::JPEG UNKNOWN IMPORTED)
+        set_target_properties(
+                SDL2::SDL2 PROPERTIES
+                IMPORTED_LOCATION "${JPEG_LIBRARY}"
+                INTERFACE_INCLUDE_DIRECTORIES "${JPEG_INCLUDE_DIR}"
+        )
+    endif ()
     find_package(Ogg REQUIRED)
     find_package(Vorbis REQUIRED)
     find_package(Theora REQUIRED)
