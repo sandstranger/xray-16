@@ -266,7 +266,7 @@ if (NOT WIN32)
     else ()
         add_library(JPEG::JPEG UNKNOWN IMPORTED)
         set_target_properties(
-                SDL2::SDL2 PROPERTIES
+                JPEG::JPEG PROPERTIES
                 IMPORTED_LOCATION "${JPEG_LIBRARY}"
                 INTERFACE_INCLUDE_DIRECTORIES "${JPEG_INCLUDE_DIR}"
         )
