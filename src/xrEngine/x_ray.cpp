@@ -446,8 +446,11 @@ void CApplication::ShowSplash(bool topmost)
         return;
     }
 
+#if ANDROID
+    Uint32 flags = SDL_WINDOW_BORDERLESS | SDL_WINDOW_HIDDEN |SDL_WINDOW_FULLSCREEN_DESKTOP;
+#else
     Uint32 flags = SDL_WINDOW_BORDERLESS | SDL_WINDOW_HIDDEN;
-
+#endif
     if (topmost)
         flags |= SDL_WINDOW_ALWAYS_ON_TOP;
 

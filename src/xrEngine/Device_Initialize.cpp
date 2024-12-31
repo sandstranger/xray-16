@@ -10,6 +10,9 @@
 #ifdef IMGUI_ENABLE_VIEWPORTS
 #   include <SDL_syswm.h>
 #endif
+#if ANDROID
+#include "GL/Regal.h"
+#endif
 
 SDL_HitTestResult WindowHitTest(SDL_Window* win, const SDL_Point* area, void* data);
 
@@ -45,8 +48,15 @@ void CRenderDevice::Initialize()
     TimerMM.Start();
 
     {
+
+#if ANDROID
+        RegalMakeCurrent((void*)1);
+        Uint32 flags = SDL_WINDOW_BORDERLESS | SDL_WINDOW_HIDDEN |
+                       SDL_WINDOW_RESIZABLE | SDL_WINDOW_FULLSCREEN_DESKTOP;
+#else
         Uint32 flags = SDL_WINDOW_BORDERLESS | SDL_WINDOW_HIDDEN |
             SDL_WINDOW_RESIZABLE;
+#endif
 
         GEnv.Render->ObtainRequiredWindowFlags(flags);
 

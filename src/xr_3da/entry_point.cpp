@@ -3,6 +3,10 @@
 #include "xrEngine/x_ray.h"
 #include "xrGame/xrGame.h"
 
+#if defined(ANDROID)
+#include "SDL_main.h"
+#endif
+
 #if defined(XR_PLATFORM_LINUX) || defined(XR_PLATFORM_BSD) || defined(XR_PLATFORM_APPLE)
 #include <unistd.h>
 #include <stdlib.h>
@@ -55,8 +59,12 @@ int APIENTRY WinMain(HINSTANCE inst, HINSTANCE prevInst, char* commandLine, int 
 
     return result;
 }
-#elif defined(XR_PLATFORM_LINUX) || defined(XR_PLATFORM_BSD) || defined(XR_PLATFORM_APPLE)
+#elif defined(XR_PLATFORM_LINUX) || defined(XR_PLATFORM_BSD) || defined(XR_PLATFORM_APPLE) || defined(ANDROID)
+#if ANDROID
+int SDL_main(int argc, char *argv[])
+#else
 int main(int argc, char *argv[])
+#endif
 {
     int result = EXIT_FAILURE;
 
