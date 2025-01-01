@@ -237,7 +237,7 @@ void GetPlayerName_FromRegistry(char* name, u32 const name_size)
 #elif defined(XR_PLATFORM_LINUX) || defined(XR_PLATFORM_BSD) || defined(XR_PLATFORM_APPLE)
     uid_t uid = geteuid();
     struct passwd* pw = getpwuid(uid);
-    if (pw)
+    if (pw && pw->pw_gecos!= nullptr)
     {
         strcpy(name, pw->pw_gecos);
         char* pos = strchr(name, ','); // pw_gecos return string

@@ -40,6 +40,7 @@ void SetSDLSettings(pcstr title)
 }
 } // namespace
 
+
 void CRenderDevice::Initialize()
 {
     ZoneScoped;
@@ -50,7 +51,6 @@ void CRenderDevice::Initialize()
     {
 
 #if ANDROID
-        RegalMakeCurrent((void*)1);
         Uint32 flags = SDL_WINDOW_BORDERLESS | SDL_WINDOW_HIDDEN |
                        SDL_WINDOW_RESIZABLE | SDL_WINDOW_FULLSCREEN_DESKTOP;
 #else

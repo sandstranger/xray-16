@@ -433,9 +433,12 @@ target_compile_definitions(xrEngine
     PURE_DYNAMIC_CAST
 )
 
+if (NOT ANDROID)
 set_target_properties(xrEngine PROPERTIES
     PREFIX ""
 )
+endif ()
+
 target_precompile_headers(xrEngine
     PRIVATE
     stdafx.h

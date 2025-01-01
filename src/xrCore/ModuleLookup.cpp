@@ -28,7 +28,10 @@ void* ModuleHandle::Open(pcstr moduleName)
 
     if (IsLoaded())
         Close();
-
+#if ANDROID
+    std::string fixedModuleName = std::string ("lib") + std::string (moduleName);
+    moduleName = fixedModuleName.c_str();
+#endif
     Log("Loading module:", moduleName);
 
     xr_string buf(moduleName);

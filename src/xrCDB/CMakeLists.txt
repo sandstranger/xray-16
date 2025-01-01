@@ -57,10 +57,11 @@ target_compile_definitions(xrCDB
     $<$<BOOL:${STATIC_BUILD}>:OPCODE_STATIC>
 )
 
+if (NOT ANDROID)
 set_target_properties(xrCDB PROPERTIES
     PREFIX ""
 )
-
+endif ()
 target_precompile_headers(xrCDB
     PRIVATE
     stdafx.h

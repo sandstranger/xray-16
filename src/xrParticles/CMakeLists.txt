@@ -46,9 +46,10 @@ target_compile_definitions(xrParticles
     XR_PARTICLES_EXPORTS
 )
 
-set_target_properties(xrParticles PROPERTIES
-    PREFIX ""
-)
+if (NOT ANDROID)
+    set_target_properties(xrParticles PROPERTIES
+    PREFIX "")
+endif ()
 
 target_precompile_headers(xrParticles
     PRIVATE

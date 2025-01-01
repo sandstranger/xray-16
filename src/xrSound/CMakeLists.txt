@@ -140,11 +140,11 @@ target_compile_definitions(xrSound
     PRIVATE
     XRSOUND_EXPORTS
 )
-
+if (NOT ANDROID)
 set_target_properties(xrSound PROPERTIES
     PREFIX ""
 )
-
+endif ()
 target_precompile_headers(xrSound
     PRIVATE
     stdafx.h

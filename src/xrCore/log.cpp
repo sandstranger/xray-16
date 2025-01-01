@@ -5,6 +5,7 @@
 #include "resource.h"
 #include "log.h"
 #include "xrCore/Threading/Lock.hpp"
+#include "android/log.h"
 
 bool LogExecCB = true;
 string_path logFName = "engine.log";
@@ -55,6 +56,9 @@ void AddOne(pcstr split)
 
 void Log(pcstr s)
 {
+#if ANDROID
+    __android_log_print(ANDROID_LOG_VERBOSE, "XRAY-16", "%s",s);
+#endif
     int i, j;
 
     const u32 length = xr_strlen(s);

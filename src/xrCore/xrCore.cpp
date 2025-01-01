@@ -170,11 +170,11 @@ void xrCore::PrintBuildInfo()
 
     Log(buf); // "%s build %s from commit[%s] branch[%s] (built by %s)"
 }
-
 void xrCore::Initialize(pcstr _ApplicationName, pcstr commandLine, bool init_fs, pcstr fs_fname, bool plugin)
 {
     ZoneScoped;
     xr_strcpy(ApplicationName, _ApplicationName);
+
     PrintBuildInfo();
 
     if (0 == init_counter)
@@ -244,11 +244,12 @@ void xrCore::Initialize(pcstr _ApplicationName, pcstr commandLine, bool init_fs,
 #elif defined(XR_PLATFORM_LINUX) || defined(XR_PLATFORM_BSD) || defined(XR_PLATFORM_APPLE)
         uid_t uid = geteuid();
         struct passwd *pw = getpwuid(uid);
-        if (pw)
+        if (pw && pw->pw_gecos!= nullptr)
         {
             strncpy(UserName, pw->pw_gecos, sizeof(UserName) - 1);
-            if (UserName[0] == '\0')
+            if (UserName[0] == '\0') {
                 strncpy(UserName, pw->pw_name, sizeof(UserName) - 1);
+            }
         }
         else
             Msg("! Failed to get user name");

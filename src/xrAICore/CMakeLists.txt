@@ -307,10 +307,11 @@ target_compile_definitions(xrAICore
     XRAICORE_EXPORTS
 )
 
+if (NOT ANDROID)
 set_target_properties(xrAICore PROPERTIES
     PREFIX ""
 )
-
+endif ()
 target_precompile_headers(xrAICore
     PRIVATE
     pch.hpp

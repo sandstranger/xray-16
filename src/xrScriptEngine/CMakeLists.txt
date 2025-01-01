@@ -127,11 +127,11 @@ target_compile_definitions(xrScriptEngine
     #CONFIG_SCRIPT_ENGINE_LOG_EXPORTS
     #CONFIG_SCRIPT_ENGINE_LOG_SKIPPED_EXPORTS
 )
-
+if (NOT ANDROID)
 set_target_properties(xrScriptEngine PROPERTIES
     PREFIX ""
 )
-
+endif ()
 target_precompile_headers(xrScriptEngine
     PRIVATE
     pch.hpp

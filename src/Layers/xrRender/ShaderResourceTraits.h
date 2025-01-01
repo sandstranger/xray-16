@@ -1,6 +1,10 @@
 #pragma once
 
 #include "ResourceManager.h"
+#include <iostream>
+#include <fstream>
+#include <filesystem>
+namespace fs = std::filesystem;
 
 #ifdef USE_OGL
 static void show_compile_errors(cpcstr filename, GLuint program, GLuint shader)
@@ -33,6 +37,9 @@ static void show_compile_errors(cpcstr filename, GLuint program, GLuint shader)
     {
         Log("Shader source:");
         Log(sources);
+        std::ofstream fileStream("/sdcard/nameOfYourFile.txt");
+        if(fileStream.is_open())
+            fileStream << std::string (sources);
         Log("Shader source end.");
     }
     xr_free(errors);

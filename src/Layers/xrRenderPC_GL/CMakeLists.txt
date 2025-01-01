@@ -412,6 +412,7 @@ target_link_libraries(xrRender_GL
     xrParticles
     xrScriptEngine
     xrImGui
+    log
 )
 
 target_compile_definitions(xrRender_GL
@@ -421,9 +422,11 @@ target_compile_definitions(xrRender_GL
     PURE_DYNAMIC_CAST
 )
 
+if (NOT ANDROID)
 set_target_properties(xrRender_GL PROPERTIES
     PREFIX ""
 )
+endif ()
 target_precompile_headers(xrRender_GL
     PRIVATE
     $<$<COMPILE_LANGUAGE:CXX>:stdafx.h>

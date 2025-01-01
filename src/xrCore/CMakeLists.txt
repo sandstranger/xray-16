@@ -454,6 +454,7 @@ if (ANDROID)
             SDL2::SDL2
 			${SDL2_LIBRARIES}
 			${LUA_LIBRARIES}
+            log
             PRIVATE
             xrMiscMath
             ${mimalloc}
@@ -503,9 +504,10 @@ else()
     target_compile_definitions(xrCore PRIVATE USE_PURE_ALLOC)
 endif()
 
-set_target_properties(xrCore PROPERTIES
-    PREFIX ""
-)
+if (NOT ANDROID)
+    set_target_properties(xrCore PROPERTIES
+    PREFIX "")
+endif ()
 
 target_precompile_headers(xrCore
     PRIVATE

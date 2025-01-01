@@ -43,9 +43,11 @@ target_compile_definitions(xrNetServer
     XR_NETSERVER_EXPORTS
 )
 
+if (NOT ANDROID)
 set_target_properties(xrNetServer PROPERTIES
     PREFIX ""
 )
+endif ()
 
 target_precompile_headers(xrNetServer
     PRIVATE

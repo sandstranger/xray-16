@@ -5,6 +5,9 @@
 #include "dxUIRender.h"
 #include "xrEngine/GameFont.h"
 #include "xrEngine/PerformanceAlert.hpp"
+#if ANDROID
+#include "GL/Regal.h"
+#endif
 
 #if defined(XR_PLATFORM_WINDOWS) || defined(XR_PLATFORM_LINUX) || defined(XR_PLATFORM_APPLE)
 #   ifndef MASTER_GOLD
@@ -202,7 +205,7 @@ void D3DXRenderBase::Create(SDL_Window* hWnd, u32& dwWidth, u32& dwHeight, float
 #endif
 
     HW.CreateDevice(hWnd);
-
+    RegalMakeCurrent(HW.m_context);
     std::tie(dwWidth, dwHeight) = HW.GetSurfaceSize();
 
     fWidth_2 = float(dwWidth / 2);

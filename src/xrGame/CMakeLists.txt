@@ -2536,10 +2536,13 @@ if ((CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebI
     message(STATUS "Build type is ${CMAKE_BUILD_TYPE}, so disable generation of debug info for xrGame module, because MCST lcc compiler does not support a file > 4 GB (this is a bug in EDG frontend).")
 endif()
 
-set_target_properties(xrGame PROPERTIES
+if (ANDROID)
+    set_target_properties(xrGame PROPERTIES UNITY_BUILD_BATCH_SIZE 50 )
+else ()
+    set_target_properties(xrGame PROPERTIES
     PREFIX ""
-    UNITY_BUILD_BATCH_SIZE 50
-)
+    UNITY_BUILD_BATCH_SIZE 50)
+endif ()
 
 target_precompile_headers(xrGame
     PRIVATE

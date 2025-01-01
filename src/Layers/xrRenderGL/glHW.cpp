@@ -66,7 +66,6 @@ void CHW::OnAppDeactivate()
             SDL_MinimizeWindow(m_window);
     }
 }
-
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -99,6 +98,9 @@ void CHW::CreateDevice(SDL_Window* hWnd)
         return;
     }
 
+#if ANDROID
+    m_helper_context = SDL_GL_CreateContext(m_window);
+#else
     {
         const Uint32 flags = SDL_WINDOW_BORDERLESS | SDL_WINDOW_HIDDEN | SDL_WINDOW_OPENGL;
 
@@ -131,6 +133,7 @@ void CHW::CreateDevice(SDL_Window* hWnd)
     }
 #endif // DEBUG
 
+#ifndef ANDROID
     int iMaxVTFUnits, iMaxCTIUnits;
     glGetIntegerv(GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, &iMaxVTFUnits);
     glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &iMaxCTIUnits);
@@ -143,7 +146,7 @@ void CHW::CreateDevice(SDL_Window* hWnd)
     Msg("* GPU OpenGL version: %s", OpenGLVersionString);
     Msg("* GPU OpenGL shading language version: %s", ShadingVersion);
     Msg("* GPU OpenGL VTF units: [%d] CTI units: [%d]", iMaxVTFUnits, iMaxCTIUnits);
-
+#endif
     ComputeShadersSupported = false; // XXX: Implement compute shaders support
 
     Caps.fTarget = D3DFMT_A8R8G8B8;
@@ -227,8 +230,11 @@ int CHW::MakeContextCurrent(IRender::RenderContext context) const
         return SDL_GL_MakeCurrent(m_window, m_context);
 
     case IRender::HelperContext:
+#if ANDROID
+        return SDL_GL_MakeCurrent(m_window, m_helper_context);
+#else
         return SDL_GL_MakeCurrent(m_helper_window, m_helper_context);
-
+#endif
     default:
         NODEFAULT;
     }

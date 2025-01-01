@@ -28,9 +28,11 @@ target_link_libraries(xr_3da
     xrGame
 )
 
+if (NOT ANDROID)
 set_target_properties(xr_3da PROPERTIES
     PREFIX ""
 )
+endif ()
 
 install(TARGETS xr_3da RUNTIME
     DESTINATION "${CMAKE_INSTALL_BINDIR}"

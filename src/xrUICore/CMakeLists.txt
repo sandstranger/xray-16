@@ -165,9 +165,11 @@ target_compile_definitions(xrUICore
     PURE_DYNAMIC_CAST
 )
 
+if (NOT ANDROID)
 set_target_properties(xrUICore PROPERTIES
     PREFIX ""
 )
+endif ()
 
 target_precompile_headers(xrUICore
     PRIVATE

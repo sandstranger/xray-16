@@ -15,10 +15,11 @@ target_compile_definitions(xrAPI
     PRIVATE
     XRAPI_EXPORTS
 )
-
+if (NOT ANDROID)
 set_target_properties(xrAPI PROPERTIES
     PREFIX ""
 )
+endif ()
 
 target_precompile_headers(xrAPI
     PRIVATE
