@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <getopt.h>
+
 #endif
 
 // Always request high performance GPU
@@ -32,7 +33,11 @@ int entry_point(pcstr commandLine)
 
     return app.Run();
 }
-
+#if ANDROID
+extern "C" {
+extern void load_vulkan();
+}
+#endif
 #if defined(XR_PLATFORM_WINDOWS)
 int StackoverflowFilter(const int exceptionCode)
 {
@@ -66,6 +71,8 @@ int SDL_main(int argc, char *argv[])
 int main(int argc, char *argv[])
 #endif
 {
+    load_vulkan();
+
     int result = EXIT_FAILURE;
 
     try

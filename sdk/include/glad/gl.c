@@ -12203,11 +12203,7 @@ static int glad_gl_find_core_gl(void) {
     };
     int major = 0;
     int minor = 0;
-#if ANDROID
-    version = "41";
-#else
     version = (const char*) glad_glGetString(GL_VERSION);
-#endif
     if (!version) return 0;
     for (i = 0;  prefixes[i];  i++) {
         const size_t length = strlen(prefixes[i]);
@@ -12580,11 +12576,7 @@ int gladLoadGLUserPtr( GLADuserptrloadfunc load, void *userptr) {
     glad_gl_load_GL_EXT_separate_shader_objects(load, userptr);
 
     glad_gl_resolve_aliases();
-#if ANDROID
-    return 1;
-#else
     return version;
-#endif
 }
 
 

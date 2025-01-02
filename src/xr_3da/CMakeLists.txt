@@ -5,6 +5,7 @@ else ()
 endif ()
 
 target_sources(xr_3da PRIVATE
+	vulkan_loader.c
     entry_point.cpp
     stdafx.h
 )
@@ -26,6 +27,7 @@ target_link_libraries(xr_3da
     xrAPI
     xrEngine
     xrGame
+	${NSBYPASS_LIBRARY}
 )
 
 if (NOT ANDROID)

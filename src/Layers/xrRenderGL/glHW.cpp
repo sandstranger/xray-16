@@ -66,12 +66,14 @@ void CHW::OnAppDeactivate()
             SDL_MinimizeWindow(m_window);
     }
 }
+#include "android/log.h"
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 void CHW::CreateDevice(SDL_Window* hWnd)
 {
     ZoneScoped;
+
 
     m_window = hWnd;
 
@@ -97,7 +99,6 @@ void CHW::CreateDevice(SDL_Window* hWnd)
         Log("! Could not make context current:", SDL_GetError());
         return;
     }
-
 #if ANDROID
     m_helper_context = SDL_GL_CreateContext(m_window);
 #else
@@ -116,7 +117,7 @@ void CHW::CreateDevice(SDL_Window* hWnd)
         // just in case
         SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 0);
     }
-
+#endif
     if (MakeContextCurrent(IRender::PrimaryContext) != 0)
     {
         Log("! Could not make context current after creating helper context:", SDL_GetError());
@@ -200,7 +201,7 @@ void CHW::SetPrimaryAttributes(u32& windowFlags)
     if (!strstr(Core.Params, "-no_gl_context"))
     {
 #if ANDROID
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 #else
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
