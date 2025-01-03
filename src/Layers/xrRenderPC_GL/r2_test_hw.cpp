@@ -42,12 +42,12 @@ public:
 BOOL xrRender_test_hw()
 {
     ZoneScoped;
-
+#ifndef ANDROID
     // Check if minimal required OpenGL features are available
     const sdl_window_test_helper windowTest;
     if (!windowTest.successful())
         return FALSE;
-
+#endif
     int version;
     {
         ZoneScopedN("gladLoadGL");

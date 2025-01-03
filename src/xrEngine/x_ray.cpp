@@ -265,9 +265,13 @@ CApplication::CApplication(pcstr commandLine, GameModule* game)
     TaskScheduler->Wait(inputTask);
     InitConsole();
 
+#if ANDROID
+    Device.Initialize();
+    Engine.Initialize(game);
+#else
     Engine.Initialize(game);
     Device.Initialize();
-
+#endif
     Console->OnDeviceInitialize();
 
     execUserScript();
@@ -436,6 +440,7 @@ int CApplication::Run()
 
 void CApplication::ShowSplash(bool topmost)
 {
+
     if (m_window)
         return;
 
