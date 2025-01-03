@@ -837,7 +837,6 @@ std::string CLocatorAPI::setup_fs_path(pcstr fs_name)
 #if ANDROID
     if (SDL_strlen(fs_path) != 0) {
         std::string fullPath = (gamePath + std::string ("/") + std::string(fs_path));
-        __android_log_print(ANDROID_LOG_VERBOSE, "stalker", "DATA PATH = %s",fullPath.c_str());
         char *tmp_path = realpath(fullPath.c_str(), NULL);
         CHECK_OR_EXIT(tmp_path && tmp_path[0],
                       make_string("Cannot get realpath for \"%s\": %s", fs_path, strerror(errno)));
@@ -1603,9 +1602,6 @@ bool CLocatorAPI::check_for_file(pcstr path, pcstr _fname, string_path& fname, c
     file desc_f;
     desc_f.name = fname;
 
-    if(!std::filesystem::exists(fname)){
-        return false;
-    }
 
     files_it I = m_files.find(desc_f);
     if (I == m_files.end())
