@@ -368,7 +368,6 @@ HRESULT CRender::shader_compile(pcstr name, IReader* fs, pcstr pFunctionName,
         appendShaderOption(dof, "USE_DOF", "1");
     }
 
-
     // Sun shafts
     if (RImplementation.o.advancedpp && ps_r_sun_shafts)
     {
@@ -562,11 +561,9 @@ HRESULT CRender::shader_compile(pcstr name, IReader* fs, pcstr pFunctionName,
             {
                 CHK_GL(glGetProgramBinary(program, binaryLength, nullptr, &binaryFormat, binary));
                 IWriter* file = FS.w_open(full_path);
-#ifndef ANDROID
                 file->w_string(HW.AdapterName);
                 file->w_string(HW.OpenGLVersionString);
                 file->w_string(HW.ShadingVersion);
-#endif
                 file->w_u32(binaryFormat);
                 file->w_u32(fileCrc);
 

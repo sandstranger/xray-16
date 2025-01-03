@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #if ANDROID
 #include "android/log.h"
+#include <filesystem>
 #endif
 #pragma hdrstop // huh?
 
@@ -945,7 +946,6 @@ IReader* CLocatorAPI::setup_fs_ltx(pcstr fs_name)
     std::string finalFileName = full_directory_path + std::string ("/") + std::string (fs_file_name);
     fs_file_name = finalFileName.c_str();
 
-    __android_log_print(ANDROID_LOG_VERBOSE, "APPNAME", "DATA PATH FINAL PATH = %s", fs_file_name );
 
     Log("using fs-ltx", fs_file_name);
 
@@ -1046,7 +1046,17 @@ void CLocatorAPI::_initialize(u32 flags, pcstr target_folder, pcstr fs_name)
 
             auto p_it = m_paths.find(root);
 
+#if ANDROID
+            FS_Path* P;
+            if (std::string(id) == "$app_data_root$"){
+                P = xr_new<FS_Path>(gamePath.c_str(), lp_add, lp_def, lp_capt, fl);
+            } else {
+                P = xr_new<FS_Path>(p_it != m_paths.end() ? p_it->second->m_Path : root,
+                                              lp_add, lp_def, lp_capt, fl);
+            }
+#else
             FS_Path* P = xr_new<FS_Path>(p_it != m_paths.end() ? p_it->second->m_Path : root, lp_add, lp_def, lp_capt, fl);
+#endif
             bNoRecurse = !(fl & FS_Path::flRecurse);
             Recurse(P->m_Path);
             auto I = m_paths.emplace(xr_strdup(id), P);
@@ -1592,6 +1602,11 @@ bool CLocatorAPI::check_for_file(pcstr path, pcstr _fname, string_path& fname, c
     // Search entry
     file desc_f;
     desc_f.name = fname;
+
+    if(!std::filesystem::exists(fname)){
+        return false;
+    }
+
     files_it I = m_files.find(desc_f);
     if (I == m_files.end())
     {

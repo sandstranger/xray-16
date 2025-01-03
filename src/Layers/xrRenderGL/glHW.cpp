@@ -134,7 +134,6 @@ void CHW::CreateDevice(SDL_Window* hWnd)
     }
 #endif // DEBUG
 
-#ifndef ANDROID
     int iMaxVTFUnits, iMaxCTIUnits;
     glGetIntegerv(GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, &iMaxVTFUnits);
     glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &iMaxCTIUnits);
@@ -147,7 +146,6 @@ void CHW::CreateDevice(SDL_Window* hWnd)
     Msg("* GPU OpenGL version: %s", OpenGLVersionString);
     Msg("* GPU OpenGL shading language version: %s", ShadingVersion);
     Msg("* GPU OpenGL VTF units: [%d] CTI units: [%d]", iMaxVTFUnits, iMaxCTIUnits);
-#endif
     ComputeShadersSupported = false; // XXX: Implement compute shaders support
 
     Caps.fTarget = D3DFMT_A8R8G8B8;
