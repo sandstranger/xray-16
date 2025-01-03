@@ -103,7 +103,13 @@ Fvector* CConsole::GetFVectorPtr(pcstr cmd) const
     {
         return cf->GetValuePtr();
     }
-    return NULL;
+
+    static Fvector vectors[3]; //array declared as static
+    for(auto & vector : vectors)
+    {
+        vector = Fvector().set(0.0f, 0.0f, 0.0f); //array initialisation
+    }
+    return vectors;
 }
 
 Fvector CConsole::GetFVector(pcstr cmd) const
