@@ -222,11 +222,13 @@ CApplication::CApplication(pcstr commandLine, GameModule* game)
         shortcuts.Disable();
 #endif
 
+#ifndef ANDROID
     if (!strstr(commandLine, "-nosplash"))
     {
         const bool topmost = !strstr(commandLine, "-splashnotop");
         ShowSplash(topmost);
     }
+#endif
 
     SDL_StopTextInput(); // It's enabled by default for some reason, we don't want it
     const auto& inputTask = TaskManager::AddTask([]
