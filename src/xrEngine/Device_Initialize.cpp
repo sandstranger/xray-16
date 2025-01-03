@@ -10,9 +10,6 @@
 #ifdef IMGUI_ENABLE_VIEWPORTS
 #   include <SDL_syswm.h>
 #endif
-#if ANDROID
-#include "GL/Regal.h"
-#endif
 
 SDL_HitTestResult WindowHitTest(SDL_Window* win, const SDL_Point* area, void* data);
 
@@ -39,7 +36,6 @@ void SetSDLSettings(pcstr title)
 #endif
 }
 } // namespace
-
 
 void CRenderDevice::Initialize()
 {
@@ -79,8 +75,23 @@ void CRenderDevice::Initialize()
 
         xr_strcpy(Core.ApplicationTitle, title);
         SetSDLSettings(title);
-
+#if ANDROID
+        int screenWidth, screenHeight;
+        SDL_DisplayMode current;
+        if (SDL_GetCurrentDisplayMode(0, &current) == 0) {
+            screenWidth = current.w;
+            screenHeight = current.h;
+            Log("CURRENT SCREEN WIDTH =", screenWidth);
+            Log("CURRENT SCREEN HEIGHT =", screenHeight);
+        } else {
+            Log("Can not get screen resolution");
+            SDL_Quit();
+            return;
+        }
+        m_sdlWnd = SDL_CreateWindow(title, 0, 0, screenWidth, screenHeight, flags);
+#else
         m_sdlWnd = SDL_CreateWindow(title, 0, 0, 640, 480, flags);
+#endif
         R_ASSERT3(m_sdlWnd, "Unable to create SDL window", SDL_GetError());
 
         SDL_SetWindowHitTest(m_sdlWnd, WindowHitTest, nullptr);

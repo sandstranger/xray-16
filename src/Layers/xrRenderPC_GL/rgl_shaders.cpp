@@ -333,7 +333,6 @@ HRESULT CRender::shader_compile(pcstr name, IReader* fs, pcstr pFunctionName,
 
     // SKIN_4
     appendShaderOption(4 == m_skinning, "SKIN_4", "1");
-
     //	Igor: need restart options
     // Soft water
     {
@@ -368,6 +367,7 @@ HRESULT CRender::shader_compile(pcstr name, IReader* fs, pcstr pFunctionName,
         const bool dof = RImplementation.o.advancedpp && ps_r2_ls_flags.test(R2FLAG_DOF);
         appendShaderOption(dof, "USE_DOF", "1");
     }
+
 
     // Sun shafts
     if (RImplementation.o.advancedpp && ps_r_sun_shafts)
@@ -482,13 +482,14 @@ HRESULT CRender::shader_compile(pcstr name, IReader* fs, pcstr pFunctionName,
     // finish
     options.finish();
     sh_name.finish();
-
     char extension[3];
     strncpy_s(extension, pTarget, 2);
 
     u32 fileCrc = 0;
     string_path filename, full_path{};
+
     strconcat(sizeof(filename), filename, "gl" DELIMITER, name, ".", extension, DELIMITER, sh_name.c_str());
+
     if (GLAD_GL_ARB_get_program_binary && GLAD_GL_ARB_separate_shader_objects)
     {
         string_path file;
@@ -561,11 +562,11 @@ HRESULT CRender::shader_compile(pcstr name, IReader* fs, pcstr pFunctionName,
             {
                 CHK_GL(glGetProgramBinary(program, binaryLength, nullptr, &binaryFormat, binary));
                 IWriter* file = FS.w_open(full_path);
-
+#ifndef ANDROID
                 file->w_string(HW.AdapterName);
                 file->w_string(HW.OpenGLVersionString);
                 file->w_string(HW.ShadingVersion);
-
+#endif
                 file->w_u32(binaryFormat);
                 file->w_u32(fileCrc);
 
