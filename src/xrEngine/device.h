@@ -44,7 +44,9 @@ private:
     CTimer_paused Timer;
     CTimer_paused TimerGlobal;
     CTimer TimerMM;
-
+#if ANDROID
+    SDL_GLContext context;
+#endif
     void SetupStates();
 
 public:
@@ -70,6 +72,11 @@ public:
     bool m_bNearer{};
 
 public:
+#ifdef ANDROID
+    void DestroyContext (){
+        SDL_GL_DeleteContext(context);
+    }
+#endif
     void SetNearer(bool enabled)
     {
         if (enabled && !m_bNearer)

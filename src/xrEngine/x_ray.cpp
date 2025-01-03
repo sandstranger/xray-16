@@ -268,6 +268,7 @@ CApplication::CApplication(pcstr commandLine, GameModule* game)
 #if ANDROID
     Device.Initialize();
     Engine.Initialize(game);
+    Device.DestroyContext();
 #else
     Engine.Initialize(game);
     Device.Initialize();

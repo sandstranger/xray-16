@@ -10,7 +10,6 @@
 #ifdef IMGUI_ENABLE_VIEWPORTS
 #   include <SDL_syswm.h>
 #endif
-
 SDL_HitTestResult WindowHitTest(SDL_Window* win, const SDL_Point* area, void* data);
 
 namespace
@@ -101,7 +100,6 @@ void CRenderDevice::Initialize()
         //We need to create test context for zink initialzation
         SDL_GLContext context = SDL_GL_CreateContext(m_sdlWnd);
         SDL_GL_MakeCurrent (m_sdlWnd,context);
-        SDL_GL_DeleteContext(context);
 #else
         m_sdlWnd = SDL_CreateWindow(title, 0, 0, 640, 480, flags);
 #endif
