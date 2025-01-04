@@ -13,7 +13,7 @@ static void set_vulkan_ptr(void* ptr) {
 }
 
 void* load_turnip_vulkan() {
-    const char* native_dir = getenv("POJAV_NATIVEDIR");
+    const char* native_dir = getenv("NATIVE_LIB_DIR");
     const char* cache_dir = getenv("TMPDIR");
     if(!linker_ns_load(native_dir)) return NULL;
     void* linkerhook = linker_ns_dlopen("liblinkerhook.so", RTLD_LOCAL | RTLD_NOW);
@@ -44,14 +44,12 @@ void* load_turnip_vulkan() {
 }
 
 void load_vulkan() {
-#ifdef ADRENO_POSSIBLE
-        void* result = load_turnip_vulkan();
-        if(result != NULL) {
-            printf("AdrenoSupp: Loaded Turnip, loader address: %p\n", result);
-            set_vulkan_ptr(result);
-            return;
-        }
-#endif
+    void* result = load_turnip_vulkan();
+    if(result != NULL) {
+        printf("AdrenoSupp: Loaded Turnip, loader address: %p\n", result);
+        set_vulkan_ptr(result);
+        return;
+    }
     printf("loading vulkan regularly...\n");
     void* vulkan_ptr = dlopen("libvulkan.so", RTLD_LAZY | RTLD_LOCAL);
     printf("loaded vulkan, ptr=%p\n", vulkan_ptr);
