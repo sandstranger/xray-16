@@ -1,6 +1,11 @@
 #include "stdafx.h"
 
 #include "XMLDocument.hpp"
+#if ANDROID
+#include <iostream>
+#include <string>
+#include <regex>
+#endif
 
 pcstr UI_PATH = UI_PATH_DEFAULT;
 pcstr UI_PATH_WITH_DELIMITER = UI_PATH_DEFAULT_WITH_DELIMITER;
@@ -186,7 +191,12 @@ bool XMLDocument::Load(pcstr path, pcstr xml_filename, bool fatal)
 bool XMLDocument::Set(pcstr text, bool fatal)
 {
     R_ASSERT(text != nullptr);
+#if ANDROID
+    std::string str = std::regex_replace(std::string (text), std::regex("\"\""), "\"");
+    m_Doc.Parse(&m_Doc, str.c_str());
+#else
     m_Doc.Parse(&m_Doc, text);
+#endif
 
     if (m_Doc.Error())
     {
