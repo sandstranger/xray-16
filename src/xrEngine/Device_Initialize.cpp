@@ -10,6 +10,7 @@
 #ifdef IMGUI_ENABLE_VIEWPORTS
 #   include <SDL_syswm.h>
 #endif
+
 SDL_HitTestResult WindowHitTest(SDL_Window* win, const SDL_Point* area, void* data);
 
 namespace
