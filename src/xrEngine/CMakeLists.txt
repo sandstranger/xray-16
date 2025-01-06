@@ -412,7 +412,7 @@ target_link_libraries(xrEngine
     PUBLIC
     xrMiscMath
 	${OPENGL_opengl_LIBRARY}
-	
+	log
     PRIVATE
     xrAPI
     xrCDB

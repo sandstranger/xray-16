@@ -17,6 +17,9 @@
 #include "IGame_Persistent.h"
 #include "LightAnimLibrary.h"
 #include "XR_IOConsole.h"
+#if ANDROID
+#include "android/log.h"
+#endif
 
 #if defined(XR_PLATFORM_WINDOWS)
 #include "AccessibilityShortcuts.hpp"
@@ -371,7 +374,12 @@ int CApplication::Run()
     {
         bool canCallActivate = false;
         bool shouldActivate = false;
-
+#ifdef ANDROID
+        //We need to poll events at android platform
+        SDL_Event event;
+        int ret = SDL_PollEvent(&event);
+        __android_log_print(ANDROID_LOG_VERBOSE, "XRAY16", "Current SDL event = %d", event.type);
+#endif
         SDL_Event events[MAX_WINDOW_EVENTS];
         const int count = SDL_PeepEvents(events, MAX_WINDOW_EVENTS,
             SDL_GETEVENT, SDL_WINDOWEVENT, SDL_WINDOWEVENT);

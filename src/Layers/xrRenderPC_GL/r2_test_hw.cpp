@@ -39,8 +39,10 @@ public:
 
     ~sdl_window_test_helper()
     {
+#ifndef ANDROID
         SDL_GL_DeleteContext(m_context);
         SDL_DestroyWindow(m_window);
+#endif
     }
 };
 
@@ -51,6 +53,7 @@ BOOL xrRender_test_hw()
     const sdl_window_test_helper windowTest;
     if (!windowTest.successful())
         return FALSE;
+
     int version;
     {
         ZoneScopedN("gladLoadGL");
