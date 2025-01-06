@@ -659,8 +659,10 @@ IRender::RenderContext CRender::GetCurrentContext() const
 
 void CRender::MakeContextCurrent(RenderContext context)
 {
+#ifndef ANDROID
     R_ASSERT3(HW.MakeContextCurrent(context) == 0,
         "Failed to switch OpenGL context", SDL_GetError());
+#endif
 }
 #endif
 

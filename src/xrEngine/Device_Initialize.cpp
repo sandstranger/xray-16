@@ -48,7 +48,7 @@ void CRenderDevice::Initialize()
 #if ANDROID
         Uint32 flags = SDL_WINDOW_BORDERLESS | SDL_WINDOW_HIDDEN |
                        SDL_WINDOW_RESIZABLE | SDL_WINDOW_FULLSCREEN_DESKTOP;
-        flags |= SDL_WINDOW_OPENGL;
+       // flags |= SDL_WINDOW_OPENGL;
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
         SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
         SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
@@ -97,9 +97,6 @@ void CRenderDevice::Initialize()
             return;
         }
         m_sdlWnd = SDL_CreateWindow(title, 0, 0, screenWidth, screenHeight, flags);
-        //We need to create test context for zink initialzation
-        SDL_GLContext context = SDL_GL_CreateContext(m_sdlWnd);
-        SDL_GL_MakeCurrent (m_sdlWnd,context);
 #else
         m_sdlWnd = SDL_CreateWindow(title, 0, 0, 640, 480, flags);
 #endif

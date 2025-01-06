@@ -6,6 +6,9 @@
 
 #include "glHW.h"
 #include "xrEngine/XR_IOConsole.h"
+#if ANDROID
+#include "osm_bridge.h"
+#endif
 
 CHW HW;
 
@@ -66,7 +69,6 @@ void CHW::OnAppDeactivate()
             SDL_MinimizeWindow(m_window);
     }
 }
-#include "android/log.h"
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -74,11 +76,9 @@ void CHW::CreateDevice(SDL_Window* hWnd)
 {
     ZoneScoped;
 
-
     m_window = hWnd;
 
     R_ASSERT(m_window);
-
     // Choose the closest pixel format
     SDL_DisplayMode mode;
     SDL_GetWindowDisplayMode(m_window, &mode);
@@ -86,6 +86,7 @@ void CHW::CreateDevice(SDL_Window* hWnd)
     // Apply the pixel format to the device context
     SDL_SetWindowDisplayMode(m_window, &mode);
 
+#ifndef ANDROID
     // Create the context
     m_context = SDL_GL_CreateContext(m_window);
     if (m_context == nullptr)
@@ -99,9 +100,7 @@ void CHW::CreateDevice(SDL_Window* hWnd)
         Log("! Could not make context current:", SDL_GetError());
         return;
     }
-#if ANDROID
-    m_helper_context = SDL_GL_CreateContext(m_window);
-#else
+
     {
         const Uint32 flags = SDL_WINDOW_BORDERLESS | SDL_WINDOW_HIDDEN | SDL_WINDOW_OPENGL;
 
@@ -117,12 +116,12 @@ void CHW::CreateDevice(SDL_Window* hWnd)
         // just in case
         SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 0);
     }
-#endif
     if (MakeContextCurrent(IRender::PrimaryContext) != 0)
     {
         Log("! Could not make context current after creating helper context:", SDL_GetError());
         return;
     }
+#endif
 
     UpdateVSync();
 
@@ -157,6 +156,9 @@ void CHW::CreateDevice(SDL_Window* hWnd)
 
 void CHW::DestroyDevice()
 {
+#if ANDROID
+    return;
+#endif
     SDL_GL_MakeCurrent(nullptr, nullptr);
 
     SDL_GL_DeleteContext(m_context);
@@ -210,16 +212,21 @@ void CHW::SetPrimaryAttributes(u32& windowFlags)
 
 IRender::RenderContext CHW::GetCurrentContext() const
 {
+#if ANDROID
+    return IRender::PrimaryContext;
+#else
     const auto context = SDL_GL_GetCurrentContext();
     if (context == m_context)
         return IRender::PrimaryContext;
     if (context == m_helper_context)
         return IRender::HelperContext;
     return IRender::NoContext;
+#endif
 }
 
 int CHW::MakeContextCurrent(IRender::RenderContext context) const
 {
+#ifndef ANDROID
     switch (context)
     {
     case IRender::NoContext:
@@ -229,15 +236,14 @@ int CHW::MakeContextCurrent(IRender::RenderContext context) const
         return SDL_GL_MakeCurrent(m_window, m_context);
 
     case IRender::HelperContext:
-#if ANDROID
-        return SDL_GL_MakeCurrent(m_window, m_helper_context);
-#else
         return SDL_GL_MakeCurrent(m_helper_window, m_helper_context);
-#endif
     default:
         NODEFAULT;
     }
     return -1;
+#else
+    return 0;
+#endif
 }
 
 void CHW::UpdateViews()
@@ -265,7 +271,11 @@ void CHW::Present()
         GL_COLOR_BUFFER_BIT, GL_NEAREST);
 #endif
 
+#if ANDROID
+    SwapSufaceWindow();
+#else
     SDL_GL_SwapWindow(m_window);
+#endif
     CurrentBackBuffer = (CurrentBackBuffer + 1) % BackBufferCount;
 }
 

@@ -1054,7 +1054,7 @@ NVAPI_INTERFACE NvAPI_GetDisplayDriverVersion(NvDisplayHandle hNvDisplay, NV_DIS
 //!
 //!  \note These functions are valid only for the current OpenGL
 //!        context. Calling these functions prior to creating a
-//!        context and calling MakeCurrent with it will result
+//!        context and calling SetupOsMContext with it will result
 //!        in errors and undefined behavior.
 //!
 //! SUPPORTED OS:  Windows XP and higher
