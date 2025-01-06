@@ -49,7 +49,7 @@ void CRenderDevice::Initialize()
 #if ANDROID
         Uint32 flags = SDL_WINDOW_BORDERLESS | SDL_WINDOW_HIDDEN |
                        SDL_WINDOW_RESIZABLE | SDL_WINDOW_FULLSCREEN_DESKTOP;
-       // flags |= SDL_WINDOW_OPENGL;
+        flags |= SDL_WINDOW_OPENGL;
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
         SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
         SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
