@@ -25,6 +25,7 @@ protected:
 
 public:
     virtual ~CScriptValueContainer();
+    virtual void dynamicCastMethod();
     IC void assign() const;
     IC void clear();
     IC void add(CScriptValue* value);

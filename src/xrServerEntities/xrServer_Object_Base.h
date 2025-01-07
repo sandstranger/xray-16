@@ -43,7 +43,7 @@ class CPureServerObject : public IPureServerObject
     using inherited = IPureServerObject;
 
 public:
-    virtual ~CPureServerObject() {}
+    virtual ~CPureServerObject();
     virtual void load(IReader& tFileStream);
     virtual void save(IWriter& tMemoryStream);
     virtual void load(NET_Packet& tNetPacket);

@@ -473,6 +473,7 @@ else ()
     $<$<STREQUAL:${MEMORY_ALLOCATOR},mimalloc>:mimalloc>
     $<$<BOOL:${JPEG_FOUND}>:JPEG::JPEG>
     LZO::LZO
+	log
 )
 endif ()
 

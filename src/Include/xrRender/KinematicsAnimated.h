@@ -35,7 +35,7 @@ struct SKeyTable
 class IKinematicsAnimated
 {
 public:
-    virtual ~IKinematicsAnimated() { ; }
+    virtual ~IKinematicsAnimated();
     // Calculation
 public:
     virtual void OnCalculateBones() = 0;

@@ -19,7 +19,7 @@ private:
 
 public:
     CHitImmunity();
-    virtual ~CHitImmunity() = default;
+    virtual ~CHitImmunity();
 
     void LoadImmunities(const char* section, const CInifile* ini);
     void AddImmunities(const char* section, const CInifile* ini);

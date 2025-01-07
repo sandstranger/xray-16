@@ -5,7 +5,7 @@
 class IParticleCustom
 {
 public:
-    virtual ~IParticleCustom() { ; }
+    virtual ~IParticleCustom();
     virtual void OnDeviceCreate() = 0;
     virtual void OnDeviceDestroy() = 0;
 

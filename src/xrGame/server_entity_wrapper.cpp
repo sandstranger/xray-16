@@ -17,6 +17,10 @@
 
 class IServerEntity;
 
+IServerEntity::~IServerEntity(){}
+CPureServerObject::~CPureServerObject(){}
+void CScriptValueContainer::dynamicCastMethod(){}
+
 CServerEntityWrapper::~CServerEntityWrapper() { F_entity_Destroy(m_object); }
 void CServerEntityWrapper::save(IWriter& stream)
 {

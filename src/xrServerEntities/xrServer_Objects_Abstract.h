@@ -125,7 +125,7 @@ public:
         flVisualAnimationPauseChange = u32(1 << 4),
     };
 
-    virtual ~IServerEntity() = 0;
+    virtual ~IServerEntity();
     // XXX: move to implementation
     Flags32 m_editor_flags;
     void set_editor_flag(u32 mask) { m_editor_flags.set(mask, true); }
@@ -155,7 +155,6 @@ public:
     virtual bool validate() = 0;
 };
 
-inline IServerEntity::~IServerEntity() = default;
 #pragma warning(pop)
 
 #pragma pack(pop)

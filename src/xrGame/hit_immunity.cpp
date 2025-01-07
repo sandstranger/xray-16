@@ -11,6 +11,7 @@ CHitImmunity::CHitImmunity()
     for (u32 i = 0; i < ALife::eHitTypeMax; i++)
         m_HitImmunityKoefs[i] = 1.0f;
 }
+CHitImmunity::~CHitImmunity() {}
 
 void CHitImmunity::LoadImmunities(const char* imm_sect, const CInifile* ini)
 {

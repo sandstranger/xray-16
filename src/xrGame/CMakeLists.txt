@@ -2511,6 +2511,7 @@ target_link_libraries(xrGame
     xrCDB
     xrPhysics
     xrNetServer
+	xrRender_GL	
 )
 
 target_compile_definitions(xrGame
