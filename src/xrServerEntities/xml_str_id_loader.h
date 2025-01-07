@@ -172,7 +172,7 @@ void CSXML_IdToIndex::InitInternal(bool crashOnFail /*= true*/, bool ignoreMissi
 
             if (m_pItemDataVector->end() != t_it)
             {
-                Msg("! duplicate %s with id[%s] in %s", tag_name, item_name, xml_file_full);
+                Msg("! duplicate %s with id[%s] in %s", tag_name, item_name, xml_file_full.c_str());
                 continue;
             }
 
