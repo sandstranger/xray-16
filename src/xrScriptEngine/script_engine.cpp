@@ -949,9 +949,13 @@ void CScriptEngine::init(ExporterFunc exporterFunc, bool loadGlobalNamespace)
         luabind::allow_nil_conversion(nilConversion);
         luabind::disable_super_deprecation();
 
+#ifndef ANDROID
         const bool escapeSequences =
             pSettingsOpenXRay->read_if_exists<bool>("lua_scripting", "allow_escape_sequences", false);
         luajit::allow_escape_sequences(escapeSequences);
+#else
+        luajit::allow_escape_sequences(true);
+#endif
     }
 
     luabind::bind_class_info(lua());
