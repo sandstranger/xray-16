@@ -101,7 +101,7 @@ public:
     // typedef xr_map<GameObject::ECallbackType, CScriptCallbackExVoid> CALLBACK_MAP;
     // typedef CALLBACK_MAP::iterator CALLBACK_MAP_IT;
 
-    virtual ~IGameObject() = 0;
+    virtual ~IGameObject();
 // derived interfaces: some functions declared as final in base classes
 // IFactoryObject
 // virtual CLASS_ID &GetClassId() override = 0;
@@ -364,5 +364,3 @@ public:
     virtual CScriptBinderObject* GetScriptBinderObject() = 0;
     virtual void SetScriptBinderObject(CScriptBinderObject* obj) = 0;
 };
-
-inline IGameObject::~IGameObject() = default;

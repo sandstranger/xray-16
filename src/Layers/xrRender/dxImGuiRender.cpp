@@ -7,7 +7,7 @@
 #elif defined(USE_OGL)
 #include <backends/imgui_impl_opengl3.h>
 #endif
-
+dxImGuiRender::~dxImGuiRender() {}
 void dxImGuiRender::Copy(IImGuiRender& _in)
 {
     *this = *dynamic_cast<dxImGuiRender*>(&_in);

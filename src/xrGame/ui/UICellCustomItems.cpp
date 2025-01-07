@@ -18,6 +18,7 @@ struct is_helper_pred
 }; // struct is_helper_pred
 } // namespace detail
 
+CUIInventoryCellItem::~CUIInventoryCellItem(){}
 CUIInventoryCellItem::CUIInventoryCellItem(CInventoryItem* itm)
 {
     m_pData = (void*)itm;

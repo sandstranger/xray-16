@@ -131,6 +131,7 @@ protected:
 
 public:
     CCC_Mask(pcstr N, Flags32* V, u32 M) : IConsole_Command(N), value(V), mask(M){};
+    virtual ~CCC_Mask();
     bool GetValue() const { return value->test(mask); }
     virtual void Execute(pcstr args)
     {
@@ -189,6 +190,7 @@ protected:
 
 public:
     CCC_Token(pcstr N, u32* V, const xr_token* T) : IConsole_Command(N), value(V), tokens(T){}
+    virtual ~CCC_Token();
 
     virtual void Execute(pcstr args)
     {
@@ -287,6 +289,7 @@ protected:
 public:
     CCC_Float(pcstr N, float* V, float _min = 0, float _max = 1)
         : IConsole_Command(N), value(V), min(_min), max(_max){}
+    virtual ~CCC_Float();
     float GetValue() const { return *value; }
     void GetBounds(float& fmin, float& fmax) const
     {
@@ -330,6 +333,7 @@ public:
         min.set(_min);
         max.set(_max);
     };
+    virtual ~CCC_Vector3();
     const Fvector GetValue() const { return *value; }
     Fvector* GetValuePtr() const { return value; }
     virtual void Execute(pcstr args)
@@ -441,6 +445,7 @@ protected:
 
 public:
     int GetValue() const { return *value; }
+    virtual ~CCC_Integer();
     void GetBounds(int& imin, int& imax) const
     {
         imin = min;

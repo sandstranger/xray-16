@@ -137,7 +137,7 @@ const float hdir[lt_hemisamples][3] = {
 //	/*else*/
 //	return (dir.z > 0) ? CUBE_FACE_POS_Z : CUBE_FACE_NEG_Z;
 //}
-
+CROS_impl::~CROS_impl() {}
 inline void CROS_impl::accum_hemi(float* hemi_cube, Fvector3& dir, float scale)
 {
     if (dir.x > 0)

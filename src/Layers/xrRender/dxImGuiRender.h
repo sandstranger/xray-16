@@ -8,6 +8,7 @@ class dxImGuiRender final : public IImGuiRender
 
 public:
     void Copy(IImGuiRender& _in) override;
+    virtual ~dxImGuiRender();
 
     void Frame() override;
     void Render(ImDrawData* data) override;

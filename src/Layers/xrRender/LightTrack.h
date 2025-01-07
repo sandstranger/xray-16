@@ -119,7 +119,7 @@ public:
     }
 
     CROS_impl();
-    virtual ~CROS_impl(){};
+    virtual ~CROS_impl();
 
 private:
     // static inline CubeFaces get_cube_face(Fvector3& dir);

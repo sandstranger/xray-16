@@ -14,6 +14,7 @@
 
 #include <xrCore/Threading/TaskManager.hpp>
 
+IGameObject::~IGameObject(){}
 class fClassEQ
 {
     CLASS_ID cls;

@@ -115,7 +115,7 @@ public:
 class XRCDB_API XR_NOVTABLE ISpatial
 {
 public:
-    virtual ~ISpatial() = 0;
+    virtual ~ISpatial();
     virtual SpatialData& GetSpatialData() = 0;
     virtual bool spatial_inside() = 0;
     virtual void spatial_register() = 0;
@@ -128,8 +128,6 @@ public:
     virtual IRenderable* dcast_Renderable() = 0;
     virtual IRender_Light* dcast_Light() = 0;
 };
-
-inline ISpatial::~ISpatial() = default;
 
 class XRCDB_API XR_NOVTABLE SpatialBase : public virtual ISpatial
 {

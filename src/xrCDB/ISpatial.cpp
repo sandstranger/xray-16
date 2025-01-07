@@ -16,6 +16,7 @@ Fvector c_spatial_offset[8] = {
     {-1, -1, -1}, {1, -1, -1}, {-1, 1, -1}, {1, 1, -1}, {-1, -1, 1}, {1, -1, 1}, {-1, 1, 1}, {1, 1, 1}};
 
 //////////////////////////////////////////////////////////////////////////
+ISpatial::~ISpatial(){}
 SpatialBase::SpatialBase(ISpatial_DB& space)
 {
     spatial.sphere.P.set(0, 0, 0);

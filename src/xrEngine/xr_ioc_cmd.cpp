@@ -351,6 +351,11 @@ public:
         return vid_monitor_token.data();
     }
 };
+CCC_Vector3::~CCC_Vector3(){}
+CCC_Float::~CCC_Float() {}
+CCC_Integer::~CCC_Integer(){}
+CCC_Mask::~CCC_Mask(){}
+CCC_Token::~CCC_Token() {}
 //-----------------------------------------------------------------------
 class CCC_VidMode : public CCC_Token
 {

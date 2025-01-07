@@ -104,6 +104,7 @@ public:
         Parent = nullptr;
         ChildIDX = u16(-1);
     }
+    virtual ~CSkeletonX();
 
     virtual void SetParent(CKinematics* K) { Parent = K; }
     virtual void AfterLoad(CKinematics* parent, u16 child_idx) = 0;
