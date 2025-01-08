@@ -263,6 +263,7 @@ void ISpatial_DB::_insert(ISpatial_NODE* N, Fvector& n_C, float n_R)
 void ISpatial_DB::insert(ISpatial* S)
 {
     ScopeLock scope(&cs);
+#ifndef ANDROID
 #ifdef DEBUG
     Stats.Insert.Begin();
 
@@ -293,7 +294,7 @@ void ISpatial_DB::insert(ISpatial* S)
         }
     }
 #endif
-
+#endif
     if (verify_sp(S, m_center, m_bounds))
     {
         // Object inside our DB
