@@ -350,6 +350,9 @@ void xrCore::_destroy()
 
 void SDLLogOutput(void* /*userdata*/, int category, SDL_LogPriority priority, const char* message)
 {
+#if DEBUG && ANDROID
+    return;
+#endif
     pcstr from;
     switch (category)
     {

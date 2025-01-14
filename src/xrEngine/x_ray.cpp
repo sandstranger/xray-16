@@ -378,7 +378,6 @@ int CApplication::Run()
         //We need to poll events at android platform
         SDL_Event event;
         int ret = SDL_PollEvent(&event);
-        __android_log_print(ANDROID_LOG_VERBOSE, "XRAY16", "Current SDL event = %d", event.type);
 #endif
         SDL_Event events[MAX_WINDOW_EVENTS];
         const int count = SDL_PeepEvents(events, MAX_WINDOW_EVENTS,
