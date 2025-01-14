@@ -44,54 +44,6 @@ void ide::InitBackend()
         m_imgui_backend.mouse_can_report_hovered_viewport = true;
 #endif
     }
-
-    // Clipboard functionality
-    io.SetClipboardTextFn = [](void*, const char* text)
-    {
-        SDL_SetClipboardText(text);
-    };
-    io.GetClipboardTextFn = [](void* user_data) -> const char*
-    {
-        auto& bd = *static_cast<ImGuiBackend*>(user_data);
-
-        if (bd.clipboard_text_data)
-            SDL_free(bd.clipboard_text_data);
-
-        bd.clipboard_text_data = SDL_GetClipboardText();
-
-        return bd.clipboard_text_data;
-    };
-    io.ClipboardUserData = &m_imgui_backend;
-
-    auto& bd = m_imgui_backend;
-
-    bd.mouse_cursors[ImGuiMouseCursor_Arrow]      = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
-    bd.mouse_cursors[ImGuiMouseCursor_TextInput]  = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
-    bd.mouse_cursors[ImGuiMouseCursor_ResizeAll]  = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEALL);
-    bd.mouse_cursors[ImGuiMouseCursor_ResizeNS]   = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);
-    bd.mouse_cursors[ImGuiMouseCursor_ResizeEW]   = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
-    bd.mouse_cursors[ImGuiMouseCursor_ResizeNESW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENESW);
-    bd.mouse_cursors[ImGuiMouseCursor_ResizeNWSE] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENWSE);
-    bd.mouse_cursors[ImGuiMouseCursor_Hand]       = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
-    bd.mouse_cursors[ImGuiMouseCursor_NotAllowed] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NO);
-}
-
-void ide::ShutdownBackend()
-{
-    auto& backend = m_imgui_backend;
-
-    if (backend.clipboard_text_data)
-    {
-        SDL_free(backend.clipboard_text_data);
-        backend.clipboard_text_data = nullptr;
-    }
-
-    for (auto& cursor : backend.mouse_cursors)
-    {
-        SDL_FreeCursor(cursor);
-        cursor = nullptr;
-    }
-    backend.last_cursor = nullptr;
 }
 
 void ide::ProcessEvent(const SDL_Event& event)
@@ -173,6 +125,29 @@ void ide::UpdateMouseData()
     }
 }
 
+#ifdef NDEBUG
+constexpr
+#endif
+SDL_SystemCursor get_sdl_cursor(ImGuiMouseCursor cursor)
+{
+    switch (cursor)
+    {
+    default:
+        VERIFY(false);
+        [[fallthrough]];
+
+    case ImGuiMouseCursor_Arrow:        return SDL_SYSTEM_CURSOR_ARROW;
+    case ImGuiMouseCursor_TextInput:    return SDL_SYSTEM_CURSOR_IBEAM;
+    case ImGuiMouseCursor_ResizeAll:    return SDL_SYSTEM_CURSOR_SIZEALL;
+    case ImGuiMouseCursor_ResizeNS:     return SDL_SYSTEM_CURSOR_SIZENS;
+    case ImGuiMouseCursor_ResizeEW:     return SDL_SYSTEM_CURSOR_SIZEWE;
+    case ImGuiMouseCursor_ResizeNESW:   return SDL_SYSTEM_CURSOR_SIZENESW;
+    case ImGuiMouseCursor_ResizeNWSE:   return SDL_SYSTEM_CURSOR_SIZENWSE;
+    case ImGuiMouseCursor_Hand:         return SDL_SYSTEM_CURSOR_HAND;
+    case ImGuiMouseCursor_NotAllowed:   return SDL_SYSTEM_CURSOR_NO;
+    }
+}
+
 void ide::UpdateMouseCursor()
 {
     const ImGuiIO& io = ImGui::GetIO();
@@ -180,24 +155,17 @@ void ide::UpdateMouseCursor()
     if (io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange)
         return;
 
-    auto& bd = m_imgui_backend;
     const ImGuiMouseCursor imgui_cursor = ImGui::GetMouseCursor();
 
+    // Hide OS mouse cursor if imgui is drawing it or if it wants no cursor
     if (io.MouseDrawCursor || imgui_cursor == ImGuiMouseCursor_None)
     {
-        // Hide OS mouse cursor if imgui is drawing it or if it wants no cursor
-        SDL_ShowCursor(SDL_FALSE);
+        pInput->ShowCursor(false);
     }
     else
     {
-        // Show OS mouse cursor
-        SDL_Cursor* expected_cursor = bd.mouse_cursors[imgui_cursor] ? bd.mouse_cursors[imgui_cursor] : bd.mouse_cursors[ImGuiMouseCursor_Arrow];
-        if (bd.last_cursor != expected_cursor)
-        {
-            SDL_SetCursor(expected_cursor); // SDL function doesn't have an early out (see #6113)
-            bd.last_cursor = expected_cursor;
-        }
-        SDL_ShowCursor(SDL_TRUE);
+        pInput->SetCursor(get_sdl_cursor(imgui_cursor));
+        pInput->ShowCursor(true);
     }
 }
 
@@ -205,21 +173,21 @@ void ide::UpdateTextInput(bool force_disable /*= false*/)
 {
     if (force_disable)
     {
-        if (m_text_input_enabled)
+        if (m_imgui_backend.text_input_enabled)
         {
             pInput->DisableTextInput();
-            m_text_input_enabled = false;
+            m_imgui_backend.text_input_enabled = false;
         }
         return;
     }
 
     const ImGuiIO& io = ImGui::GetIO();
 
-    if (m_text_input_enabled != io.WantTextInput)
+    if (m_imgui_backend.text_input_enabled != io.WantTextInput)
     {
-        m_text_input_enabled = io.WantTextInput;
+        m_imgui_backend.text_input_enabled = io.WantTextInput;
 
-        if (m_text_input_enabled)
+        if (m_imgui_backend.text_input_enabled)
             pInput->EnableTextInput();
         else
             pInput->DisableTextInput();

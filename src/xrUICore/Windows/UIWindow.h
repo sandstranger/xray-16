@@ -12,8 +12,6 @@
 #include "xrUICore/uiabstract.h"
 #include "xrUICore/ui_debug.h"
 
-class CUIFocusSystem;
-
 class XRUICORE_API CUIWindow : public CUISimpleWindow, public CUIDebuggable
 {
 public:
@@ -35,6 +33,19 @@ public:
     [[nodiscard]]
     CUIWindow* GetParent() const { return m_pParentWnd; }
     void SetParent(CUIWindow* pNewParent);
+
+    [[nodiscard]]
+    CUIWindow* GetWindowBeforeParent(const CUIWindow* parent)
+    {
+        CUIWindow* result = this;
+        for (CUIWindow* it = GetParent(); it; it = it->GetParent())
+        {
+            if (it == parent)
+                return result;
+            result = it;
+        }
+        return nullptr;
+    }
 
     //получить окно самого верхнего уровня
     [[nodiscard]]
@@ -83,24 +94,22 @@ public:
 
     virtual void Enable(bool status) { m_bIsEnabled = status; }
 
-    void SetFocusValuable(bool valuable) { m_bFocusValuable = valuable; }
-
     [[nodiscard]]
     bool IsEnabled() const { return m_bIsEnabled; }
 
     [[nodiscard]]
-    bool IsFocusValuable() const
+    bool IsFocusValuable(const CUIWindow* parent) const
     {
-        if (!m_bFocusValuable)
-            return false;
-
         bool ok;
-        for (auto it = this; ; it = it->GetParent())
+        const CUIWindow* it = this;
+        for (;; it = it->GetParent())
         {
             ok = it->IsShown() && it->IsEnabled();
             if (!ok || !it->GetParent())
                 break;
         }
+        if (parent && parent != it)
+            return false;
         return ok;
     }
 
@@ -111,25 +120,28 @@ public:
         Enable(status);
     }
 
-    virtual CUIFocusSystem* GetCurrentFocusSystem() const
-    {
-        if (m_pParentWnd)
-            return m_pParentWnd->GetCurrentFocusSystem();
-        return nullptr;
-    }
-
     [[nodiscard]]
     virtual bool IsShown() const { return GetVisible(); }
 
     void ShowChildren(bool show);
 
     //абсолютные координаты
-    void GetAbsoluteRect(Frect& r);
-    IC void GetAbsolutePos(Fvector2& p)
+    void GetAbsoluteRect(Frect& r) const;
+
+    void GetAbsolutePos(Fvector2& p) const
     {
         Frect abs;
         GetAbsoluteRect(abs);
         p.set(abs.x1, abs.y1);
+    }
+
+    Fvector2 GetAbsoluteCenterPos() const
+    {
+        Frect abs;
+        GetAbsoluteRect(abs);
+        auto size = GetWndSize();
+        size.div(2.0f);
+        return { abs.x1 + size.x, abs.y1 + size.y };
     }
 
     void SetWndRect_script(Frect rect) { CUISimpleWindow::SetWndRect(rect); }
@@ -157,7 +169,10 @@ public:
 
     using WINDOW_LIST = ui_list<CUIWindow*>;
 
+    [[nodiscard]]
     WINDOW_LIST& GetChildWndList() { return m_ChildWndList; }
+    [[nodiscard]]
+    const WINDOW_LIST& GetChildWndList() const { return m_ChildWndList; }
 
     [[nodiscard]]
     IC bool IsAutoDelete() const { return m_bAutoDelete; }
@@ -227,8 +242,6 @@ protected:
     // Если курсор над окном
     bool m_bCursorOverWindow{};
     bool m_bCustomDraw{};
-
-    bool m_bFocusValuable{};
 };
 
 XRUICORE_API bool fit_in_rect(CUIWindow* w, Frect const& vis_rect, float border = 0.0f, float dx16pos = 0.0f);

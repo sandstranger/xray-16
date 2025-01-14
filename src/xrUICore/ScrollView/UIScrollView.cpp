@@ -115,6 +115,24 @@ void CUIScrollView::Update()
     if (m_flags.test(eNeedRecalc))
         RecalcSize();
 
+    if (const auto focused = CursorOverWindow() ? UI().Focus().GetFocused() : nullptr)
+    {
+        const auto scrollItem = focused->GetWindowBeforeParent(m_pad);
+
+        if (scrollItem && GetSelected() != scrollItem)
+        {
+            const auto prevPos = GetCurrentScrollPos();
+
+            ScrollToWindow(scrollItem);
+
+            if (m_flags.test(eItemsSelectabe))
+                scrollItem->OnMouseDown(MOUSE_1);
+
+            if (prevPos != GetCurrentScrollPos())
+                UI().GetUICursor().WarpToWindow(focused);
+        }
+    }
+
     inherited::Update();
 }
 
@@ -320,6 +338,19 @@ void CUIScrollView::ScrollToEnd()
     OnScrollV(nullptr, nullptr);
 }
 
+void CUIScrollView::ScrollToWindow(CUIWindow* pWnd, float center_y_ratio /*= 0.5f*/)
+{
+    R_ASSERT2_CURE(pWnd->GetParent() == m_pad, "Requested window to scroll to doesn't belong to the scroll view", return);
+
+    if (m_flags.test(eNeedRecalc))
+        RecalcSize();
+
+    const float ratio = GetHeight() * center_y_ratio;
+    const int pos = iFloor(m_upIndent + pWnd->GetWndPos().y - ratio);
+
+    SetScrollPos(pos);
+}
+
 void CUIScrollView::SetRightIndention(float val)
 {
     m_rightIndent = val;
@@ -399,4 +430,48 @@ void CUIScrollView::UpdateChildrenLenght()
     {
         it->SetWidth(len);
     }
+}
+
+void CUIScrollView::FillDebugInfo()
+{
+#ifndef MASTER_GOLD
+    CUIWindow::FillDebugInfo();
+
+    if (!ImGui::CollapsingHeader(CUIScrollView::GetDebugType()))
+        return;
+
+    ImGui::DragFloat("Up indent", &m_upIndent);
+    ImGui::DragFloat("Down indent", &m_downIndent);
+    ImGui::DragFloat("Left indent", &m_leftIndent);
+    ImGui::DragFloat("Right indent", &m_rightIndent);
+
+    ImGui::DragFloat("Vertical interval", &m_vertInterval);
+
+    ImGui::Separator();
+    ImGui::Text("Flags:");
+
+    if (ImGui::Button("Recalculate"))
+        m_flags.set(eNeedRecalc, true);
+
+    const auto addFlag = [this](pcstr text, u16 flag)
+    {
+        ImGui::SameLine();
+        bool value = m_flags.test(flag);
+        if (ImGui::Checkbox(text, &value))
+            m_flags.set(flag, value);
+    };
+
+    addFlag("Vertical flip", eVertFlip);
+    addFlag("Fixed scrollbar", eFixedScrollBar);
+    addFlag("Items selectable", eItemsSelectabe);
+    addFlag("Inverse direction", eInverseDir);
+
+    ImGui::Separator();
+    ImGui::LabelText("Scrollbar profile", "%s", m_scrollbar_profile.empty() ? "" : m_scrollbar_profile.c_str());
+    ImGui::Separator();
+
+    ImGui::BeginDisabled();
+    ImGui::DragInt2("Visible region", (int*)&m_visible_rgn);
+    ImGui::EndDisabled();
+#endif
 }

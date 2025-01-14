@@ -1,6 +1,7 @@
 [submodule "Externals/LuaJIT"]
 	path = Externals/LuaJIT
 	url = https://github.com/OpenXRay/LuaJIT.git
+	branch = v2.1
 [submodule "Externals/luabind"]
 	path = Externals/luabind
 url=https://github.com/sandstranger/luabind-deboostified.git
@@ -25,6 +26,7 @@ url=https://github.com/sandstranger/zlib-xray16.git
 [submodule "Externals/imgui"]
 	path = Externals/imgui
 	url = https://github.com/ocornut/imgui.git
+	branch = docking
 [submodule "Externals/xrLuaFix"]
 	path = Externals/xrLuaFix
 url=https://github.com/sandstranger/xrLuaFix.git

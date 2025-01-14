@@ -105,8 +105,9 @@ extern void __cdecl _terminate();
 
 void _initialize_cpu_thread()
 {
+#ifndef ANDROID
     xrDebug::OnThreadSpawn();
-
+#endif
     if (CPU::HasSSE)
     {
         //_mm_setcsr ( _mm_getcsr() | (_MM_FLUSH_ZERO_ON+_MM_DENORMALS_ZERO_ON) );

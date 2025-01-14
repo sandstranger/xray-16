@@ -76,62 +76,60 @@ void CHW::CreateDevice(SDL_Window* hWnd)
 {
     ZoneScoped;
 
-    m_window = hWnd;
+    if (hWnd) {
+        m_window = hWnd;
 
-    R_ASSERT(m_window);
-    // Choose the closest pixel format
-    SDL_DisplayMode mode;
-    SDL_GetWindowDisplayMode(m_window, &mode);
-    mode.format = SDL_PIXELFORMAT_RGBA8888;
-    // Apply the pixel format to the device context
-    SDL_SetWindowDisplayMode(m_window, &mode);
-
+        R_ASSERT(m_window);
+        // Choose the closest pixel format
+        SDL_DisplayMode mode;
+        SDL_GetWindowDisplayMode(m_window, &mode);
+        mode.format = SDL_PIXELFORMAT_RGBA8888;
+        // Apply the pixel format to the device context
+        SDL_SetWindowDisplayMode(m_window, &mode);
+    }
+    Caps.fTarget = D3DFMT_A8R8G8B8;
+    Caps.fDepth = D3DFMT_D24S8;
 #ifndef ANDROID
     // Create the context
     m_context = SDL_GL_CreateContext(m_window);
     if (m_context == nullptr)
     {
-        Log("! Could not create drawing context:", SDL_GetError());
+        Log("! OpenGL: could not create drawing context:", SDL_GetError());
         return;
     }
 
     if (MakeContextCurrent(IRender::PrimaryContext) != 0)
     {
-        Log("! Could not make context current:", SDL_GetError());
-        return;
-    }
-
-    {
-        const Uint32 flags = SDL_WINDOW_BORDERLESS | SDL_WINDOW_HIDDEN | SDL_WINDOW_OPENGL;
-
-        m_helper_window = SDL_CreateWindow("OpenXRay OpenGL helper window", 0, 0, 1, 1, flags);
-        R_ASSERT3(m_helper_window, "Cannot create helper window for OpenGL", SDL_GetError());
-
-        SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
-
-        // Create helper context
-        m_helper_context = SDL_GL_CreateContext(m_helper_window);
-        R_ASSERT3(m_helper_context, "Cannot create OpenGL context", SDL_GetError());
-
-        // just in case
-        SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 0);
-    }
-    if (MakeContextCurrent(IRender::PrimaryContext) != 0)
-    {
-        Log("! Could not make context current after creating helper context:", SDL_GetError());
+        Log("! OpenGL: could not make context current:", SDL_GetError());
         return;
     }
 #endif
 
-    UpdateVSync();
+    int version;
+    {
+        ZoneScopedN("gladLoadGL");
+        version = gladLoadGL(reinterpret_cast<GLADloadfunc>(SDL_GL_GetProcAddress));
+    }
+    if (version == 0)
+    {
+        Log("! OpenGL: could not initialize GLAD.");
+        if (const auto err = SDL_GetError())
+            Log("SDL Error:", err);
+        return;
+    }
+
+    if (ThisInstanceIsGlobal())
+    {
+        UpdateVSync();
 
 #ifdef DEBUG
-    if (glDebugMessageCallback)
-    {
-        CHK_GL(glEnable(GL_DEBUG_OUTPUT));
-        CHK_GL(glDebugMessageCallback((GLDEBUGPROC)OnDebugCallback, nullptr));
-    }
+        if (glDebugMessageCallback)
+        {
+            CHK_GL(glEnable(GL_DEBUG_OUTPUT));
+            CHK_GL(glDebugMessageCallback((GLDEBUGPROC)OnDebugCallback, nullptr));
+        }
 #endif // DEBUG
+    }
 
     int iMaxVTFUnits, iMaxCTIUnits;
     glGetIntegerv(GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, &iMaxVTFUnits);
@@ -147,9 +145,6 @@ void CHW::CreateDevice(SDL_Window* hWnd)
     Msg("* GPU OpenGL VTF units: [%d] CTI units: [%d]", iMaxVTFUnits, iMaxCTIUnits);
     ComputeShadersSupported = false; // XXX: Implement compute shaders support
 
-    Caps.fTarget = D3DFMT_A8R8G8B8;
-    Caps.fDepth = D3DFMT_D24S8;
-
     //	Create render target and depth-stencil views here
     UpdateViews();
 }
@@ -159,13 +154,15 @@ void CHW::DestroyDevice()
 #if ANDROID
     return;
 #endif
-    SDL_GL_MakeCurrent(nullptr, nullptr);
+    CHK_GL(glDeleteFramebuffers(1, &pFB));
+    pFB = 0;
+
+    const auto context = SDL_GL_GetCurrentContext();
+    if (context == m_context)
+        SDL_GL_MakeCurrent(nullptr, nullptr);
 
     SDL_GL_DeleteContext(m_context);
     m_context = nullptr;
-
-    SDL_GL_DeleteContext(m_helper_context);
-    m_helper_context = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -176,7 +173,9 @@ void CHW::Reset()
     ZoneScoped;
 
     CHK_GL(glDeleteFramebuffers(1, &pFB));
+    pFB = 0;
     UpdateViews();
+
     UpdateVSync();
 }
 
@@ -217,8 +216,6 @@ IRender::RenderContext CHW::GetCurrentContext() const
     const auto context = SDL_GL_GetCurrentContext();
     if (context == m_context)
         return IRender::PrimaryContext;
-    if (context == m_helper_context)
-        return IRender::HelperContext;
     return IRender::NoContext;
 #endif
 }
@@ -234,8 +231,6 @@ int CHW::MakeContextCurrent(IRender::RenderContext context) const
     case IRender::PrimaryContext:
         return SDL_GL_MakeCurrent(m_window, m_context);
 
-    case IRender::HelperContext:
-        return SDL_GL_MakeCurrent(m_helper_window, m_helper_context);
     default:
         NODEFAULT;
     }

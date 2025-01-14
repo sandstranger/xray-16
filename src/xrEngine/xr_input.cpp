@@ -4,13 +4,38 @@
 #include "xr_input.h"
 #include "IInputReceiver.h"
 #include "GameFont.h"
+#include "XR_IOConsole.h"
 #include "xrCore/Text/StringConversion.hpp"
 #include "xrCore/xr_token.h"
 
 #include <locale>
 
 CInput* pInput = nullptr;
-IInputReceiver dummyController;
+
+class DummyReceiver : public IInputReceiver
+{
+public:
+    void IR_OnKeyboardPress(int dik) override
+    {
+        switch (GetBindedAction(dik))
+        {
+        case kQUIT:
+            if (Console)
+                Console->Execute("main_menu");
+            return;
+
+        case kCONSOLE:
+            if (Console)
+                Console->Show();
+            return;
+
+        case kEDITOR:
+            if (Device.b_is_Ready)
+                Device.editor().SwitchToNextState();
+            return;
+        }
+    }
+} dummyController;
 
 ENGINE_API float psMouseSens = 1.f;
 ENGINE_API float psMouseSensScale = 1.f;
@@ -56,6 +81,19 @@ CInput::CInput(const bool exclusive)
     Device.seqAppDeactivate.Add(this, REG_PRIORITY_HIGH);
     Device.seqFrame.Add(this, REG_PRIORITY_HIGH);
 
+    mouseCursors[SDL_SYSTEM_CURSOR_ARROW]     = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+    mouseCursors[SDL_SYSTEM_CURSOR_IBEAM]     = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
+    mouseCursors[SDL_SYSTEM_CURSOR_WAIT]      = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_WAIT);
+    mouseCursors[SDL_SYSTEM_CURSOR_CROSSHAIR] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_CROSSHAIR);
+    mouseCursors[SDL_SYSTEM_CURSOR_WAITARROW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_WAITARROW);
+    mouseCursors[SDL_SYSTEM_CURSOR_SIZENWSE]  = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENWSE);
+    mouseCursors[SDL_SYSTEM_CURSOR_SIZENESW]  = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENESW);
+    mouseCursors[SDL_SYSTEM_CURSOR_SIZEWE]    = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
+    mouseCursors[SDL_SYSTEM_CURSOR_SIZENS]    = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);
+    mouseCursors[SDL_SYSTEM_CURSOR_SIZEALL]   = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEALL);
+    mouseCursors[SDL_SYSTEM_CURSOR_NO]        = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NO);
+    mouseCursors[SDL_SYSTEM_CURSOR_HAND]      = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
+
     if (strstr(Core.Params, "-no_gamepad"))
         return;
 
@@ -71,6 +109,13 @@ CInput::~CInput()
     ZoneScoped;
 
     GrabInput(false);
+
+    for (auto& cursor : mouseCursors)
+    {
+        SDL_FreeCursor(cursor);
+        cursor = nullptr;
+    }
+    lastCursor = nullptr;
 
     for (auto& controller : controllers)
         SDL_GameControllerClose(controller);
@@ -139,9 +184,6 @@ void CInput::MouseUpdate()
     SDL_PumpEvents();
     const auto count = SDL_PeepEvents(events, MAX_MOUSE_EVENTS,
         SDL_GETEVENT, SDL_MOUSEMOTION, SDL_MOUSEWHEEL);
-
-    if (count)
-        SetCurrentInputType(KeyboardMouse);
 
     for (int i = 0; i < count; ++i)
     {
@@ -566,7 +608,7 @@ bool CInput::iSetMousePos(const Ivector2& p, bool global /*= false*/) const
 void CInput::GrabInput(const bool grab)
 {
     // Self descriptive
-    SDL_ShowCursor(grab ? SDL_FALSE : SDL_TRUE);
+    ShowCursor(!grab);
 
     // Clip cursor to the current window
     // If SDL_HINT_GRAB_KEYBOARD is set then the keyboard will be grabbed too
@@ -583,6 +625,21 @@ void CInput::GrabInput(const bool grab)
 bool CInput::InputIsGrabbed() const
 {
     return inputGrabbed;
+}
+
+void CInput::ShowCursor(const bool show)
+{
+    SDL_ShowCursor(show ? SDL_TRUE : SDL_FALSE);
+}
+
+void CInput::SetCursor(const SDL_SystemCursor cursor)
+{
+    SDL_Cursor* expected_cursor = mouseCursors[cursor] ? mouseCursors[cursor] : mouseCursors[ImGuiMouseCursor_Arrow];
+    if (lastCursor != expected_cursor) // SDL function doesn't have an early out
+    {
+        SDL_SetCursor(expected_cursor);
+        lastCursor = expected_cursor;
+    }
 }
 
 void CInput::EnableTextInput()
@@ -718,11 +775,6 @@ void CInput::ExclusiveMode(const bool exclusive)
 {
     GrabInput(false);
 
-    // Original CInput was using DirectInput in exclusive mode
-    // In which keyboard was grabbed with the mouse.
-    // It produces problems on Linux, so it's disabled by default.
-    if (strstr(Core.Params, "-grab_keyboard"))
-        SDL_SetHint(SDL_HINT_GRAB_KEYBOARD, exclusive ? "1" : "0");
     exclusiveInput = exclusive;
 
     GrabInput(true);

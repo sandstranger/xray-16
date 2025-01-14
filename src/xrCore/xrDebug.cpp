@@ -943,7 +943,9 @@ void xrDebug::Initialize(pcstr commandLine)
 {
     ZoneScoped;
     *BugReportFile = 0;
+#ifndef ANDROID
     OnThreadSpawn();
+#endif
     SetupExceptionHandler();
     SDL_SetAssertionHandler(SDLAssertionHandler, nullptr);
     // exception handler to all "unhandled" exceptions

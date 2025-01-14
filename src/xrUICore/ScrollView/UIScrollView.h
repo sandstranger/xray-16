@@ -56,6 +56,7 @@ public:
     void Clear();
     void ScrollToBegin();
     void ScrollToEnd();
+    void ScrollToWindow(CUIWindow* pWnd, float center_y_ratio = 0.5f);
     bool GetVertFlip() const { return !!m_flags.test(eVertFlip); }
     bool Empty() const { return m_pad->GetChildWndList().empty(); }
 
@@ -83,6 +84,7 @@ public:
     CUIScrollBar* ScrollBar() { return m_VScrollBar; }
 
     pcstr GetDebugType() override { return "CUIScrollView"; }
+    void FillDebugInfo() override;
 
     typedef fastdelegate::FastDelegate2<CUIWindow*, CUIWindow*, bool> cmp_function;
     cmp_function m_sort_function;

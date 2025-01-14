@@ -55,7 +55,7 @@ void CDialogHolder::StartMenu(CUIDialogWnd* pDialog, bool bDoHideIndicators)
             CurrentGameUI()->ShowGameIndicators(false);
         }
     }
-    SetFocused(nullptr);
+    UI().Focus().SetFocused(nullptr);
     pDialog->SetHolder(this);
 
     if (pDialog->NeedCursor())
@@ -248,6 +248,9 @@ void CDialogHolder::OnFrame()
                 (*it).wnd->Update();
     }
 
+    if (m_is_foremost)
+        UI().Focus().Update(wnd);
+
     m_b_in_update = false;
     if (!m_dialogsToRender_new.empty())
     {
@@ -303,6 +306,7 @@ bool CDialogHolder::IR_UIOnKeyboardPress(int dik)
         return false;
     if (!TIR->IR_process())
         return false;
+
     // mouse click
     if (dik == MOUSE_1 || dik == MOUSE_2 || dik == MOUSE_3)
     {
@@ -315,6 +319,32 @@ bool CDialogHolder::IR_UIOnKeyboardPress(int dik)
 
     if (TIR->OnKeyboardAction(dik, WINDOW_KEY_PRESSED))
         return true;
+
+    if (dik > XR_CONTROLLER_BUTTON_INVALID && dik < XR_CONTROLLER_BUTTON_MAX)
+    {
+        FocusDirection direction = FocusDirection::Same;
+        switch (GetBindedAction(dik, EKeyContext::UI))
+        {
+        case kUI_MOVE_LEFT:  direction = FocusDirection::Left; break;
+        case kUI_MOVE_RIGHT: direction = FocusDirection::Right; break;
+        case kUI_MOVE_UP:    direction = FocusDirection::Up; break;
+        case kUI_MOVE_DOWN:  direction = FocusDirection::Down; break;
+        }
+
+        if (direction != FocusDirection::Same)
+        {
+            auto& focus = UI().Focus();
+            const auto focused = focus.GetFocused();
+            const Fvector2 vec = focused ? focused->GetAbsoluteCenterPos() : UI().GetUICursor().GetCursorPosition();
+            const auto [candidate, candidate2] = focus.FindClosestFocusable(vec, direction);
+
+            if (candidate || candidate2)
+            {
+                focus.SetFocused(candidate ? candidate : candidate2);
+                return true;
+            }
+        }
+    }
 
     if (!TIR->StopAnyMove() && g_pGameLevel)
     {
@@ -333,24 +363,6 @@ bool CDialogHolder::IR_UIOnKeyboardPress(int dik)
             return (false);
         }
     }
-
-    /*if (const auto focused = GetFocused())
-    {
-        CUIWindow* target{};
-        switch (GetBindedAction(dik, EKeyContext::UI))
-        {
-        case kUI_MOVE_LEFT:  target = FindClosestFocusable(focused, FocusDirection::Left); break;
-        case kUI_MOVE_RIGHT: target = FindClosestFocusable(focused, FocusDirection::Right); break;
-        case kUI_MOVE_UP:    target = FindClosestFocusable(focused, FocusDirection::Up); break;
-        case kUI_MOVE_DOWN:  target = FindClosestFocusable(focused, FocusDirection::Down); break;
-        }
-
-        if (target)
-        {
-            SetFocused(target);
-            GetUICursor().WarpToWindow(target, true);
-        }
-    }*/
 
     return true;
 }
@@ -498,6 +510,22 @@ bool CDialogHolder::IR_UIOnControllerPress(int dik, float x, float y)
     if (TIR->OnControllerAction(dik, x, y, WINDOW_KEY_PRESSED))
         return true;
 
+    // simulate mouse click
+    if (TIR->NeedCursor())
+    {
+        int action = -1;
+        if (IsBinded(kUI_CLICK_1, dik, EKeyContext::UI))
+            action = WINDOW_LBUTTON_DOWN;
+        else if (IsBinded(kUI_CLICK_2, dik, EKeyContext::UI))
+            action = WINDOW_RBUTTON_DOWN;
+        if (action != -1)
+        {
+            Fvector2 cp = GetUICursor().GetCursorPosition();
+            if (TIR->OnMouseAction(cp.x, cp.y, (EUIMessages)action))
+                return true;
+        }
+    }
+
     if (!TIR->StopAnyMove() && g_pGameLevel)
     {
         IGameObject* O = Level().CurrentEntity();
@@ -527,6 +555,22 @@ bool CDialogHolder::IR_UIOnControllerRelease(int dik, float x, float y)
 
     if (TIR->OnControllerAction(dik, x, y, WINDOW_KEY_RELEASED))
         return true;
+
+    // simulate mouse click
+    if (TIR->NeedCursor())
+    {
+        int action = -1;
+        if (IsBinded(kUI_CLICK_1, dik, EKeyContext::UI))
+            action = WINDOW_LBUTTON_UP;
+        else if (IsBinded(kUI_CLICK_2, dik, EKeyContext::UI))
+            action = WINDOW_RBUTTON_UP;
+        if (action != -1)
+        {
+            Fvector2 cp = GetUICursor().GetCursorPosition();
+            if (TIR->OnMouseAction(cp.x, cp.y, (EUIMessages)action))
+                return true;
+        }
+    }
 
     if (!TIR->StopAnyMove() && g_pGameLevel)
     {
@@ -558,6 +602,51 @@ bool CDialogHolder::IR_UIOnControllerHold(int dik, float x, float y)
     if (TIR->OnControllerAction(dik, x, y, WINDOW_KEY_HOLD))
         return true;
 
+    if (IsBinded(kUI_MOVE, dik, EKeyContext::UI))
+    {
+        FocusDirection direction = FocusDirection::Same;
+
+        if (fis_zero(y))
+        {
+            if (x < 0)
+                direction = FocusDirection::Left;
+            else
+                direction = FocusDirection::Right;
+        }
+        else if (y < 0)
+        {
+            if (fis_zero(x))
+                direction = FocusDirection::Up;
+            else if (x < 0)
+                direction = FocusDirection::UpperLeft;
+            else
+                direction = FocusDirection::UpperRight;
+        }
+        else
+        {
+            if (fis_zero(x)) // same x
+                direction = FocusDirection::Down;
+            else if (x < 0)
+                direction = FocusDirection::LowerLeft;
+            else
+                direction = FocusDirection::LowerRight;
+        }
+
+        if (direction != FocusDirection::Same)
+        {
+            auto& focus = UI().Focus();
+            const auto focused = focus.GetFocused();
+            const Fvector2 vec = focused ? focused->GetAbsoluteCenterPos() : UI().GetUICursor().GetCursorPosition();
+            const auto [candidate, candidate2] = focus.FindClosestFocusable(vec, direction);
+
+            if (candidate || candidate2)
+            {
+                focus.SetFocused(candidate ? candidate : candidate2);
+                return true;
+            }
+        }
+    }
+
     if (!TIR->StopAnyMove() && g_pGameLevel)
     {
         IGameObject* O = Level().CurrentEntity();
@@ -574,6 +663,7 @@ bool CDialogHolder::IR_UIOnControllerHold(int dik, float x, float y)
 
 bool CDialogHolder::FillDebugTree(const CUIDebugState& debugState)
 {
+#ifndef MASTER_GOLD
     // XXX: Was this meant to be used somewhere here? Because currently its unused and could also be constexpr
     //ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_OpenOnArrow;
 
@@ -600,6 +690,7 @@ bool CDialogHolder::FillDebugTree(const CUIDebugState& debugState)
             ImGui::TreePop();
         }
     }
+#endif
     return true;
 }
 
