@@ -26,8 +26,31 @@ CUIScrollView::~CUIScrollView() { Clear(); }
 void CUIScrollView::SendMessage(CUIWindow* pWnd, s16 msg, void* pData)
 {
     CUIWndCallback::OnEvent(pWnd, msg, pData);
-    if (CHILD_CHANGED_SIZE == msg && m_pad->IsChild(pWnd))
-        m_flags.set(eNeedRecalc, true);
+
+    switch (msg)
+    {
+    case CHILD_CHANGED_SIZE:
+    {
+        if (m_pad->IsChild(pWnd))
+            m_flags.set(eNeedRecalc, true);
+        break;
+    }
+    case WINDOW_FOCUS_RECEIVED:
+    {
+        if (UI().Focus().GetFocused() != pWnd)
+            break;
+
+        if (const auto& item = pWnd->GetWindowBeforeParent(m_pad);
+            item && item != GetSelected())
+        {
+            const auto prevPos = GetCurrentScrollPos();
+            ScrollToWindow(item);
+            if (prevPos != GetCurrentScrollPos())
+                UI().GetUICursor().WarpToWindow(item);
+        }
+        break;
+    }
+    } // switch (msg)
 }
 
 void CUIScrollView::ForceUpdate() { m_flags.set(eNeedRecalc, true); }
@@ -115,7 +138,11 @@ void CUIScrollView::Update()
     if (m_flags.test(eNeedRecalc))
         RecalcSize();
 
-    if (const auto focused = CursorOverWindow() ? UI().Focus().GetFocused() : nullptr)
+    CUIWindow* focused{};
+    if (m_pad->CursorOverWindow() && !m_flags.test(eItemsSelectabe))
+        focused = UI().Focus().GetFocused();
+
+    if (focused)
     {
         const auto scrollItem = focused->GetWindowBeforeParent(m_pad);
 
@@ -124,9 +151,6 @@ void CUIScrollView::Update()
             const auto prevPos = GetCurrentScrollPos();
 
             ScrollToWindow(scrollItem);
-
-            if (m_flags.test(eItemsSelectabe))
-                scrollItem->OnMouseDown(MOUSE_1);
 
             if (prevPos != GetCurrentScrollPos())
                 UI().GetUICursor().WarpToWindow(focused);
@@ -340,7 +364,7 @@ void CUIScrollView::ScrollToEnd()
 
 void CUIScrollView::ScrollToWindow(CUIWindow* pWnd, float center_y_ratio /*= 0.5f*/)
 {
-    R_ASSERT2_CURE(pWnd->GetParent() == m_pad, "Requested window to scroll to doesn't belong to the scroll view", return);
+    R_ASSERT2_CURE(pWnd && pWnd->GetParent() == m_pad, "Requested window to scroll to doesn't belong to the scroll view", return);
 
     if (m_flags.test(eNeedRecalc))
         RecalcSize();
@@ -407,6 +431,21 @@ void CUIScrollView::SetSelected(CUIWindow* w)
     {
         smart_cast<CUISelectable*>(it)->SetSelected(it == w);
     }
+}
+
+bool CUIScrollView::SelectFirst()
+{
+    ScrollToBegin();
+
+    if (Empty() || !m_flags.test(eItemsSelectabe))
+        return false;
+
+    const auto first = Items()[0];
+    ScrollToWindow(first);
+    SetSelected(first);
+    if (UI().Focus().IsRegistered(first))
+        UI().Focus().SetFocused(first);
+    return true;
 }
 
 CUIWindow* CUIScrollView::GetSelected()
