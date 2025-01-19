@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
 #endif
 {
 #if ANDROID
-    chdir(getenv("GAME_PATH"));
+    chdir(getenv("ANDROID_PATH"));
 #endif
     int result = EXIT_FAILURE;
 
