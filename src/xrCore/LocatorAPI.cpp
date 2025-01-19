@@ -160,10 +160,6 @@ XRCORE_API void _dump_open_files(int mode)
     Log("----total count = ", g_open_files.size());
 }
 
-#if ANDROID
-static std::string gamePath;
-#endif
-
 CLocatorAPI::CLocatorAPI() :
 #ifdef CONFIG_PROFILE_LOCKS
     m_auth_lock(xr_new<Lock>(MUTEX_PROFILE_ID(CLocatorAPI::m_auth_lock)))
@@ -171,9 +167,6 @@ CLocatorAPI::CLocatorAPI() :
     m_auth_lock(xr_new<Lock>())
 #endif // CONFIG_PROFILE_LOCKS
 {
-#if ANDROID
-    gamePath = std::string(getenv("GAME_PATH"));
-#endif
     m_Flags.zero();
 #if defined(XR_PLATFORM_WINDOWS)
     // get page size
@@ -828,24 +821,13 @@ void CLocatorAPI::setup_fs_path(pcstr fs_name, string_path& fs_path)
     *(slash + 1) = 0;
 }
 
-std::string CLocatorAPI::setup_fs_path(pcstr fs_name)
+void CLocatorAPI::setup_fs_path(pcstr fs_name)
 {
     string_path fs_path;
     setup_fs_path(fs_name, fs_path);
 
     string_path full_current_directory;
-#if ANDROID
-    if (SDL_strlen(fs_path) != 0) {
-        std::string fullPath = (gamePath + std::string ("/") + std::string(fs_path));
-        char *tmp_path = realpath(fullPath.c_str(), NULL);
-        CHECK_OR_EXIT(tmp_path && tmp_path[0],
-                      make_string("Cannot get realpath for \"%s\": %s", fs_path, strerror(errno)));
-        SDL_strlcpy(full_current_directory, tmp_path, sizeof full_current_directory);
-        free(tmp_path);
-    } else {
-        SDL_strlcpy(full_current_directory, gamePath.c_str(), sizeof full_current_directory);
-    }
-#elif defined(XR_PLATFORM_WINDOWS)
+#if defined(XR_PLATFORM_WINDOWS)
     _fullpath(full_current_directory, fs_path, sizeof full_current_directory);
 #elif defined(XR_PLATFORM_LINUX) || defined(XR_PLATFORM_BSD) || defined(XR_PLATFORM_APPLE)
     if (SDL_strlen(fs_path) != 0)
@@ -925,13 +907,11 @@ std::string CLocatorAPI::setup_fs_path(pcstr fs_name)
     m_paths.emplace(xr_strdup("$fs_root$"), path);
 
     Msg("$fs_root$ = %s", full_current_directory);
-
-    return {full_current_directory};
 }
 
 IReader* CLocatorAPI::setup_fs_ltx(pcstr fs_name)
 {
-    std::string full_directory_path = setup_fs_path(fs_name);
+    setup_fs_path(fs_name);
 
     // if (m_Flags.is(flTargetFolderOnly)) {
     // append_path ("$fs_root$", "", 0, FALSE);
@@ -941,10 +921,6 @@ IReader* CLocatorAPI::setup_fs_ltx(pcstr fs_name)
     pcstr fs_file_name = FSLTX;
     if (fs_name && *fs_name)
         fs_file_name = fs_name;
-
-    std::string finalFileName = full_directory_path + std::string ("/") + std::string (fs_file_name);
-    fs_file_name = finalFileName.c_str();
-
 
     Log("using fs-ltx", fs_file_name);
 

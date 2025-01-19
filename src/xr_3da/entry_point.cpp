@@ -5,6 +5,7 @@
 
 #if defined(ANDROID)
 #include "SDL_main.h"
+#include <unistd.h>
 #endif
 
 #if defined(XR_PLATFORM_LINUX) || defined(XR_PLATFORM_BSD) || defined(XR_PLATFORM_APPLE)
@@ -66,6 +67,9 @@ int SDL_main(int argc, char *argv[])
 int main(int argc, char *argv[])
 #endif
 {
+#if ANDROID
+    chdir(getenv("GAME_PATH"));
+#endif
     int result = EXIT_FAILURE;
 
     try

@@ -210,7 +210,7 @@ private:
     T* r_open_impl(pcstr path, pcstr _fname);
 
     void setup_fs_path(pcstr fs_name, string_path& fs_path);
-    std::string setup_fs_path(pcstr fs_name);
+    void setup_fs_path(pcstr fs_name);
     IReader* setup_fs_ltx(pcstr fs_name);
 
 public:
