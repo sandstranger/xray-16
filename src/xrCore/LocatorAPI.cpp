@@ -1021,17 +1021,7 @@ void CLocatorAPI::_initialize(u32 flags, pcstr target_folder, pcstr fs_name)
 
             auto p_it = m_paths.find(root);
 
-#if ANDROID
-            FS_Path* P;
-            if (std::string(id) == "$app_data_root$"){
-                P = xr_new<FS_Path>(getenv("APP_DATA_ROOT"), lp_add, lp_def, lp_capt, fl);
-            } else {
-                P = xr_new<FS_Path>(p_it != m_paths.end() ? p_it->second->m_Path : root,
-                                              lp_add, lp_def, lp_capt, fl);
-            }
-#else
             FS_Path* P = xr_new<FS_Path>(p_it != m_paths.end() ? p_it->second->m_Path : root, lp_add, lp_def, lp_capt, fl);
-#endif
             bNoRecurse = !(fl & FS_Path::flRecurse);
             Recurse(P->m_Path);
             auto I = m_paths.emplace(xr_strdup(id), P);
