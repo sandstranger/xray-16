@@ -14,9 +14,6 @@ url=https://github.com/sandstranger/GameSpy.git
 [submodule "Externals/zlib"]
 	path = Externals/zlib
 url=https://github.com/sandstranger/zlib-xray16.git
-[submodule "Externals/BugTrap"]
-	path = Externals/BugTrap
-	url = https://github.com/OpenXRay/BugTrap.git
 [submodule "Externals/gli"]
 	path = Externals/gli
 	url = https://github.com/g-truc/gli.git
