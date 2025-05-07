@@ -11,9 +11,6 @@ url=https://github.com/sandstranger/GameSpy.git
 [submodule "Externals/AGS_SDK"]
 	path = Externals/AGS_SDK
 	url = https://github.com/GPUOpen-LibrariesAndSDKs/AGS_SDK.git
-[submodule "Externals/zlib"]
-	path = Externals/zlib
-url=https://github.com/sandstranger/zlib-xray16.git
 [submodule "Externals/gli"]
 	path = Externals/gli
 	url = https://github.com/g-truc/gli.git
