@@ -2,15 +2,12 @@
 
 #include "ui_debug.h"
 #include "ui_base.h"
+#include "ui_styles.h"
 #include "xrEngine/editor_helper.h"
 
 CUIDebuggable::~CUIDebuggable()
 {
-    if (GEnv.UI)
-    {
-        if (UI().Debugger().GetSelected() == this)
-            UI().Debugger().SetSelected(nullptr);
-    }
+    UnregisterDebuggable();
 }
 
 void CUIDebuggable::RegisterDebuggable()
@@ -36,6 +33,13 @@ void CUIDebugger::Unregister(CUIDebuggable* debuggable)
     const auto it = std::find(m_root_windows.begin(), m_root_windows.end(), debuggable);
     if (it != m_root_windows.end())
         m_root_windows.erase(it);
+
+    if (m_state.selected == debuggable)
+        m_state.selected = nullptr;
+    if (m_state.newSelected == debuggable)
+        m_state.newSelected = nullptr;
+    if (m_state.examined == debuggable)
+        m_state.examined = nullptr;
 #endif
 }
 
@@ -61,6 +65,13 @@ CUIDebugger::CUIDebugger()
     reset_settings();
 }
 
+void CUIDebugger::OnUIReset()
+{
+    m_state.selected = nullptr;
+    m_state.newSelected = nullptr;
+    m_state.examined = nullptr;
+}
+
 void CUIDebugger::on_tool_frame()
 {
 #ifndef MASTER_GOLD
@@ -77,6 +88,9 @@ void CUIDebugger::on_tool_frame()
 
             if (ImGui::BeginMenu("Options"))
             {
+                if (ImGui::Button("Reset options"))
+                    reset_settings();
+
                 ImGui::Checkbox("Randomly coloured rects", &m_state.settings.coloredRects);
 
                 ImGui::Text("");
@@ -104,8 +118,36 @@ void CUIDebugger::on_tool_frame()
                 imgui::ItemHelp("Non-valuable window hovered by in-game cursor");
                 ImGui::EndDisabled();
 
+                imgui::ColorEdit4("Direction arrow", colors.directionArrow);
+                imgui::ItemHelp("The color of the arrow being drawn when examining the focus system");
+                imgui::ColorEdit4("Direction text", colors.directionText);
+                imgui::ItemHelp("The color of the text being drawn when examining the focus system");
+
                 ImGui::EndMenu();
             }
+
+            if (ImGui::BeginMenu("Styles"))
+            {
+                if (ImGui::BeginCombo("##", UIStyles->GetCurrentStyleName()))
+                {
+                    for (const auto [name, id] : UIStyles->GetToken())
+                    {
+                        if (!name)
+                            continue;
+                        if (ImGui::Selectable(name, name == UIStyles->GetCurrentStyleName()))
+                            UIStyles->SetStyle(name, true);
+                    }
+                    ImGui::EndCombo();
+                }
+
+                if (ImGui::Button("Reload UI"))
+                {
+                    UIStyles->Reset();
+                }
+
+                ImGui::EndMenu();
+            }
+
             ImGui::EndMenuBar();
         }
 
@@ -150,6 +192,8 @@ void CUIDebugger::reset_settings()
             /*.focusableValuableHovered    =*/ color_rgba(0,   255, 0,   255),
             /*.focusableNonValuable        =*/ color_rgba(255, 0,   0,   200),
             /*.focusableNonValuableHovered =*/ color_rgba(255, 0,   0,   255),
+            /*.directionArrow              =*/ color_rgba(255, 255, 255, 255),
+            /*.directionText               =*/ color_rgba(0,   0,   0,   255),
         },
         /*.drawWndRects =*/ true,
         /*.coloredRects =*/ false,
@@ -182,6 +226,10 @@ void CUIDebugger::apply_setting(pcstr line)
         settings.colors.focusableNonValuable = color;
     else if (sscanf(line, "FocusableNonValuableHoveredColor=0x%X", &color) == 1)
         settings.colors.focusableNonValuableHovered = color;
+    else if (sscanf(line, "DirectionArrowColor=0x%X", &color) == 1)
+        settings.colors.directionArrow = color;
+    else if (sscanf(line, "DirectionTextColor=0x%X", &color) == 1)
+        settings.colors.directionText = color;
 }
 
 void CUIDebugger::save_settings(ImGuiTextBuffer* buffer) const
@@ -200,6 +248,8 @@ void CUIDebugger::save_settings(ImGuiTextBuffer* buffer) const
     buffer->appendf("FocusableValuableHoveredColor=0x%X\n", colors.focusableValuableHovered);
     buffer->appendf("FocusableNonValuableColor=0x%X\n", colors.focusableNonValuable);
     buffer->appendf("FocusableNonValuableHoveredColor=0x%X\n", colors.focusableNonValuableHovered);
+    buffer->appendf("DirectionArrowColor=0x%X\n", colors.directionArrow);
+    buffer->appendf("DirectionTextColor=0x%X\n", colors.directionText);
 }
 
 size_t CUIDebugger::estimate_settings_size() const
@@ -239,6 +289,12 @@ size_t CUIDebugger::estimate_settings_size() const
 
     // "FocusableNonValuableHoveredColor=0x%X\n"
     size += std::size("FocusableNonValuableHoveredColor=0x") + HEXNUMBER_SIZE;
+
+    // "DirectionArrowColor=0x%X\n"
+    size += std::size("DirectionArrowColor=0x") + HEXNUMBER_SIZE;
+
+    // "DirectionTextColor=0x%X\n"
+    size += std::size("DirectionTextColor=0x") + HEXNUMBER_SIZE;
 
     return size;
 }

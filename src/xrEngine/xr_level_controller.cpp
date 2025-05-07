@@ -610,14 +610,8 @@ static void RemapKeys()
         keyboard_key& kb = keyboards[idx];
         if (pInput->GetKeyName(kb.dik, buff, sizeof(buff)))
             kb.key_local_name = buff;
-        else
-        {
-#ifndef MASTER_GOLD
-            Msg("! Can't find a key name for %s", kb.key_name);
-#endif
-            if (kb.key_local_name.empty())
-                kb.key_local_name = kb.key_name;
-        }
+        else if (kb.key_local_name.empty())
+            kb.key_local_name = kb.key_name;
 
         // Msg("[%s]-[%s]", kb.key_name, kb.key_local_name.c_str());
     }
@@ -638,19 +632,21 @@ pcstr IdToActionName(EGameActions id)
 
         ++idx;
     }
-    Msg("! cant find corresponding [action_name] for id");
-    return NULL;
+#ifndef MASTER_GOLD
+    Msg("! [IdToActionName] cant find corresponding 'action_name' for id '%u'", id);
+#endif
+    return nullptr;
 }
 
-EGameActions ActionNameToId(pcstr name)
+EGameActions ActionNameToId(pcstr name, bool silent /*= false*/)
 {
-    if (const game_action* action = ActionNameToPtr(name))
+    if (const game_action* action = ActionNameToPtr(name, silent))
         return action->id;
 
     return kNOTBINDED;
 }
 
-game_action* ActionNameToPtr(pcstr name)
+game_action* ActionNameToPtr(pcstr name, [[maybe_unused]] bool silent /*= false*/)
 {
     R_ASSERT1_CURE(name, return nullptr);
 
@@ -661,7 +657,10 @@ game_action* ActionNameToPtr(pcstr name)
             return &actions[idx];
         ++idx;
     }
-    Msg("! [ActionNameToPtr] cant find corresponding 'id' for '%s'", name);
+#ifndef MASTER_GOLD
+    if (!silent)
+        Msg("! [ActionNameToPtr] cant find corresponding 'id' for '%s'", name);
+#endif
     return nullptr;
 }
 
@@ -697,14 +696,12 @@ int GetActionDik(EGameActions action_id, int idx)
 
 pcstr DikToKeyname(int dik)
 {
-    keyboard_key* kb = DikToPtr(dik, true);
-    if (kb)
+    if (const keyboard_key* kb = DikToPtr(dik, true))
         return kb->key_name;
-    else
-        return nullptr;
+    return nullptr;
 }
 
-keyboard_key* DikToPtr(int dik, bool safe)
+keyboard_key* DikToPtr(int dik, [[maybe_unused]] bool silent)
 {
     int idx = 0;
     while (keyboards[idx].key_name)
@@ -716,20 +713,22 @@ keyboard_key* DikToPtr(int dik, bool safe)
         ++idx;
     }
 
-    if (!safe)
+#ifndef MASTER_GOLD
+    if (!silent)
         Msg("! [DikToPtr] cant find corresponding 'keyboard_key' for dik '%d'", dik);
+#endif
 
     return nullptr;
 }
 
-int KeynameToDik(pcstr name)
+int KeynameToDik(pcstr name, bool silent /*= false*/)
 {
-    if (const keyboard_key* kb = KeynameToPtr(name))
+    if (const keyboard_key* kb = KeynameToPtr(name, silent))
         return kb->dik;
     return SDL_SCANCODE_UNKNOWN;
 }
 
-keyboard_key* KeynameToPtr(pcstr name)
+keyboard_key* KeynameToPtr(pcstr name, [[maybe_unused]] bool silent /*= false*/)
 {
     R_ASSERT1_CURE(name, return nullptr);
 
@@ -742,7 +741,10 @@ keyboard_key* KeynameToPtr(pcstr name)
         ++idx;
     }
 
-    Msg("! [KeynameToPtr] cant find corresponding 'keyboard_key' for keyname %s", name);
+#ifndef MASTER_GOLD
+    if (!silent)
+        Msg("! [KeynameToPtr] cant find corresponding 'keyboard_key' for keyname %s", name);
+#endif
     return nullptr;
 }
 
@@ -974,13 +976,13 @@ class CCC_DefControls : public CCC_UnBindAll
         { kMAP,                     { SDL_SCANCODE_M,       SDL_SCANCODE_UNKNOWN,       XR_CONTROLLER_BUTTON_INVALID } },
         { kCONTACTS,                { SDL_SCANCODE_H,       SDL_SCANCODE_UNKNOWN,       XR_CONTROLLER_BUTTON_INVALID } },
 
-        { kJUMP,                    { SDL_SCANCODE_SPACE,   SDL_SCANCODE_UNKNOWN,       XR_CONTROLLER_BUTTON_LEFTSTICK } },
+        { kJUMP,                    { SDL_SCANCODE_SPACE,   SDL_SCANCODE_UNKNOWN,       XR_CONTROLLER_BUTTON_A } },
         { kCROUCH_TOGGLE,           { SDL_SCANCODE_UNKNOWN, SDL_SCANCODE_UNKNOWN,       XR_CONTROLLER_BUTTON_B } },
         { kWPN_RELOAD,              { SDL_SCANCODE_R,       SDL_SCANCODE_UNKNOWN,       XR_CONTROLLER_BUTTON_X } },
-        { kUSE,                     { SDL_SCANCODE_F,       SDL_SCANCODE_UNKNOWN,       XR_CONTROLLER_BUTTON_A } },
+        { kUSE,                     { SDL_SCANCODE_F,       SDL_SCANCODE_UNKNOWN,       XR_CONTROLLER_BUTTON_Y } },
 
-        { kTORCH,                   { SDL_SCANCODE_L,       SDL_SCANCODE_UNKNOWN,       XR_CONTROLLER_BUTTON_Y } },
-        { kSCORES,                  { SDL_SCANCODE_TAB,     SDL_SCANCODE_UNKNOWN,       XR_CONTROLLER_BUTTON_RIGHTSTICK } },
+        { kTORCH,                   { SDL_SCANCODE_L,       SDL_SCANCODE_UNKNOWN,       XR_CONTROLLER_BUTTON_RIGHTSTICK } },
+        { kSCORES,                  { SDL_SCANCODE_TAB,     SDL_SCANCODE_UNKNOWN,       XR_CONTROLLER_BUTTON_LEFTSTICK } },
 
         { kENTER,                   { SDL_SCANCODE_RETURN,  SDL_SCANCODE_KP_ENTER,      XR_CONTROLLER_BUTTON_START } },
         { kQUIT,                    { SDL_SCANCODE_ESCAPE,  SDL_SCANCODE_UNKNOWN,       XR_CONTROLLER_BUTTON_BACK } },
@@ -1041,8 +1043,8 @@ class CCC_DefControls : public CCC_UnBindAll
         // Talk:
         { kTALK_SWITCH_TO_TRADE,    { SDL_SCANCODE_X,       SDL_SCANCODE_UNKNOWN,       XR_CONTROLLER_BUTTON_X } },
         { kTALK_LOG_SCROLL,         { SDL_SCANCODE_UNKNOWN, SDL_SCANCODE_UNKNOWN,       XR_CONTROLLER_AXIS_LEFT } },
-        { kTALK_LOG_SCROLL_UP,      { SDL_SCANCODE_E,       SDL_SCANCODE_PAGEUP,        XR_CONTROLLER_AXIS_TRIGGER_LEFT } },
-        { kTALK_LOG_SCROLL_DOWN,    { SDL_SCANCODE_Q,       SDL_SCANCODE_PAGEDOWN,      XR_CONTROLLER_AXIS_TRIGGER_RIGHT } },
+        { kTALK_LOG_SCROLL_UP,      { SDL_SCANCODE_Q,       SDL_SCANCODE_PAGEUP,        SDL_SCANCODE_UNKNOWN } },
+        { kTALK_LOG_SCROLL_DOWN,    { SDL_SCANCODE_E,       SDL_SCANCODE_PAGEDOWN,      SDL_SCANCODE_UNKNOWN } },
 
         { kEDITOR,                  { SDL_SCANCODE_F10,     SDL_SCANCODE_UNKNOWN,       XR_CONTROLLER_BUTTON_INVALID } },
     };

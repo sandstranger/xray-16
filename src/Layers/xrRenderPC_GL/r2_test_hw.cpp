@@ -1,5 +1,7 @@
 #include "stdafx.h"
 
+namespace xray::render::RENDER_NAMESPACE
+{
 class sdl_window_test_helper
 {
     SDL_Window* m_window{};
@@ -50,3 +52,4 @@ BOOL xrRender_test_hw()
 
     return FALSE;
 }
+} // namespace xray::render::RENDER_NAMESPACE

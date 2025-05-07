@@ -134,8 +134,7 @@ void CRenderDevice::Initialize()
 
     if (!GEnv.isDedicatedServer)
     {
-        seqAppStart.Add(&m_editor);
-        seqAppEnd.Add(&m_editor);
+        seqFrame.Add(&m_editor, -5);
     }
 }
 

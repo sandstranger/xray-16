@@ -155,10 +155,14 @@ void CUITalkDialogWnd::Show()
     inherited::Enable(true);
 
     ResetAll();
+
+    UI().Focus().LockToWindow(UIQuestionsList);
 }
 
 void CUITalkDialogWnd::Hide()
 {
+    if (UI().Focus().GetLocker() == UIQuestionsList)
+        UI().Focus().Unlock();
     InventoryUtilities::SendInfoToActor("ui_talk_hide");
     InventoryUtilities::SendInfoToLuaScripts("ui_talk_hide");
     inherited::Show(false);
@@ -216,7 +220,7 @@ void CUITalkDialogWnd::AddQuestion(LPCSTR str, LPCSTR value, int number, bool b_
     }
     if (b_finalizer)
     {
-        itm->m_text->SetAccelerator(kQUIT, false, 2);
+        itm->m_text->SetAccelerator(kUI_BACK, false, 2);
         itm->m_text->SetAccelerator(kUSE, false, 3);
     }
 
@@ -235,8 +239,7 @@ void CUITalkDialogWnd::AddAnswer(LPCSTR SpeakerName, LPCSTR str, bool bActor)
     GAME_NEWS_DATA news_data;
     news_data.news_caption = SpeakerName;
 
-    xr_string res;
-    res = "%c[250,255,232,208]";
+    xr_string res = "%c[250,255,232,208]";
     res += str;
     news_data.news_text = res.c_str();
 
@@ -246,7 +249,7 @@ void CUITalkDialogWnd::AddAnswer(LPCSTR SpeakerName, LPCSTR str, bool bActor)
     news_data.texture_name = ci.IconName();
     news_data.receive_time = Level().GetGameTime();
 
-    Actor()->game_news_registry->registry().objects().push_back(news_data);
+    Actor()->game_news_registry->registry().objects().emplace_back(std::move(news_data));
 }
 
 void CUITalkDialogWnd::AddIconedAnswer(LPCSTR caption, LPCSTR text, LPCSTR texture_name, LPCSTR templ_name)
@@ -264,7 +267,7 @@ void CUITalkDialogWnd::AddIconedAnswer(LPCSTR caption, LPCSTR text, LPCSTR textu
     news_data.texture_name = texture_name;
     news_data.receive_time = Level().GetGameTime();
 
-    Actor()->game_news_registry->registry().objects().push_back(news_data);
+    Actor()->game_news_registry->registry().objects().emplace_back(std::move(news_data));
 }
 
 void CUITalkDialogWnd::AddIconedAnswer(pcstr text, pcstr texture_name, Frect texture_rect, pcstr templ_name)
@@ -282,7 +285,7 @@ void CUITalkDialogWnd::AddIconedAnswer(pcstr text, pcstr texture_name, Frect tex
     news_data.texture_name = texture_name;
     news_data.receive_time = Level().GetGameTime();
 
-    Actor()->game_news_registry->registry().objects().push_back(news_data);
+    Actor()->game_news_registry->registry().objects().emplace_back(std::move(news_data));
 }
 
 void CUITalkDialogWnd::SetOsoznanieMode(bool b)
@@ -340,9 +343,9 @@ void CUITalkDialogWnd::UpdateButtonsLayout(bool b_disable_break, bool trade_enab
 void CUITalkDialogWnd::TryScrollAnswersList(bool down)
 {
     if (down)
-        UIAnswersList->ScrollBar()->TryScrollDec();
-    else
         UIAnswersList->ScrollBar()->TryScrollInc();
+    else
+        UIAnswersList->ScrollBar()->TryScrollDec();
 }
 
 void CUITalkDialogWnd::FocusOnNextQuestion(bool next, bool loop) const
@@ -408,9 +411,6 @@ void CUITalkDialogWnd::FocusOnLastQuestion() const
 
 bool CUITalkDialogWnd::OnKeyboardAction(int dik, EUIMessages keyboard_action)
 {
-    if (CUIWindow::OnKeyboardAction(dik, keyboard_action))
-        return true;
-
     if (keyboard_action == WINDOW_KEY_PRESSED)
     {
         const auto focused = UIQuestionsList->CursorOverWindow() ? UI().Focus().GetFocused() : nullptr;
@@ -424,8 +424,7 @@ bool CUITalkDialogWnd::OnKeyboardAction(int dik, EUIMessages keyboard_action)
             }
         }
     }
-
-    return false;
+    return CUIWindow::OnKeyboardAction(dik, keyboard_action);
 }
 
 void CUIQuestionItem::SendMessage(CUIWindow* pWnd, s16 msg, void* pData) { CUIWndCallback::OnEvent(pWnd, msg, pData); }

@@ -20,7 +20,7 @@ inline pcstr CUIDebuggable::GetDebugType() { return "CUIDebuggable"; }
 
 struct CUIDebuggerSettings
 {
-    struct
+    struct Colors
     {
         // Just a window
         u32 normal;
@@ -38,6 +38,10 @@ struct CUIDebuggerSettings
         u32 focusableNonValuable;
         // Non-valuable window hovered by in-game cursor
         u32 focusableNonValuableHovered;
+        // The color of the arrow being drawn when examining the focus system
+        u32 directionArrow;
+        // The color of the text being drawn when examining the focus system
+        u32 directionText;
     } colors;
 
     bool drawWndRects;
@@ -48,6 +52,7 @@ struct CUIDebugState
 {
     CUIDebuggable* selected{};
     mutable CUIDebuggable* newSelected{};
+    mutable CUIDebuggable* examined{};
 
     CUIDebuggerSettings settings;
 
@@ -60,7 +65,7 @@ struct CUIDebugState
     }
 };
 
-class XRUICORE_API CUIDebugger final : public xray::editor::ide_tool
+class XRUICORE_API CUIDebugger final : public xray::editor::ide_tool, public CUIResetNotifier
 {
     xr_vector<CUIDebuggable*> m_root_windows;
     CUIDebugState m_state;
@@ -79,6 +84,8 @@ public:
 
     [[nodiscard]]
     bool ShouldDrawRects() const { return m_state.settings.drawWndRects; }
+
+    void OnUIReset() override;
 
 private:
     pcstr tool_name() const override { return "UI Debugger"; }

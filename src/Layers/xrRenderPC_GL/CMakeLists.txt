@@ -419,6 +419,7 @@ target_compile_definitions(xrRender_GL
     PRIVATE
     XRRENDER_GL_EXPORTS
     USE_OGL
+    RENDER_NAMESPACE=render_gl
     PURE_DYNAMIC_CAST
 )
 

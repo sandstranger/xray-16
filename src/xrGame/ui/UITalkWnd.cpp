@@ -140,7 +140,8 @@ void CUITalkWnd::UpdateQuestions()
         }
     }
 
-    UITalkDialogWnd->FocusOnFirstQuestion();
+    if (pInput->IsCurrentInputTypeController())
+        UITalkDialogWnd->FocusOnFirstQuestion();
 
     m_bNeedToUpdateQuestions = false;
 }
@@ -348,6 +349,9 @@ void CUITalkWnd::SwitchToUpgrade()
 
 bool CUITalkWnd::OnKeyboardAction(int dik, EUIMessages keyboard_action)
 {
+    if (inherited::OnKeyboardAction(dik, keyboard_action))
+        return true;
+
     if (keyboard_action == WINDOW_KEY_PRESSED)
     {
         if (IsBinded(kUSE, dik) || IsBinded(kQUIT, dik) || IsBinded(kUI_BACK, dik, EKeyContext::UI))
@@ -387,11 +391,6 @@ bool CUITalkWnd::OnKeyboardAction(int dik, EUIMessages keyboard_action)
     {
         switch (GetBindedAction(dik, EKeyContext::UI))
         {
-        case kUI_MOVE_LEFT:
-        case kUI_MOVE_RIGHT:
-            // Suppress focus system activation
-            return true;
-
         case kUI_MOVE_UP:
             UITalkDialogWnd->FocusOnNextQuestion(false, keyboard_action != WINDOW_KEY_HOLD);
             return true;
@@ -402,43 +401,29 @@ bool CUITalkWnd::OnKeyboardAction(int dik, EUIMessages keyboard_action)
         } // switch (GetBindedAction(dik, EKeyContext::UI))
     }
 
-    return inherited::OnKeyboardAction(dik, keyboard_action);
+    return false;
 }
 
-bool CUITalkWnd::OnControllerAction(int axis, float x, float y, EUIMessages controller_action)
+bool CUITalkWnd::OnControllerAction(int axis, const ControllerAxisState& state, EUIMessages controller_action)
 {
-    if (controller_action == WINDOW_KEY_HOLD)
+    if (inherited::OnControllerAction(axis, state, controller_action))
+        return true;
+
+    if (controller_action == WINDOW_KEY_PRESSED || controller_action == WINDOW_KEY_HOLD)
     {
-        switch (GetBindedAction(axis, EKeyContext::Talk))
+        if (IsBinded(kUI_MOVE, axis, EKeyContext::UI))
         {
-        case kTALK_LOG_SCROLL:
-            if (y > 0)
-                UITalkDialogWnd->TryScrollAnswersList(false);
-            else
-                UITalkDialogWnd->TryScrollAnswersList(true);
+            UITalkDialogWnd->FocusOnNextQuestion(state.y > 0, controller_action != WINDOW_KEY_HOLD);
+            return true;
+        }
+        if (IsBinded(kTALK_LOG_SCROLL, axis, EKeyContext::Talk))
+        {
+            UITalkDialogWnd->TryScrollAnswersList(state.y > 0);
             return true;
         }
     }
 
-    if (controller_action == WINDOW_KEY_PRESSED || controller_action == WINDOW_KEY_HOLD)
-    {
-        switch (GetBindedAction(axis, EKeyContext::UI))
-        {
-        case kUI_MOVE_LEFT:
-        case kUI_MOVE_RIGHT:
-            // Suppress focus system activation
-            return true;
-
-        case kUI_MOVE:
-            if (y > 0)
-                UITalkDialogWnd->FocusOnNextQuestion(true, controller_action != WINDOW_KEY_HOLD);
-            else
-                UITalkDialogWnd->FocusOnNextQuestion(false, controller_action != WINDOW_KEY_HOLD);
-            return true;
-        } // switch (GetBindedAction(axis, EKeyContext::UI))
-    }
-
-    return inherited::OnControllerAction(axis, x, y, controller_action);
+    return false;
 }
 
 void CUITalkWnd::PlaySnd(LPCSTR text)

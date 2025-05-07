@@ -2,6 +2,8 @@
 
 #include "Include/xrRender/ImGuiRender.h"
 
+namespace xray::render::RENDER_NAMESPACE
+{
 class dxImGuiRender final : public IImGuiRender
 {
     void SetState(ImDrawData* data);
@@ -18,3 +20,4 @@ public:
     void OnDeviceResetBegin() override;
     void OnDeviceResetEnd() override;
 };
+} // namespace xray::render::RENDER_NAMESPACE

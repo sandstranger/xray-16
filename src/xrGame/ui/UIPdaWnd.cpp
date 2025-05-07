@@ -92,8 +92,7 @@ void CUIPdaWnd::Init()
     }
 
     m_btn_close = UIHelper::Create3tButton(uiXml, "close_button", this);
-    m_btn_close->SetAccelerator(kQUIT, false, 2);
-    m_btn_close->SetAccelerator(kUI_BACK, false, 3);
+    m_btn_close->SetAccelerator(kUI_BACK, false, 2);
     UI().Focus().UnregisterFocusable(m_btn_close);
 
     m_hint_wnd = UIHelper::CreateHint(uiXml, "hint_wnd");
@@ -447,9 +446,9 @@ bool CUIPdaWnd::OnKeyboardAction(int dik, EUIMessages keyboard_action)
     return false;
 }
 
-bool CUIPdaWnd::OnControllerAction(int axis, float x, float y, EUIMessages controller_action)
+bool CUIPdaWnd::OnControllerAction(int axis, const ControllerAxisState& state, EUIMessages controller_action)
 {
-    if (inherited::OnControllerAction(axis, x, y, controller_action))
+    if (inherited::OnControllerAction(axis, state, controller_action))
         return true;
 
     return false;

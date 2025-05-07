@@ -21,11 +21,30 @@ limitations under the License.
 #include "Cursor/UICursor.h"
 
 #include "xrCore/buffer_vector.h"
+#include "xrEngine/editor_helper.h"
 
 #include <array>
 
 namespace
 {
+constexpr cpcstr short_direction(FocusDirection direction)
+{
+    switch (direction)
+    {
+    case FocusDirection::Same:       return "S";
+    case FocusDirection::Up:         return "U";
+    case FocusDirection::Down:       return "D";
+    case FocusDirection::Left:       return "L";
+    case FocusDirection::Right:      return "R";
+    case FocusDirection::UpperLeft:  return "UL";
+    case FocusDirection::UpperRight: return "UR";
+    case FocusDirection::LowerLeft:  return "LL";
+    case FocusDirection::LowerRight: return "LR";
+    }
+    XR_ASSUME(false);
+    return "";
+}
+
 std::array<FocusDirection, 3> allowed_directions(FocusDirection direction)
 {
     switch (direction)
@@ -232,4 +251,107 @@ std::pair<CUIWindow*, CUIWindow*> CUIFocusSystem::FindClosestFocusable(const Fve
         const_cast<CUIWindow*>(closest),
         const_cast<CUIWindow*>(closest2)
     };
+}
+
+bool CUIFocusSystem::FillDebugTree(const CUIDebugState& debugState)
+{
+#ifndef MASTER_GOLD
+    ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_OpenOnArrow;
+    if (debugState.selected == this)
+        flags |= ImGuiTreeNodeFlags_Selected;
+
+    const bool open = ImGui::TreeNodeEx(this, flags, "Focus system (%s)", GetDebugType());
+    if (ImGui::IsItemClicked())
+        debugState.select(this);
+
+    if (open)
+    {
+        if (m_valuable.empty())
+            ImGui::BulletText("Valuable: 0");
+        else
+        {
+            if (ImGui::TreeNode(&m_valuable, "Valuable: %zu", m_valuable.size()))
+            {
+                const auto prevExamined = debugState.examined;
+                // Make sure we only draw debug data only in the focus system tree structure
+                debugState.examined = nullptr;
+
+                for (const auto& window : m_valuable)
+                {
+                    const_cast<CUIWindow*>(window)->FillDebugTree(debugState);
+                }
+
+                if (CUIWindow* examinedWindow = dynamic_cast<CUIWindow*>(debugState.examined))
+                {
+                    const auto& colors = debugState.settings.colors;
+                    for (const auto& window : m_valuable)
+                    {
+                        if (window == examinedWindow)
+                            continue;
+                        DrawDebugInfo(*examinedWindow, *window, colors.directionArrow, colors.directionText);
+                    }
+                }
+
+                debugState.examined = prevExamined;
+                ImGui::TreePop();
+            }
+        }
+
+        if (m_non_valuable.empty())
+            ImGui::BulletText("Non valuable: 0");
+        else
+        {
+            if (ImGui::TreeNode(&m_non_valuable, "Non valuable: %zu", m_non_valuable.size()))
+            {
+                for (auto& window : m_non_valuable)
+                    const_cast<CUIWindow*>(window)->FillDebugTree(debugState);
+                ImGui::TreePop();
+            }
+        }
+
+        ImGui::TreePop();
+    }
+
+    return open;
+#else
+    return true;
+#endif
+}
+void CUIFocusSystem::FillDebugInfo()
+{
+#ifndef MASTER_GOLD
+    if (!ImGui::CollapsingHeader(CUIFocusSystem::GetDebugType()))
+        return;
+
+    ImGui::LabelText("Current focused", "%s", m_current_focused ? m_current_focused->WindowName().c_str() : "none");
+    ImGui::LabelText("Locker", "%s", m_focus_locker ? m_focus_locker->WindowName().c_str() : "none");
+#endif
+}
+
+void CUIFocusSystem::DrawDebugInfo(const CUIWindow& from, const CUIWindow& to, u32 color, u32 textColor) const
+{
+#ifndef MASTER_GOLD
+    const auto mainVP = ImGui::GetMainViewport();
+    const auto draw_list = ImGui::GetForegroundDrawList(mainVP);
+
+    auto fromPos = from.GetAbsoluteCenterPos();
+    auto toPos = to.GetAbsoluteCenterPos();
+
+    UI().ClientToScreenScaled(fromPos);
+    UI().ClientToScreenScaled(toPos);
+
+    const auto direction = get_focus_direction(fromPos, toPos);
+    const auto text = short_direction(direction);
+    ImVec2 text_size = ImGui::CalcTextSize(text);
+
+    Fcolor clr = color;
+    const float radius = text_size.x > text_size.y ? text_size.x / 1.5f : text_size.y / 1.5f;
+
+    draw_list->AddLine((ImVec2&)fromPos, (ImVec2&)toPos, clr.get_windows(), 2.0f);
+    draw_list->AddCircleFilled((ImVec2&)toPos, radius, clr.get_windows());
+
+    clr = textColor;
+    toPos.sub((Fvector2&)(text_size /= 2));
+    draw_list->AddText((ImVec2&)toPos, clr.get_windows(), text);
+#endif
 }

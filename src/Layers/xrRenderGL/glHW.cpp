@@ -10,6 +10,8 @@
 #include "osm_bridge.h"
 #endif
 
+namespace xray::render::RENDER_NAMESPACE
+{
 CHW HW;
 
 void CALLBACK OnDebugCallback(GLenum /*source*/, GLenum /*type*/, GLuint id, GLenum severity, GLsizei /*length*/,
@@ -145,8 +147,8 @@ void CHW::CreateDevice(SDL_Window* hWnd)
     Msg("* GPU OpenGL VTF units: [%d] CTI units: [%d]", iMaxVTFUnits, iMaxCTIUnits);
     ComputeShadersSupported = false; // XXX: Implement compute shaders support
 
-    //	Create render target and depth-stencil views here
-    UpdateViews();
+    if (glGenFramebuffers && glBindFramebuffer)
+        UpdateViews();
 }
 
 void CHW::DestroyDevice()
@@ -304,3 +306,4 @@ void CHW::EndPixEvent() const
     if (glPushDebugGroup)
         glPopDebugGroup();
 }
+} // namespace xray::render::RENDER_NAMESPACE
