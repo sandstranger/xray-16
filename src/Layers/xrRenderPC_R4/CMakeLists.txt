@@ -19,8 +19,8 @@ target_sources(xrRenderPC_R4 PRIVATE
 
 target_include_directories(xrRenderPC_R4
     PRIVATE
-    "${XRAY16_SOURCE_DIR}/src"
-    "${XRAY16_SOURCE_DIR}/sdk/include"
+    "${CMAKE_SOURCE_DIR}/src"
+    "${CMAKE_SOURCE_DIR}/sdk/include"
 )
 
 target_link_libraries(xrRenderPC_R4
@@ -40,6 +40,7 @@ target_compile_definitions(xrRenderPC_R4
     USE_DX11
 )
 
+if (NOT ANDROID)
 set_target_properties(xrRenderPC_R4 PROPERTIES
     PREFIX ""
 )
@@ -47,6 +48,7 @@ target_precompile_headers(xrRenderPC_R4
     PRIVATE
     stdafx.h
 )
+endif ()
 
 if (BUILD_SHARED_LIBS AND NOT ANDROID)
     install(TARGETS xrRenderPC_R4 LIBRARY

@@ -391,15 +391,15 @@ target_sources(xrRender_GL PRIVATE
 target_include_directories(xrRender_GL
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${XRAY16_SOURCE_DIR}/src"
-    "${XRAY16_SOURCE_DIR}/src/Layers/xrRender"
-    "${XRAY16_SOURCE_DIR}/src/Include/xrRender"
-    "${XRAY16_SOURCE_DIR}/src/Layers/xrRender_R2"
-    "${XRAY16_SOURCE_DIR}/sdk/include"
-    "${XRAY16_SOURCE_DIR}/sdk/include/DirectXMesh"
-    "${XRAY16_SOURCE_DIR}/Externals"
-    "${XRAY16_SOURCE_DIR}/Externals/gli"
-    "${XRAY16_SOURCE_DIR}/Externals/gli/external"
+    "${CMAKE_SOURCE_DIR}/src"
+    "${CMAKE_SOURCE_DIR}/src/Layers/xrRender"
+    "${CMAKE_SOURCE_DIR}/src/Include/xrRender"
+    "${CMAKE_SOURCE_DIR}/src/Layers/xrRender_R2"
+    "${CMAKE_SOURCE_DIR}/sdk/include"
+    "${CMAKE_SOURCE_DIR}/sdk/include/DirectXMesh"
+    "${CMAKE_SOURCE_DIR}/Externals"
+    "${CMAKE_SOURCE_DIR}/Externals/gli"
+    "${CMAKE_SOURCE_DIR}/Externals/gli/external"
 )
 
 target_link_libraries(xrRender_GL
@@ -427,11 +427,11 @@ if (NOT ANDROID)
 set_target_properties(xrRender_GL PROPERTIES
     PREFIX ""
 )
-endif ()
 target_precompile_headers(xrRender_GL
-    PRIVATE
-    $<$<COMPILE_LANGUAGE:CXX>:stdafx.h>
+        PRIVATE
+        $<$<COMPILE_LANGUAGE:CXX>:stdafx.h>
 )
+endif ()
 if (BUILD_SHARED_LIBS AND NOT ANDROID)
     install(TARGETS xrRender_GL LIBRARY
         DESTINATION "${CMAKE_INSTALL_LIBDIR}"

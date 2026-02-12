@@ -69,7 +69,7 @@ target_sources(xrOPCODE PRIVATE
 
 target_include_directories(xrOPCODE
     PRIVATE
-    "${XRAY16_SOURCE_DIR}/src"
+    "${CMAKE_SOURCE_DIR}/src"
 )
 
 target_link_libraries(xrOPCODE
@@ -88,10 +88,12 @@ set_target_properties(xrOPCODE PROPERTIES
     PREFIX ""
 )
 
+if (NOT ANDROID)
 target_precompile_headers(xrOPCODE
     PRIVATE
     pch.hpp
 )
+endif ()
 
 if (BUILD_SHARED_LIBS AND NOT ANDROID)
     install(TARGETS xrOPCODE LIBRARY

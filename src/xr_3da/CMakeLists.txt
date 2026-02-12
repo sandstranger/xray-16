@@ -25,7 +25,7 @@ set_property(
 
 target_include_directories(xr_3da
     PRIVATE
-    "${XRAY16_SOURCE_DIR}/src"
+    "${CMAKE_SOURCE_DIR}/src"
 )
 
 target_link_libraries(xr_3da

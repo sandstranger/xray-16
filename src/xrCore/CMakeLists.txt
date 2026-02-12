@@ -441,31 +441,45 @@ target_sources_grouped(
     XML/tinyxmlparser.cpp
 )
 
+if (NOT ANDROID)
 target_include_directories(xrCore
     PUBLIC
-    "${XRAY16_SOURCE_DIR}/Externals/tracy/public"
+    "${CMAKE_SOURCE_DIR}/Externals/tracy/public"
 
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${XRAY16_SOURCE_DIR}/src"
-    "${XRAY16_SOURCE_DIR}/Externals"
-    "${XRAY16_SOURCE_DIR}/Externals/mimalloc/include"
+    "${CMAKE_SOURCE_DIR}/src"
+    "${CMAKE_SOURCE_DIR}/Externals"
+    "${CMAKE_SOURCE_DIR}/Externals/mimalloc/include"
 )
+else ()
+    target_include_directories(xrCore
+            PUBLIC
+            "${CMAKE_SOURCE_DIR}/Externals/tracy/public"
+
+            PRIVATE
+            ${JPEG_INCLUDE_DIRS}
+            ${LZO_INCLUDE_DIR}
+            ${LUA_INCLUDE_DIR}
+            ${SDL2_INCLUDE_DIR}
+            "${CMAKE_CURRENT_SOURCE_DIR}"
+            "${CMAKE_SOURCE_DIR}/src"
+            "${CMAKE_SOURCE_DIR}/Externals"
+            "${CMAKE_SOURCE_DIR}/Externals/mimalloc/include"
+    )
+endif ()
 
 if (ANDROID)
     target_link_libraries(xrCore
             PUBLIC
-#            pthread
             $<$<PLATFORM_ID:FreeBSD,OpenBSD,NetBSD,DragonFlyBSD>:execinfo>
-            SDL2::SDL2
 			${SDL2_LIBRARIES}
 			${LUA_LIBRARIES}
             log
             PRIVATE
             xrMiscMath
-            ${mimalloc}
-            $<$<BOOL:${JPEG_FOUND}>:JPEG::JPEG>
-            LZO::LZO
+            ${LZO_LIBRARY}
+            ${JPEG_LIBRARIES}
     )
 else ()
     target_link_libraries(xrCore
@@ -514,12 +528,11 @@ endif()
 if (NOT ANDROID)
     set_target_properties(xrCore PROPERTIES
     PREFIX "")
+    target_precompile_headers(xrCore
+            PRIVATE
+            stdafx.h
+    )
 endif ()
-
-target_precompile_headers(xrCore
-    PRIVATE
-    stdafx.h
-)
 
 if (BUILD_SHARED_LIBS AND NOT ANDROID)
     install(TARGETS xrCore LIBRARY

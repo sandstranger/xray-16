@@ -584,7 +584,7 @@ endif()
 
 target_include_directories(xrLuaJIT
     PUBLIC
-    "${XRAY16_SOURCE_DIR}/Externals/LuaJIT/src"
+    "${CMAKE_SOURCE_DIR}/Externals/LuaJIT/src"
 
     PRIVATE
     "${CMAKE_CURRENT_BINARY_DIR}"

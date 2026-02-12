@@ -38,9 +38,9 @@ target_sources_grouped(
 
 target_include_directories(xrCDB
     PRIVATE
-    "${XRAY16_SOURCE_DIR}/src"
-    "${XRAY16_SOURCE_DIR}/Externals"
-    "${XRAY16_SOURCE_DIR}/Externals/imgui"
+    "${CMAKE_SOURCE_DIR}/src"
+    "${CMAKE_SOURCE_DIR}/Externals"
+    "${CMAKE_SOURCE_DIR}/Externals/imgui"
 )
 
 target_link_libraries(xrCDB
@@ -60,11 +60,11 @@ if (NOT ANDROID)
 set_target_properties(xrCDB PROPERTIES
     PREFIX ""
 )
-endif ()
 target_precompile_headers(xrCDB
-    PRIVATE
-    stdafx.h
+        PRIVATE
+        stdafx.h
 )
+endif ()
 
 if (BUILD_SHARED_LIBS AND NOT ANDROID)
     install(TARGETS xrCDB LIBRARY

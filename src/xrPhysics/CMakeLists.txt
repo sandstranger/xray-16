@@ -395,13 +395,13 @@ target_sources_grouped(
 
 target_include_directories(xrPhysics
     PUBLIC
-    "${XRAY16_SOURCE_DIR}/Externals"
+    "${CMAKE_SOURCE_DIR}/Externals"
 
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${XRAY16_SOURCE_DIR}/src"
-    "${XRAY16_SOURCE_DIR}/Externals/imgui"
-    "${XRAY16_SOURCE_DIR}/Externals/ode/include"
+    "${CMAKE_SOURCE_DIR}/src"
+    "${CMAKE_SOURCE_DIR}/Externals/imgui"
+    "${CMAKE_SOURCE_DIR}/Externals/ode/include"
 )
 
 target_link_libraries(xrPhysics
@@ -424,6 +424,7 @@ target_compile_definitions(xrPhysics
     PURE_DYNAMIC_CAST
 )
 
+if (NOT ANDROID)
 set_target_properties(xrPhysics PROPERTIES
     PREFIX ""
 )
@@ -432,6 +433,7 @@ target_precompile_headers(xrPhysics
     PRIVATE
     StdAfx.h
 )
+endif ()
 
 if (BUILD_SHARED_LIBS AND NOT ANDROID)
     install(TARGETS xrPhysics LIBRARY

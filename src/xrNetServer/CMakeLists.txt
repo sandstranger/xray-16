@@ -30,7 +30,7 @@ target_sources(xrNetServer PRIVATE
 target_include_directories(xrNetServer
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${XRAY16_SOURCE_DIR}/src"
+    "${CMAKE_SOURCE_DIR}/src"
 )
 
 target_link_libraries(xrNetServer
@@ -47,12 +47,12 @@ if (NOT ANDROID)
 set_target_properties(xrNetServer PROPERTIES
     PREFIX ""
 )
+target_precompile_headers(xrNetServer
+        PRIVATE
+        stdafx.h
+)
 endif ()
 
-target_precompile_headers(xrNetServer
-    PRIVATE
-    stdafx.h
-)
 
 if (BUILD_SHARED_LIBS AND NOT ANDROID)
     install(TARGETS xrNetServer LIBRARY

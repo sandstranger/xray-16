@@ -21,6 +21,13 @@ option(XRAY_ENABLE_TRACY "Enable tracy profiler"      OFF)
 include(XRay.Build)
 include(XRay.Packaging)
 
+if (ANDROID)
+    include_directories(Externals)
+    include_directories(src)
+    include_directories(res)
+    include_directories(misc)
+endif ()
+
 add_subdirectory(Externals)
 add_subdirectory(src)
 add_subdirectory(res)

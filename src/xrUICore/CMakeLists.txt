@@ -125,7 +125,7 @@ target_sources(xrUICore PRIVATE
 target_include_directories(xrUICore
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${XRAY16_SOURCE_DIR}/src"
+    "${CMAKE_SOURCE_DIR}/src"
 )
 
 target_link_libraries(xrUICore
@@ -140,21 +140,23 @@ target_link_libraries(xrUICore
 )
 
 target_compile_definitions(xrUICore
-    PRIVATE
-    XRUICORE_EXPORTS
-    PURE_DYNAMIC_CAST
+        PRIVATE
+        XRUICORE_EXPORTS
+        PURE_DYNAMIC_CAST
 )
 
 if (NOT ANDROID)
-set_target_properties(xrUICore PROPERTIES
+    set_target_properties(xrUICore PROPERTIES
     PREFIX ""
-)
+    )
+
+    target_precompile_headers(xrUICore
+            PRIVATE
+            pch.hpp
+    )
+
 endif ()
 
-target_precompile_headers(xrUICore
-    PRIVATE
-    pch.hpp
-)
 
 if (BUILD_SHARED_LIBS AND NOT ANDROID)
     install(TARGETS xrUICore LIBRARY

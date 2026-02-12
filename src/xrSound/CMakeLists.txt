@@ -118,11 +118,11 @@ target_sources_grouped(
 #    xr_cda.h
 #)
 
+if (NOT ANDROID)
 target_include_directories(xrSound
     PRIVATE
     "${CMAKE_SOURCE_DIR}/src"
     "${CMAKE_SOURCE_DIR}/src/xrEngine"
-    "${OPENAL_INCLUDE_DIR}"
 )
 
 target_link_libraries(xrSound
@@ -137,7 +137,28 @@ target_link_libraries(xrSound
     Vorbis::Vorbis
     Vorbis::VorbisFile
 )
+else ()
+    target_include_directories(xrSound
+            PRIVATE
+            "${CMAKE_SOURCE_DIR}/src"
+            "${CMAKE_SOURCE_DIR}/src/xrEngine"
+            "${OPENAL_INCLUDE_DIR}"
+            ${OGG_INCLUDE_DIR}
+            ${VORBISFILE_INCLUDE_DIRS}
+    )
 
+    target_link_libraries(xrSound
+            PRIVATE
+            xrCore
+            xrMiscMath
+            xrAPI
+            xrCDB
+            xrMaterialSystem
+            ${OPENAL_LIBRARY}
+            ${OGG_LIBRARY}
+            ${VORBISFILE_LIBRARIES}
+    )
+endif ()
 target_compile_definitions(xrSound
     PRIVATE
     XRSOUND_EXPORTS
@@ -146,11 +167,11 @@ if (NOT ANDROID)
 set_target_properties(xrSound PROPERTIES
     PREFIX ""
 )
-endif ()
 target_precompile_headers(xrSound
-    PRIVATE
-    stdafx.h
+        PRIVATE
+        stdafx.h
 )
+endif ()
 
 if (BUILD_SHARED_LIBS AND NOT ANDROID)
     install(TARGETS xrSound LIBRARY

@@ -2473,13 +2473,13 @@ target_sources(xrGame PRIVATE
 target_include_directories(xrGame
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${XRAY16_SOURCE_DIR}/src"
-    "${XRAY16_SOURCE_DIR}/src/xrCore"
-    "${XRAY16_SOURCE_DIR}/src/xrServerEntities"
-    "${XRAY16_SOURCE_DIR}/Externals/GameSpy/src"
-    "${XRAY16_SOURCE_DIR}/Externals/ode/include"
-    "${XRAY16_SOURCE_DIR}/Externals/OpenAutomate/inc"
-    "${XRAY16_SOURCE_DIR}/sdk/include"
+    "${CMAKE_SOURCE_DIR}/src"
+    "${CMAKE_SOURCE_DIR}/src/xrCore"
+    "${CMAKE_SOURCE_DIR}/src/xrServerEntities"
+    "${CMAKE_SOURCE_DIR}/Externals/GameSpy/src"
+    "${CMAKE_SOURCE_DIR}/Externals/ode/include"
+    "${CMAKE_SOURCE_DIR}/Externals/OpenAutomate/inc"
+    "${CMAKE_SOURCE_DIR}/sdk/include"
 )
 
 target_link_libraries(xrGame
@@ -2525,12 +2525,12 @@ else ()
     set_target_properties(xrGame PROPERTIES
     PREFIX ""
     UNITY_BUILD_BATCH_SIZE 50)
-endif ()
 
-target_precompile_headers(xrGame
-    PRIVATE
-    $<$<COMPILE_LANGUAGE:CXX>:StdAfx.h>
-)
+    target_precompile_headers(xrGame
+            PRIVATE
+            $<$<COMPILE_LANGUAGE:CXX>:StdAfx.h>
+    )
+endif ()
 
 if (BUILD_SHARED_LIBS AND NOT ANDROID)
     install(TARGETS xrGame LIBRARY

@@ -407,15 +407,29 @@ target_sources(xrEngine
     TODO.txt
 )
 
+if (NOT ANDROID)
 target_include_directories(xrEngine
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${XRAY16_SOURCE_DIR}/src"
-    "${XRAY16_SOURCE_DIR}/Externals/imgui"
-    "${XRAY16_SOURCE_DIR}/Externals/OpenAutomate/inc"
+    "${CMAKE_SOURCE_DIR}/src"
+    "${CMAKE_SOURCE_DIR}/Externals/imgui"
+    "${CMAKE_SOURCE_DIR}/Externals/OpenAutomate/inc"
 )
+else ()
+    target_include_directories(xrEngine
+            PRIVATE
+            "${CMAKE_CURRENT_SOURCE_DIR}"
+            "${CMAKE_SOURCE_DIR}/src"
+            "${CMAKE_SOURCE_DIR}/Externals/imgui"
+            "${CMAKE_SOURCE_DIR}/Externals/OpenAutomate/inc"
+            ${THEORA_INCLUDE_DIR}
+            ${SDL2_INCLUDE_DIR}
+            ${OPENAL_INCLUDE_DIR}
+            ${OGG_INCLUDE_DIR}
+    )
+endif ()
 
-
+if (NOT ANDROID)
 target_link_libraries(xrEngine
     PUBLIC
     xrMiscMath
@@ -435,6 +449,27 @@ target_link_libraries(xrEngine
     Theora::Theora
     SDL2::SDL2
 )
+else ()
+    target_link_libraries(xrEngine
+            PUBLIC
+            xrMiscMath
+            ${OPENGL_opengl_LIBRARY}
+            log
+            PRIVATE
+            xrAPI
+            xrCDB
+            xrMaterialSystem
+            xrCore
+            xrSound
+            xrScriptEngine
+            xrNetServer
+            xrImGui
+            ${OPENAL_LIBRARY}
+            ${SDL2_LIBRARY}
+            ${OGG_LIBRARY}
+            ${THEORA_LIBRARY}
+    )
+endif ()
 
 target_compile_definitions(xrEngine
     PRIVATE
@@ -446,12 +481,12 @@ if (NOT ANDROID)
 set_target_properties(xrEngine PROPERTIES
     PREFIX ""
 )
+target_precompile_headers(xrEngine
+        PRIVATE
+        stdafx.h
+)
 endif ()
 
-target_precompile_headers(xrEngine
-    PRIVATE
-    stdafx.h
-)
 if (BUILD_SHARED_LIBS AND NOT ANDROID)
     install(TARGETS xrEngine LIBRARY
         DESTINATION "${CMAKE_INSTALL_LIBDIR}"

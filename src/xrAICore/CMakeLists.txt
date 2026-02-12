@@ -286,8 +286,8 @@ target_sources_grouped(
 target_include_directories(xrAICore
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${XRAY16_SOURCE_DIR}/src"
-    "${XRAY16_SOURCE_DIR}/sdk/include"
+    "${CMAKE_SOURCE_DIR}/src"
+    "${CMAKE_SOURCE_DIR}/sdk/include"
 )
 
 target_link_libraries(xrAICore
@@ -308,11 +308,11 @@ if (NOT ANDROID)
 set_target_properties(xrAICore PROPERTIES
     PREFIX ""
 )
-endif ()
 target_precompile_headers(xrAICore
-    PRIVATE
-    pch.hpp
+        PRIVATE
+        pch.hpp
 )
+endif ()
 if (BUILD_SHARED_LIBS AND NOT ANDROID)
     install(TARGETS xrAICore LIBRARY
         DESTINATION "${CMAKE_INSTALL_LIBDIR}"

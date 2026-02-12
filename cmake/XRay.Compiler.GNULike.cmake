@@ -140,7 +140,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_compile_options(-Og)
 endif()
 
-if (NOT WIN32)
+if (NOT WIN32 AND NOT ANDROID)
     find_package(SDL2 2.0.18 REQUIRED)
     find_package(OpenAL REQUIRED)
     find_package(JPEG)
