@@ -38,13 +38,13 @@ CUIRankingWnd::~CUIRankingWnd()
         xr_delete(achievement);
     m_achieves_vec.clear();
 
-	//Alundaio: CoC Rankings
+    //Alundaio: CoC Rankings
     for (auto& ranking : m_coc_ranking_vec)
         xr_delete(ranking);
-	m_coc_ranking_vec.clear();
+    m_coc_ranking_vec.clear();
 
-	xr_delete(m_coc_ranking_actor);
-	//-Alundaio
+    xr_delete(m_coc_ranking_actor);
+    //-Alundaio
 }
 
 void CUIRankingWnd::Show(bool status)
@@ -57,7 +57,7 @@ void CUIRankingWnd::Show(bool status)
         if (m_money_value)
         {
             string64 buf;
-            xr_sprintf(buf, sizeof(buf), "%d %s", Actor()->get_money(), "RU");
+            xr_sprintf(buf, sizeof(buf), "%d %s", Actor()->get_money(), StringTable().GetCurrency().c_str());
             m_money_value->SetText(buf);
             m_money_value->AdjustWidthToText();
         }
@@ -137,13 +137,13 @@ bool CUIRankingWnd::Init()
     std::ignore = UIHelper::CreateFrameLine(xml, "fraction_line1", this, false);
     std::ignore = UIHelper::CreateFrameLine(xml, "fraction_line2", this, false);
 
-	// Dynamic stats
+    // Dynamic stats
     XML_NODE stored_root = xml.GetLocalRoot();
     XML_NODE node = xml.NavigateToNode("stat_info", 0);
     xml.SetLocalRoot(node);
 
     auto stat_count = xml.GetNodesNum(node, "stat");
-    const u32 value_color = CUIXmlInit::GetColor(xml, "value", 0, 0xFFffffff);
+    const u32 value_color = CUIXmlInit::GetColor(xml, "value", 0, 0xFFFFFFFF);
 
     for (size_t i = 0; i < stat_count; ++i)
     {
@@ -328,7 +328,7 @@ void CUIRankingWnd::DrawHint()
             achievement->DrawHint();
     }
 
-	//Alundaio: CoC Ranking
+    //Alundaio: CoC Ranking
     for (const auto& ranking : m_coc_ranking_vec)
     {
         if (ranking->IsShown())
@@ -336,8 +336,8 @@ void CUIRankingWnd::DrawHint()
     }
 
     if (m_coc_ranking_actor && m_coc_ranking_actor->IsShown())
-		m_coc_ranking_actor->DrawHint();
-	//-Alundaio
+        m_coc_ranking_actor->DrawHint();
+    //-Alundaio
 }
 
 void CUIRankingWnd::get_statistic() const
@@ -464,13 +464,13 @@ void CUIRankingWnd::ResetAll()
     for (const auto& achievement : m_achieves_vec)
         achievement->Reset();
 
-	//Alundaio: CoC Rankings
+    //Alundaio: CoC Rankings
     for (const auto& ranking : m_coc_ranking_vec)
         ranking->Reset();
 
     if (m_coc_ranking_actor)
         m_coc_ranking_actor->Reset();
-	//-Alundaio
+    //-Alundaio
 
     inherited::ResetAll();
 }

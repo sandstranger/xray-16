@@ -1,7 +1,9 @@
 #include "pch.hpp"
+
 #include "UIFrameWindow.h"
-#include "XML/UITextureMaster.h"
+
 #include "Static/UIStatic.h"
+#include "XML/UITextureMaster.h"
 
 void draw_rect(Fvector2 LTp, Fvector2 RBp, Fvector2 LTt, Fvector2 RBt, u32 clr, Fvector2 const& ts);
 
@@ -39,7 +41,6 @@ void CUIFrameWindow::SetWndSize(const Fvector2& sz)
 
 bool CUIFrameWindow::InitTextureEx(pcstr texture, pcstr shader, bool fatal /*= true*/)
 {
-    dbg_tex_name = texture;
     string256 buf;
 
     const bool back_exist = CUITextureMaster::InitTexture(strconcat(sizeof(buf), buf, texture, "_back"), shader, m_shader, m_tex_rect[fmBK]);
@@ -166,12 +167,24 @@ void CUIFrameWindow::Draw()
     inherited::Draw();
 }
 
+CUIStatic* CUIFrameWindow::GetTitleText(bool create_on_demand /*= false*/)
+{
+    if (create_on_demand && !m_title_text)
+    {
+        m_title_text = xr_new<CUIStatic>("title");
+        m_title_text->SetAutoDelete(true);
+        AttachChild(m_title_text);
+    }
+    return m_title_text;
+}
+
+
 void CUIFrameWindow::DrawElements()
 {
     GEnv.UIRender->SetShader(*m_shader);
 
-    Fvector2 ts;
-    GEnv.UIRender->GetActiveTextureResolution(ts);
+    Fvector2 ts{};
+    m_shader->GetBaseTextureResolution(ts);
 
     Frect rect;
     GetAbsoluteRect(rect);

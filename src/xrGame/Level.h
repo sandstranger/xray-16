@@ -4,10 +4,8 @@
 #include "xrEngine/IGame_Persistent.h"
 #if defined(XR_PLATFORM_WINDOWS)
 #include "xrNetServer/NET_Client.h"
-#elif defined(XR_PLATFORM_LINUX) || defined(XR_PLATFORM_BSD) || defined(XR_PLATFORM_APPLE)
+#else // XXX: multiplayer on Linux
 #include "xrNetServer/empty/NET_Client.h"
-#else
-#   error Select or add implementation for your platform
 #endif
 #include "xrEngine/StatGraph.h"
 #include "xrMessages.h"
@@ -115,7 +113,6 @@ protected:
 #endif
     CPHCommander* m_ph_commander = nullptr;
     CPHCommander* m_ph_commander_scripts = nullptr;
-    CPHCommander* m_ph_commander_physics_worldstep = nullptr;
 
     // Local events
     EVENT eChangeRP;
@@ -289,9 +286,10 @@ public:
     void net_Update() override;
     bool Load_GameSpecific_Before() override;
     bool Load_GameSpecific_After() override;
+    void Load_GameSpecific_CFORM(CDB::TRI* T, u32 count) override;
     void Load_GameSpecific_CFORM_Serialize(IWriter& writer) override;
     bool Load_GameSpecific_CFORM_Deserialize(IReader& reader) override;
-    void Load_GameSpecific_CFORM(CDB::TRI* T, u32 count) override;
+    void Load_GameSpecific_CFORM_SetMaterials(CDB::TRI* tris, u32 count, xr_map<u16, shared_str>& gameMtls) override;
 
     // Events
     void OnEvent(EVENT E, u64 P1, u64 P2) override;
@@ -355,7 +353,6 @@ public:
     void script_gc(); // GC-cycle
     IC CPHCommander& ph_commander();
     IC CPHCommander& ph_commander_scripts();
-    IC CPHCommander& ph_commander_physics_worldstep();
 
     CLevel();
     virtual ~CLevel();
@@ -434,6 +431,9 @@ public:
 #ifdef DEBUG
     LevelGraphDebugRender* GetLevelGraphDebugRender() const { return levelGraphDebugRender; }
 #endif
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION();
 };
 
 // XXX nitrocaster: should not cast to inherited
@@ -487,12 +487,6 @@ IC CPHCommander& CLevel::ph_commander_scripts()
 {
     VERIFY(m_ph_commander_scripts);
     return *m_ph_commander_scripts;
-}
-
-IC CPHCommander& CLevel::ph_commander_physics_worldstep()
-{
-    VERIFY(m_ph_commander_scripts);
-    return *m_ph_commander_physics_worldstep;
 }
 
 extern bool g_bDebugEvents;

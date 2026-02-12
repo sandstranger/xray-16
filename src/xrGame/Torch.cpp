@@ -107,7 +107,7 @@ void CTorch::SwitchNightVision(bool vision_on, bool use_sounds)
         m_night_vision = xr_new<CNightVisionEffector>(cNameSect());
 
     LPCSTR disabled_names = pSettings->r_string(cNameSect(), "disabled_maps");
-    LPCSTR curr_map = *Level().name();
+    pcstr curr_map = Level().name().c_str();
     u32 cnt = _GetItemCount(disabled_names);
     bool b_allow = true;
     string512 tmp;
@@ -199,7 +199,7 @@ void CTorch::Switch(bool light_on)
     }
     glow_render->set_active(light_on);
 
-    if (*light_trace_bone)
+    if (light_trace_bone.c_str())
     {
         IKinematics* pVisual = smart_cast<IKinematics*>(Visual());
         VERIFY(pVisual);
@@ -505,7 +505,7 @@ CNightVisionEffector::CNightVisionEffector(const shared_str& section) : m_pActor
 {
     m_sounds.LoadSound(section.c_str(), "snd_night_vision_on", "NightVisionOnSnd", false, SOUND_TYPE_ITEM_USING);
     m_sounds.LoadSound(section.c_str(), "snd_night_vision_off", "NightVisionOffSnd", false, SOUND_TYPE_ITEM_USING);
-    m_sounds.LoadSound(section.c_str(), "snd_night_vision_idle", "NightVisionIdleSnd", false, SOUND_TYPE_ITEM_USING);
+    m_sounds.LoadSound(section.c_str(), "snd_night_vision_idle", "NightVisionIdleSnd", true, SOUND_TYPE_ITEM_USING);
     m_sounds.LoadSound(
         section.c_str(), "snd_night_vision_broken", "NightVisionBrokenSnd", false, SOUND_TYPE_ITEM_USING);
 }
@@ -532,6 +532,7 @@ void CNightVisionEffector::Stop(const float factor, bool play_sound)
         if (play_sound)
             PlaySounds(eStopSound);
 
+        m_sounds.StopSound("NightVisionOnSnd");
         m_sounds.StopSound("NightVisionIdleSnd");
     }
 }

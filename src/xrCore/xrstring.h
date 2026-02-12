@@ -25,11 +25,6 @@ struct XRCORE_API str_value_cmp
     IC bool operator()(const str_value* A, const str_value* B) const { return A->dwCRC < B->dwCRC; };
 };
 
-struct XRCORE_API str_hash_function
-{
-    IC u32 operator()(str_value const* const value) const { return value->dwCRC; };
-};
-
 #pragma warning(pop)
 
 struct str_container_impl;
@@ -48,7 +43,7 @@ public:
     void verify() const;
 
     [[nodiscard]]
-    size_t stat_economy() const;
+    std::pair<size_t, size_t> stat_economy() const;
 
 private:
     str_container_impl* impl;
@@ -138,13 +133,11 @@ public:
         _set(nullptr);
         return *this;
     }
-    // XXX tamlin: Remove operator*(). It may be convenient, but it's dangerous. Use
-    [[nodiscard]]
-    pcstr operator*() const { return p_ ? p_->value : nullptr; }
 
     [[nodiscard]]
     bool operator!() const { return p_ == nullptr; }
-
+    [[nodiscard]]
+    explicit operator bool() const { return p_ != nullptr; }
     [[nodiscard]]
     char operator[](size_t id) { return p_->value[id]; }
     [[nodiscard]]
@@ -178,31 +171,35 @@ public:
 
     [[nodiscard]]
     bool equal(const shared_str& rhs) const { return (p_ == rhs.p_); }
-
-    shared_str& __cdecl printf(const char* format, ...)
-    {
-        string4096 buf;
-        va_list p;
-        va_start(p, format);
-        int vs_sz = vsnprintf(buf, sizeof(buf) - 1, format, p);
-        buf[sizeof(buf) - 1] = 0;
-        va_end(p);
-        if (vs_sz)
-            _set(buf);
-        return (shared_str&)*this;
-    }
 };
 
+inline int __cdecl xr_sprintf(shared_str& destination, pcstr format_string, ...)
+{
+    string4096 buf;
+    va_list args;
+    va_start(args, format_string);
+    const int vs_sz = vsnprintf(buf, sizeof(buf) - 1, format_string, args);
+    buf[sizeof(buf) - 1] = 0;
+    va_end(args);
+    if (vs_sz >= 0)
+        destination = buf;
+    return vs_sz;
+}
 
 template<>
 struct std::hash<shared_str>
 {
     [[nodiscard]] size_t operator()(const shared_str& str) const noexcept
     {
-        const auto str_val = str._get();
-        return std::hash<pcstr>{}(str_val ? str_val->value : nullptr);
+        return str ? str._get()->dwCRC : std::hash<pcstr>{}(nullptr);
     }
 };
+
+bool operator==(const shared_str&, std::nullptr_t) = delete;
+bool operator!=(const shared_str&, std::nullptr_t) = delete;
+
+bool operator==(std::nullptr_t, const shared_str&) = delete;
+bool operator!=(std::nullptr_t, const shared_str&) = delete;
 
 // res_ptr == res_ptr
 // res_ptr != res_ptr
@@ -225,14 +222,14 @@ ICF int xr_strcmp(const char* S1, const char* S2)
     return strcmp(S1, S2);
 }
 
-IC int xr_strcmp(const shared_str& a, const char* b) noexcept { return xr_strcmp(*a, b); }
-IC int xr_strcmp(const char* a, const shared_str& b) noexcept { return xr_strcmp(a, *b); }
+IC int xr_strcmp(const shared_str& a, const char* b) noexcept { return xr_strcmp(a.c_str(), b); }
+IC int xr_strcmp(const char* a, const shared_str& b) noexcept { return xr_strcmp(a, b.c_str()); }
 IC int xr_strcmp(const shared_str& a, const shared_str& b) noexcept
 {
     if (a.equal(b))
         return 0;
     else
-        return xr_strcmp(*a, *b);
+        return xr_strcmp(a.c_str(), b.c_str());
 }
 
 IC char* xr_strlwr(char* src)
@@ -248,7 +245,7 @@ IC char* xr_strlwr(char* src)
 
 IC void xr_strlwr(shared_str& src)
 {
-    if (*src)
+    if (src.c_str())
     {
         char* lp = xr_strdup(src.c_str());
         xr_strlwr(lp);
@@ -258,3 +255,4 @@ IC void xr_strlwr(shared_str& src)
 }
 
 #pragma pack(pop)
+////

@@ -1,13 +1,13 @@
 #include "stdafx.h"
 #pragma hdrstop
 
-#include	"Layers/xrRender/ResourceManager.h"
-#include	"Layers/xrRender/tss.h"
-#include	"Layers/xrRender/Blender.h"
-#include	"Layers/xrRender/Blender_Recorder.h"
+#include "Layers/xrRender/ResourceManager.h"
+#include "Layers/xrRender/tss.h"
+#include "Layers/xrRender/Blender.h"
+#include "Layers/xrRender/Blender_Recorder.h"
 //	adopt_compiler don't have = operator And it can't have = operator
-#include	"xrScriptEngine/script_engine.hpp"
-#include	"luabind/return_reference_to_policy.hpp"
+#include "xrScriptEngine/script_engine.hpp"
+#include "xrScriptEngine/script_space.hpp"
 #include "xrCore/Threading/ScopeLock.hpp"
 
 #ifdef	DEBUG
@@ -544,9 +544,9 @@ ShaderElement* CBlender_Compile::_lua_Compile(LPCSTR namesp, LPCSTR name)
     RS.Invalidate();
 
     // Compile
-    LPCSTR t_0 = *L_textures[0] ? *L_textures[0] : "null";
-    LPCSTR t_1 = L_textures.size() > 1 ? *L_textures[1] : "null";
-    LPCSTR t_d = detail_texture ? detail_texture : "null";
+    pcstr t_0 = L_textures[0].c_str() ? L_textures[0].c_str() : "null";
+    pcstr t_1 = L_textures.size() > 1 ? L_textures[1].c_str() : "null";
+    pcstr t_d = detail_texture ? detail_texture : "null";
     object shader = RImplementation.Resources->ScriptEngine.name_space(namesp);
     functor<void> element = object_cast<functor<void>>(shader[name]);
     bool bFirstPass = false;

@@ -1,10 +1,11 @@
 #pragma once
 #include "_flags.h"
+
 class UITimeDilator
 {
 public:
 
-    enum UIMode
+    enum UIMode : u8
     {
         None = 0,
         Inventory = 1 << 0,
@@ -12,16 +13,16 @@ public:
     };
 
     void SetUiTimeFactor(float timeFactor);
-    float GetUiTimeFactor();
+    float GetUiTimeFactor() const;
 
     void SetModeEnability(UIMode mode, bool status);
-    bool GetModeEnability(UIMode mode);
+    bool GetModeEnability(UIMode mode) const;
 
     void SetCurrentMode(UIMode mode);
 
 private:
     float uiTimeFactor = 1.0;
-    Flags32 enabledModes;
+    Flags8 enabledModes;
     UIMode currMode;
 
     void startTimeDilation();

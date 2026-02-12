@@ -186,8 +186,8 @@ void CHUDTarget::Render()
                         if (fuzzyShowInfo > 0.5f)
                         {
                             F->SetColor(subst_alpha(C, u8(iFloor(255.f * (fuzzyShowInfo - 0.5f) * 2.f))));
-                            F->OutNext("%s", *StringTable().translate(others_inv_owner->Name()));
-                            F->OutNext("%s", *StringTable().translate(others_inv_owner->CharacterInfo().Community().id()));
+                            F->OutNext("%s", StringTable().translate(others_inv_owner->Name()).c_str());
+                            F->OutNext("%s", StringTable().translate(others_inv_owner->CharacterInfo().Community().id()).c_str());
                         }
                     }
 
@@ -238,7 +238,7 @@ void CHUDTarget::Render()
                             const int alpha_C = iFloor(255.f * (fuzzyShowInfo - 0.5f) * 2.f);
                             const u8 alpha_b = u8(alpha_C & 0x00ff);
                             F->SetColor(subst_alpha(C, alpha_b));
-                            F->OutNext("%s", *PP.RQ.O->cName());
+                            F->OutNext("%s", PP.RQ.O->cName().c_str());
                         }
                     }
                 };

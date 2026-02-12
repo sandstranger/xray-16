@@ -87,13 +87,7 @@ void ParseFile(pcstr path, CMemoryWriter& W, IReader* F, XMLDocument* xml, bool 
             return;
         if (includeName == strstr(includeName, comparePath))
         {
-            pcstr fileName = strstr(includeName, comparePath);
-            if (fileName)
-                fileName++;
-            else
-                fileName = includeName;
-
-            shared_str fn = xml->correct_file_name(uiPath, fileName);
+            shared_str fn = xml->correct_file_name(uiPath, strchr(includeName, _DELIMITER) + 1);
             string_path buff;
             strconcat(buff, uiPathDelim, fn.c_str());
             file = FS.r_open(path, buff);
@@ -152,7 +146,7 @@ bool XMLDocument::Load(pcstr path_alias, pcstr path, pcstr xml_filename, bool fa
     shared_str fn = correct_file_name(path, xml_filename);
 
     string_path str;
-    xr_sprintf(str, "%s" DELIMITER "%s", path, *fn);
+    xr_sprintf(str, "%s" DELIMITER "%s", path, fn.c_str());
     return Load(path_alias, str, fatal);
 }
 
@@ -162,12 +156,12 @@ bool XMLDocument::Load(pcstr path_alias, pcstr path, pcstr path2, pcstr xml_file
     shared_str fn = correct_file_name(path, xml_filename);
 
     string_path str;
-    xr_sprintf(str, "%s" DELIMITER "%s", path, *fn);
+    xr_sprintf(str, "%s" DELIMITER "%s", path, fn.c_str());
     if (Load(path_alias, str, false))
         return true;
 
     fn = correct_file_name(path2, xml_filename);
-    xr_sprintf(str, "%s" DELIMITER "%s", path2, *fn);
+    xr_sprintf(str, "%s" DELIMITER "%s", path2, fn.c_str());
     return Load(path_alias, str, fatal);
 }
 
@@ -233,11 +227,33 @@ XML_NODE XMLDocument::NavigateToNode(CONST_XML_NODE start_node, pcstr path, cons
     buf_str[0] = 0;
     xr_strcpy(buf_str, path);
 
-    const char seps[] = ":";
     size_t tmp = 0;
 
-    //разбить путь на отдельные подпути
-    char* token = strtok(buf_str, seps);
+    char* cursor = buf_str;
+
+    // Thread-safe tokenization over ':'
+    auto next_token = [](char*& cur) -> char*
+    {
+        if (!cur || *cur == '\0')
+            return nullptr;
+
+        char* start = cur;
+        char* sep = strchr(cur, ':');
+        if (sep)
+        {
+            *sep = '\0';
+            cur = sep + 1;
+        }
+        else
+        {
+            cur = nullptr;
+        }
+
+        return start;
+    };
+
+    // разбить путь на отдельные подпути
+    char* token = next_token(cursor);
 
     if (token != nullptr)
     {
@@ -250,7 +266,7 @@ XML_NODE XMLDocument::NavigateToNode(CONST_XML_NODE start_node, pcstr path, cons
     while (token)
     {
         // Get next token:
-        token = strtok(nullptr, seps);
+        token = next_token(cursor);
 
         if (token != nullptr)
             if (node)

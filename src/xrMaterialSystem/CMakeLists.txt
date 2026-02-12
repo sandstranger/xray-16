@@ -1,4 +1,4 @@
-add_library(xrMaterialSystem SHARED)
+add_library(xrMaterialSystem)
 
 target_sources_grouped(
     TARGET xrMaterialSystem
@@ -37,8 +37,9 @@ target_precompile_headers(xrMaterialSystem
     PRIVATE
     stdafx.h
 )
-if (NOT ANDROID)
-install(TARGETS xrMaterialSystem LIBRARY
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-)
-endif ()
+
+if (BUILD_SHARED_LIBS AND NOT ANDROID)
+    install(TARGETS xrMaterialSystem LIBRARY
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    )
+endif()

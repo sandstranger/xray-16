@@ -97,7 +97,6 @@ CCustomMonster::CCustomMonster()
     m_memory_manager = 0;
     m_movement_manager = 0;
     m_sound_player = 0;
-    m_already_dead = false;
     m_invulnerable = false;
     m_moving_object = 0;
 }
@@ -701,7 +700,7 @@ void CCustomMonster::Die(IGameObject* who)
 
 bool CCustomMonster::net_Spawn(CSE_Abstract* DC)
 {
-    memory().reload(*cNameSect());
+    memory().reload(cNameSect().c_str());
     memory().reinit();
 
     if (!movement().net_Spawn(DC) || !inherited::net_Spawn(DC) || !CScriptEntity::net_Spawn(DC))

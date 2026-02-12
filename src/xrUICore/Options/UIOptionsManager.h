@@ -1,4 +1,5 @@
 #pragma once
+
 #include "xrCore/xrstring.h"
 #include "xrCommon/xr_vector.h"
 #include "xrCommon/xr_map.h"
@@ -38,12 +39,15 @@ protected:
 
     groups m_groups;
 
-    enum
+    enum : u8
     {
         e_vid_restart = (1 << 0),
         e_snd_restart = (1 << 1),
         e_ui_restart = (1 << 2),
         e_system_restart = (1 << 3)
     };
-    u16 m_restart_flags;
+    u8 m_restart_flags;
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION();
 };

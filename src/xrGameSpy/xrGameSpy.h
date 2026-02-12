@@ -12,8 +12,7 @@
 #include <GameSpy/sake/sake.h>
 #include <GameSpy/sc/sc.h>
 
-// XXX: temporary use MASTER_GOLD here, switch to XRAY_STATIC_BUILD later
-#ifdef MASTER_GOLD // XRAY_STATIC_BUILD
+#ifdef XRAY_STATIC_BUILD
 #   define XRGAMESPY_API
 #else
 #   ifdef XRGAMESPY_EXPORTS
@@ -38,3 +37,12 @@ XRGAMESPY_API void GetGameID(int* GameID, int verID);
 // XXX: remove hack
 #undef min
 #undef max
+#undef accept
+#undef bind
+#undef connect
+#undef getpeername
+#undef getsockname
+#undef getsockopt
+#undef recvfrom
+#undef sendto
+#undef setsockopt

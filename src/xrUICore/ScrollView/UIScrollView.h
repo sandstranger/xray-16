@@ -11,7 +11,7 @@ class XRUICORE_API CUIScrollView : public CUIWindow, public CUIWndCallback
     typedef CUIWindow inherited;
     friend class CUIXmlInitBase; // for init
 protected:
-    enum
+    enum : u16
     {
         eVertFlip = (1 << 0),
         eNeedRecalc = (1 << 1),
@@ -89,6 +89,9 @@ public:
 
     typedef fastdelegate::FastDelegate2<CUIWindow*, CUIWindow*, bool> cmp_function;
     cmp_function m_sort_function;
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION(CUIWindow);
 };
 
 #define ADD_TEXT_TO_VIEW3(txt, st, view)              \

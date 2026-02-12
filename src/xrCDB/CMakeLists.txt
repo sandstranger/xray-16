@@ -1,4 +1,4 @@
-add_library(xrCDB SHARED)
+add_library(xrCDB)
 
 target_sources_grouped(
     TARGET xrCDB
@@ -54,7 +54,6 @@ target_link_libraries(xrCDB
 target_compile_definitions(xrCDB
     PRIVATE
     XRCDB_EXPORTS
-    $<$<BOOL:${STATIC_BUILD}>:OPCODE_STATIC>
 )
 
 if (NOT ANDROID)
@@ -67,8 +66,8 @@ target_precompile_headers(xrCDB
     stdafx.h
 )
 
-if (NOT ANDROID)
-install(TARGETS xrCDB LIBRARY
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-)
-endif ()
+if (BUILD_SHARED_LIBS AND NOT ANDROID)
+    install(TARGETS xrCDB LIBRARY
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    )
+endif()

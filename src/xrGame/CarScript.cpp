@@ -1,11 +1,11 @@
 #include "pch_script.h"
+
 #include "alife_space.h"
 #include "Car.h"
 #include "CarWeapon.h"
 #include "script_game_object.h"
-#include "xrScriptEngine/ScriptExporter.hpp"
 
-SCRIPT_EXPORT(CCar, (CGameObject, CHolderCustom),
+void CCar::script_register(lua_State* luaState)
 {
     using namespace luabind;
 
@@ -34,6 +34,13 @@ SCRIPT_EXPORT(CCar, (CGameObject, CHolderCustom),
             .def("SetExplodeTime", &CCar::SetExplodeTime)
             .def("ExplodeTime", &CCar::ExplodeTime)
             .def("CarExplode", &CCar::CarExplode)
+            // X-Ray Extensions:
+            .def("get_fuel", &CCar::GetfFuel)
+            .def("set_fuel", &CCar::SetfFuel)
+            .def("get_fuel_tank", &CCar::GetfFuelTank)
+            .def("set_fuel_tank", &CCar::SetfFuelTank)
+            .def("get_fuel_consumption", &CCar::GetfFuelConsumption)
+            .def("set_fuel_consumption", &CCar::SetfFuelConsumption)
             /***** added by Ray Twitty (aka Shadows) START *****/
             .def("GetfFuel", &CCar::GetfFuel)
             .def("SetfFuel", &CCar::SetfFuel)
@@ -55,4 +62,4 @@ SCRIPT_EXPORT(CCar, (CGameObject, CHolderCustom),
             /***** added by Ray Twitty (aka Shadows) END *****/
             .def(constructor<>())
     ];
-});
+}

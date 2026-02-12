@@ -1,4 +1,4 @@
-add_library(xrAPI SHARED)
+add_library(xrAPI)
 
 target_sources(xrAPI PRIVATE
     stdafx.h
@@ -25,8 +25,9 @@ target_precompile_headers(xrAPI
     PRIVATE
     stdafx.h
 )
-if (NOT ANDROID)
-install(TARGETS xrAPI LIBRARY
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-)
-endif ()
+
+if (BUILD_SHARED_LIBS AND NOT ANDROID)
+    install(TARGETS xrAPI LIBRARY
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    )
+endif()

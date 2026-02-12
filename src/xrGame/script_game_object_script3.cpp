@@ -23,7 +23,6 @@
 #include "script_monster_hit_info.h"
 #include "script_entity_action.h"
 #include "action_planner.h"
-#include "physics_shell_scripted.h"
 #include "helicopter.h"
 #include "HangingLamp.h"
 #include "holder_custom.h"
@@ -574,6 +573,7 @@ luabind::class_<CScriptGameObject>& script_register_game_object2(luabind::class_
         .def("is_on_belt", &CScriptGameObject::IsOnBelt)
         .def("item_on_belt", &CScriptGameObject::ItemOnBelt)
         .def("belt_count", &CScriptGameObject::BeltSize)
+        .def("belt_object_count", &CScriptGameObject::BeltSize)
 
         .def("get_actor_max_weight", &CScriptGameObject::GetActorMaxWeight)
         .def("set_actor_max_weight", &CScriptGameObject::SetActorMaxWeight)

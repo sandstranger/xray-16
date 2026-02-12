@@ -474,7 +474,7 @@ u32 CScriptGameObject::Money()
     return pOurOwner->get_money();
 }
 
-void CScriptGameObject::TransferMoney(int money, CScriptGameObject* pForWho)
+void CScriptGameObject::TransferMoney(u32 money, CScriptGameObject* pForWho)
 {
     if (!pForWho)
     {
@@ -486,9 +486,9 @@ void CScriptGameObject::TransferMoney(int money, CScriptGameObject* pForWho)
     CInventoryOwner* pOtherOwner = smart_cast<CInventoryOwner*>(&pForWho->object());
     VERIFY(pOtherOwner);
 
-    if (pOurOwner->get_money() - money < 0)
+    if (pOurOwner->get_money() < money)
     {
-        GEnv.ScriptEngine->script_log(LuaMessageType::Error, "Character does not have enought money");
+        GEnv.ScriptEngine->script_log(LuaMessageType::Error, "Character does not have enough money");
         return;
     }
 
@@ -496,7 +496,7 @@ void CScriptGameObject::TransferMoney(int money, CScriptGameObject* pForWho)
     pOtherOwner->set_money(pOtherOwner->get_money() + money, true);
 }
 
-void CScriptGameObject::GiveMoney(int money)
+void CScriptGameObject::GiveMoney(u32 money)
 {
     CInventoryOwner* pOurOwner = smart_cast<CInventoryOwner*>(&object());
     VERIFY(pOurOwner);
@@ -662,7 +662,7 @@ LPCSTR CScriptGameObject::ProfileName()
     if (!profile_id || !profile_id.size())
         return NULL;
     else
-        return *profile_id;
+        return profile_id.c_str();
 }
 
 LPCSTR CScriptGameObject::CharacterName()
@@ -776,7 +776,7 @@ LPCSTR CScriptGameObject::CharacterCommunity()
         GEnv.ScriptEngine->script_log(LuaMessageType::Error, "CharacterCommunity available only for InventoryOwner");
         return NULL;
     }
-    return *pInventoryOwner->CharacterInfo().Community().id();
+    return pInventoryOwner->CharacterInfo().Community().id().c_str();
 }
 
 void CScriptGameObject::SetCharacterCommunity(LPCSTR comm, int squad, int group)
@@ -911,10 +911,10 @@ void construct_restriction_vector(shared_str restrictions, xr_vector<ALife::_OBJ
 {
     result.clear();
     string64 temp;
-    u32 n = _GetItemCount(*restrictions);
+    u32 n = _GetItemCount(restrictions.c_str());
     for (u32 i = 0; i < n; ++i)
     {
-        IGameObject* object = Level().Objects.FindObjectByName(_GetItem(*restrictions, i, temp));
+        IGameObject* object = Level().Objects.FindObjectByName(_GetItem(restrictions.c_str(), i, temp));
         if (!object)
             continue;
         result.push_back(object->ID());
@@ -972,7 +972,7 @@ LPCSTR CScriptGameObject::in_restrictions()
             LuaMessageType::Error, "CRestrictedObject : cannot access class member in_restrictions!");
         return ("");
     }
-    return (*monster->movement().restrictions().in_restrictions());
+    return (monster->movement().restrictions().in_restrictions().c_str());
 }
 
 LPCSTR CScriptGameObject::out_restrictions()
@@ -984,7 +984,7 @@ LPCSTR CScriptGameObject::out_restrictions()
             LuaMessageType::Error, "CRestrictedObject : cannot access class member out_restrictions!");
         return ("");
     }
-    return (*monster->movement().restrictions().out_restrictions());
+    return (monster->movement().restrictions().out_restrictions().c_str());
 }
 
 LPCSTR CScriptGameObject::base_in_restrictions()
@@ -996,7 +996,7 @@ LPCSTR CScriptGameObject::base_in_restrictions()
             LuaMessageType::Error, "CRestrictedObject : cannot access class member base_in_restrictions!");
         return ("");
     }
-    return (*monster->movement().restrictions().base_in_restrictions());
+    return (monster->movement().restrictions().base_in_restrictions().c_str());
 }
 
 LPCSTR CScriptGameObject::base_out_restrictions()
@@ -1008,7 +1008,7 @@ LPCSTR CScriptGameObject::base_out_restrictions()
             LuaMessageType::Error, "CRestrictedObject : cannot access class member base_out_restrictions!");
         return ("");
     }
-    return (*monster->movement().restrictions().base_out_restrictions());
+    return (monster->movement().restrictions().base_out_restrictions().c_str());
 }
 
 bool CScriptGameObject::accessible_position(const Fvector& position)

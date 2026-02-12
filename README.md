@@ -13,27 +13,26 @@
 **OpenXRay** is an improved version of the X-Ray Engine, the game engine used in the world-famous S.T.A.L.K.E.R. game series by GSC Game World.
 
 This is a fan-made project not affiliated with GSC Game World in any way.
-However, they know about many community projects, including this, and support the S.T.A.L.K.E.R. community efforts to make the game better.
+However, they know about many community projects, including this, and support S.T.A.L.K.E.R. community efforts to make the game better.
 
 Installation instructions are on the [How to install and play](https://github.com/OpenXRay/xray-16/wiki/[EN]-How-to-install-and-play) page.
 
-## Main differences from the original X-Ray are:
+## Supported game platforms
+- Call of Chernobyl 1.4.22.
+- Call of Pripyat 1.6.02.
+- Clear Sky 1.5.10. (minor bugs are possible, but the game is stable finishable. See [#382](https://github.com/OpenXRay/xray-16/issues/382))
+
+Shadow of Chernobyl is **not supported** yet. (see [#392](https://github.com/OpenXRay/xray-16/issues/392)) <br>
+Legends of the Zone/Enhanced Edition is not supported and won't ever be likely. (see [#1865](https://github.com/OpenXRay/xray-16/issues/1865))
+
+## Main differences from the original X-Ray
 - Support for 64-bit.
 - Improved performance, better FPS.
 - Original bugs fixes.
 - New features for modmakers.
 - Works on Linux, macOS, *BSDs and supports ARM, ARM64, E2K (Elbrus 2000), PPC64LE architectures.
 
-You can see the detailed differences table [here](https://github.com/OpenXRay/xray-16/wiki/%5BEN%5D-Differences-from-original-X‐Ray)
-
-## Supported game platforms
-OpenXRay is based on X-Ray 1.6.02, used in S.T.A.L.K.E.R.: Call of Pripyat, but the engine was extended to support more than that:
-
-|Call of Pripyat|Clear Sky|Call of Chernobyl|
-|---|---|---|
-|Yes|Release candidate (see [#382](https://github.com/OpenXRay/xray-16/issues/382)).<br>Minor bugs possible, but game is stable finishable.|Yes|
-
-Shadow of Chernobyl is **not supported** yet (see [#392](https://github.com/OpenXRay/xray-16/issues/392)).
+You can see the detailed differences table [here](https://github.com/OpenXRay/xray-16/wiki/%5BEN%5D-Differences-from-original-X‐Ray).
 
 ## Goals
 1. Clean up engine code, boost performance, and fix original X-Ray Engine bugs that were polluting S.T.A.L.K.E.R. series.
@@ -81,36 +80,35 @@ Take a look at our [Issues](https://github.com/openxray/xray-16/issues) page:
 
 Make sure to visit our [wiki](https://github.com/OpenXRay/xray-16/wiki):
 * [Build instructions for Windows](https://github.com/OpenXRay/xray-16/wiki/[EN]-How-to-build-and-setup-on-Windows).
-* [Build instructions for Linux and other platforms](https://github.com/OpenXRay/xray-16/wiki/[EN]-How-to-build-and-setup-on-Linux).
+* [Build instructions for Linux and other platforms](https://github.com/OpenXRay/xray-16/wiki/%5BEN%5D-How-to-build-and-setup-on-Linux-and-MacOS).
 
 The `dev` branch is the default and base branch for the project. It is used for development, and all pull requests should go there. But be aware that this branch sometimes may be broken, and we can only rarely do force pushes to this branch.
 
+The code base is based on X-Ray 1.6.02 that is used in S.T.A.L.K.E.R.: Call of Pripyat and it was greatly refactored.
+
 ### Funding
-[![Financial Contributors](https://opencollective.com/openxray/tiers/badge.svg?label=Financial%20contributors)](https://opencollective.com/openxray) [![Sponsors](https://img.shields.io/github/sponsors/openxray?color=brightgreen&label=Sponsors)](https://github.com/sponsors/OpenXRay) [![Patreon](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fwww.patreon.com%2Fapi%2Fcampaigns%2F5950725&query=data.attributes.patron_count&suffix=%20Patrons&color=success&label=Patreon&style=flat)](https://patreon.com/openxray)
+[![Sponsors](https://img.shields.io/github/sponsors/openxray?color=brightgreen&label=Sponsors)](https://github.com/sponsors/OpenXRay) [![Patreon](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fwww.patreon.com%2Fapi%2Fcampaigns%2F5950725&query=data.attributes.patron_count&suffix=%20Patrons&color=success&label=Patreon&style=flat)](https://patreon.com/openxray) [![Financial Contributors](https://opencollective.com/openxray/tiers/badge.svg?label=Financial%20contributors)](https://opencollective.com/openxray)
 
 You may provide financial support for this project by donating via different ways:
-* [Boosty](https://boosty.to/openxray) – a large part of the team is located in Russia, if you have an ability to donate through Boosty, please use it, since we don't have an ability to withdraw funds from services like Patreon, etc. to our local Russian banking cards/accounts.
-* [GitHub Sponsors](https://github.com/sponsors/OpenXRay), [Patreon](https://patreon.com/openxray), [Open Collective](https://opencollective.com/openxray) – funds raised from these services will be used to support our developers outside of Russia, and also we may use them to pay for paid services on GitHub, AppVeyor, etc.
-* BTC: 363ZUoWcQe9fDvRPK9Kee2YuPdyhSFQpr2
-* ETH: 0x45a4fe8566e76946591e1eeabf190aa09b1cdb66
-* TRX: TGx7QAhTPsRcwnb4mwCtNDU7NF6kuoACpt
-* Please, contact @xottab_duty in [our Discord](discord.gg/sjRMQwv) if you would like to use another cryptocurrency.
+* [GitHub Sponsors](https://github.com/sponsors/OpenXRay), [Patreon](https://patreon.com/openxray), [Open Collective](https://opencollective.com/openxray) – many team members and contributors are located all over the world, and we provide a way to support of us worldwide.
+* [Boosty](https://boosty.to/openxray) – a large part of the team and many contributors are located in Russia, and we provide a way to support us from Russia and Belarus.
+* Please, contact @1yohji in [our Discord](discord.gg/sjRMQwv) if you would like to use cryptocurrency.
 
+Raised funds will be used to support our developers and contributors, and also we may use them to pay for paid services on GitHub, etc.
 Thank you for your support!
 
 ## Thanks
 * [GSC Game World](https://gsc-game.com/) – for creating S.T.A.L.K.E.R. and supporting the community.
 * Loxotron – for making the engine sources available.
 * [All the OpenXRay contributors](https://github.com/OpenXRay/xray-16/graphs/contributors) – for making the project what it is:
-  * The first OpenXRay team (2014-2017) – for being at the origins of the project:
-    * [nitrocaster](https://github.com/nitrocaster) – original project founder.
+  * The OpenXRay team:
+    * [nitrocaster](https://github.com/nitrocaster) – original project founder and former project leader (2014-2018).
     * [Kaffeine](https://github.com/Kaffeine) – initial work on the Linux port, refactoring, polishing.
     * [CrossVR](https://github.com/CrossVR) (Armada651) – creation of the OpenGL renderer, work on the build system, other project maintenance work.
     * [andrew-boyarshin](https://github.com/andrew-boyarshin) – work on the build system.
     * [CasualDev242](https://github.com/CasualDev242) (Swartz27) – work on renderer features.
     * [awdavies](https://github.com/awdavies) – project maintenance work.
-  * The second OpenXRay team (2017-now) – for continuing work on the project:
-    * [Xottab_DUTY](https://github.com/Xottab-DUTY) – current project leader.
+    * [Xottab_DUTY](https://github.com/Xottab-DUTY) – former project leader (2018-2026), gathering a new team, creation of the community (GitHub, Discord, VK), defining project guiding principles and goals, working on many areas of tasks (core, renderering, AI, gameplay, UI), SOC/CS/COC support.
     * [intorr](https://github.com/intorr) – work on the project quality, memory leaks, refactoring and optimizations.
     * [eagleivg](https://github.com/eagleivg) – main part of the work on Linux port.
     * [q4a](https://github.com/q4a) – main part of the work on Linux port.
@@ -126,7 +124,7 @@ Thank you for your support!
     * [Zigatun](https://github.com/Zigatun) – work on ARM port.
     * [Masterkatze](https://github.com/Masterkatze) – work on the build system, bug fixing.
     * [Chugunov Roman](https://github.com/ChugunovRoman) – work on [porting Call of Chernobyl to latest OpenXRay](https://github.com/ChugunovRoman/xray-16), extending functionality for modmakers.
-    * [yohjimane](https://github.com/yohjimane) – work on introducing many new features, fixing original engine bugs.
+    * [yohjimane](https://github.com/yohjimane) – lead developer (2026-current), work on introducing many new features, fixing original engine bugs
   * Other contributors:
     * [alexgdi](https://github.com/alexgdi) – work on organizing project infrastructure, external dependencies.
     * [Shoker](https://github.com/ShokerStlk) – contributing new features, bug fixing.
@@ -165,7 +163,7 @@ Thank you for your support!
     * [tamlin-mike](https://github.com/tamlin-mike) – work on the build system.
     * [Vincent](https://github.com/0xBADEAFFE) – work on the Linux port.
     * [abramcumner](https://github.com/abramcumner) – useful fixes and additions.
-    * [Morrey](https://github.com/morrey) (nouverbe, [viventaje](https://github.com/viventaje)) – work on Clear Sky support and his Return to Clear Sky mod, and work on DX12 support.
+    * [Morrey](https://github.com/morrey) (nouverbe, [viventaje](https://github.com/viventaje)) – work on DX12 renderer, Clear Sky support and his Return to Clear Sky mod.
     * [avoitishin](https://github.com/avoitishin) – work on scripting features expansion, other improvements and fixes.
   * Financial supporters:
     * [nitrocaster](https://github.com/nitrocaster), Lukas Friedrich, Luke Jones, NekoIt, Igor Polyakov,
@@ -174,7 +172,8 @@ Thank you for your support!
     * Valevicor, Nac, Midiy, Vadim Balashov, Jacob Arms,
     * CatWMuttonChops, Reed777, Interpreter_, nexusasx10, [Egor Olefirenko](https://github.com/olefirenque),
     * Igor Zharenko, SLF, Dmitriy Terletskiy, Alex Brodskiy, Neizvestniy Chelovek,
-    * LinuxNerd, [tyabus](https://github.com/tyabus), [Sevenfortyseven](https://github.com/Sevenfortyseven)
+    * LinuxNerd, [tyabus](https://github.com/tyabus), [Sevenfortyseven](https://github.com/Sevenfortyseven), 777yur0k, ItzVladik,
+    * @psistore, @forealdo25, Tech Racoon
 * Particular projects and their contributors:
   * [Oxygen](https://github.com/xrOxygen) – for being our friends and giving tips and help with new features, optimizations, bug fixes, etc.
   * [Shoker Weapon Mod](https://github.com/ShokerStlk/xray-16-SWM) – for first introducing 3D (PiP) scopes and implementing new features to overall improve the weaponry of the game.

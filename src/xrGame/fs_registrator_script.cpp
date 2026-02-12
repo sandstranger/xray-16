@@ -1,6 +1,8 @@
 #include "pch_script.h"
+
 #include "xrCore/LocatorAPI.h"
-#include "xrScriptEngine/ScriptExporter.hpp"
+
+#include "base_client_classes_wrappers.h"
 
 LPCSTR get_file_age_str(CLocatorAPI* fs, LPCSTR nm);
 CLocatorAPI* getFS() { return &FS; }
@@ -13,7 +15,7 @@ LPCSTR update_path_script(CLocatorAPI* fs, LPCSTR initial, LPCSTR src)
     convert_path_separators(temp);
 #endif
     temp_2 = temp;
-    return *temp_2;
+    return temp_2.c_str();
 }
 
 //Alundaio: Set flag to rescan all files in path
@@ -175,7 +177,7 @@ LPCSTR get_file_age_str(CLocatorAPI* fs, LPCSTR nm)
     return asctime(newtime);
 }
 
-SCRIPT_EXPORT(fs_registrator, (),
+void fs_registrator::script_register(lua_State* luaState)
 {
     using namespace luabind;
 
@@ -281,5 +283,6 @@ SCRIPT_EXPORT(fs_registrator, (),
             .def("file_list_open", &file_list_open_script_2)
             .def("file_list_open_ex", &file_list_open_ex),
 
-        def("getFS", getFS)];
-});
+        def("getFS", getFS)
+    ];
+}

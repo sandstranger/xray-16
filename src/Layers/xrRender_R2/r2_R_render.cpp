@@ -329,7 +329,6 @@ void CRender::Render()
     }
 
     r_rain.sync();
-    RCache.ClearRT(Target->rt_Accumulator, {});
 
     // Directional light - fucking sun
     {
@@ -381,9 +380,6 @@ void CRender::Render()
         PIX_EVENT(DEFER_LIGHT_COMBINE);
         Target->phase_combine();
     }
-
-    if (Details)
-        Details->details_clear();
 
     VERIFY(dsgraph.mapDistort.empty());
 }

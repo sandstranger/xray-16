@@ -7,15 +7,16 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #include "pch_script.h"
+
+#include "xrScriptEngine/script_engine.hpp"
+
 #include "ef_storage.h"
 #include "ai_space.h"
 #include "script_game_object.h"
 #include "script_game_object_impl.h"
 #include "entity_alive.h"
-#include "xrScriptEngine/script_engine.hpp"
 #include "ef_base.h"
 #include "xrServer_Objects_ALife.h"
-#include "xrScriptEngine/ScriptExporter.hpp"
 
 CEF_Storage* ef_storage() { return (&ai().ef_storage()); }
 float evaluate(CEF_Storage* ef_storage, LPCSTR function, CScriptGameObject* _0, CScriptGameObject* _1,
@@ -34,7 +35,7 @@ float evaluate(CEF_Storage* ef_storage, LPCSTR function, CScriptGameObject* _0, 
     if (_0 && !ef_storage->non_alife().member())
     {
         GEnv.ScriptEngine->script_log(
-            LuaMessageType::Error, "object %s is not herited from CSE_ALifeSchedulable!", *_0->cName());
+            LuaMessageType::Error, "object %s is not herited from CSE_ALifeSchedulable!", _0->cName().c_str());
         return (0.f);
     }
 
@@ -42,7 +43,7 @@ float evaluate(CEF_Storage* ef_storage, LPCSTR function, CScriptGameObject* _0, 
     if (_1 && !ef_storage->non_alife().enemy())
     {
         GEnv.ScriptEngine->script_log(
-            LuaMessageType::Error, "object %s is not herited from CSE_ALifeSchedulable!", *_1->cName());
+            LuaMessageType::Error, "object %s is not herited from CSE_ALifeSchedulable!", _1->cName().c_str());
         return (0.f);
     }
 
@@ -117,7 +118,7 @@ float evaluate(CEF_Storage* ef_storage, LPCSTR function, CSE_ALifeObject* _0)
     return (evaluate(ef_storage, function, _0, 0, 0, 0));
 }
 
-SCRIPT_EXPORT(CEF_Storage, (),
+void CEF_Storage::script_register(lua_State* luaState)
 {
     using namespace luabind;
 
@@ -135,4 +136,4 @@ SCRIPT_EXPORT(CEF_Storage, (),
             .def("evaluate", (float (*)(CEF_Storage*, LPCSTR, CSE_ALifeObject*, CSE_ALifeObject*, CSE_ALifeObject*))(&evaluate))
             .def("evaluate", (float (*)(CEF_Storage*, LPCSTR, CSE_ALifeObject*, CSE_ALifeObject*, CSE_ALifeObject*, CSE_ALifeObject*))(&evaluate))
     ];
-});
+}

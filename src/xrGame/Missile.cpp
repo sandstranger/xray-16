@@ -143,8 +143,8 @@ void CMissile::spawn_fake_missile()
 
     if (!getDestroy())
     {
-        CSE_Abstract* object = Level().spawn_item(
-            *cNameSect(), Position(), (GEnv.isDedicatedServer) ? u32(-1) : ai_location().level_vertex_id(), ID(), true);
+        CSE_Abstract* object = Level().spawn_item(cNameSect().c_str(), Position(),
+            GEnv.isDedicatedServer ? u32(-1) : ai_location().level_vertex_id(), ID(), true);
 
         CSE_ALifeObject* alife_object = smart_cast<CSE_ALifeObject*>(object);
         VERIFY(alife_object);
@@ -392,13 +392,9 @@ void CMissile::UpdateXForm()
             return;
 
         const CInventoryOwner* parent = smart_cast<const CInventoryOwner*>(E);
-        if (parent && parent->use_simplified_visual())
+        if (parent && parent->attached(this))
             return;
 
-        if (parent->attached(this))
-            return;
-
-        VERIFY(E);
         IKinematics* V = smart_cast<IKinematics*>(E->Visual());
         VERIFY(V);
 

@@ -11,9 +11,8 @@
 #include "xrNetServer/NET_Messages.h"
 
 #include "xrPhysics/IPHWorld.h"
-
-#include "PHCommander.h"
 #include "physics_game.h"
+
 extern pureFrame* g_pNetProcessor;
 
 bool CLevel::net_Start_client(const char* options) { return false; }
@@ -26,8 +25,8 @@ bool CLevel::net_start_client1()
     // name_of_server
     string64 name_of_server = "";
     //	xr_strcpy						(name_of_server,*m_caClientOptions);
-    if (strchr(*m_caClientOptions, '/'))
-        strncpy_s(name_of_server, *m_caClientOptions, strchr(*m_caClientOptions, '/') - *m_caClientOptions);
+    if (strchr(m_caClientOptions.c_str(), '/'))
+        strncpy_s(name_of_server, m_caClientOptions.c_str(), strchr(m_caClientOptions.c_str(), '/') - m_caClientOptions.c_str());
 
     if (strchr(name_of_server, '/'))
         *strchr(name_of_server, '/') = 0;
@@ -60,7 +59,7 @@ bool CLevel::net_start_client2()
         }
     }
 
-    connected_to_server = Connect2Server(*m_caClientOptions);
+    connected_to_server = Connect2Server(m_caClientOptions.c_str());
 
     return true;
 }
@@ -138,12 +137,9 @@ bool CLevel::net_start_client4()
 
         // Send physics to single or multithreaded mode
 
-        create_physics_world(!!psDeviceFlags.test(mtPhysics), &ObjectSpace, &Objects);
+        create_physics_world(psDeviceFlags.test(mtPhysics), &ObjectSpace, &Objects);
 
         R_ASSERT(physics_world());
-
-        m_ph_commander_physics_worldstep = xr_new<CPHCommander>();
-        physics_world()->set_update_callback(m_ph_commander_physics_worldstep);
 
         physics_world()->set_default_contact_shotmark(ContactShotMark);
         physics_world()->set_default_character_contact_shotmark(CharacterContactShotMark);

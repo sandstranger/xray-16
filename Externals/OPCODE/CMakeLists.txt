@@ -1,13 +1,4 @@
-if (STATIC_BUILD)
-    add_library(xrOPCODE STATIC)
-
-    target_compile_definitions(xrOPCODE
-        PRIVATE
-        OPCODE_STATIC
-    )
-else()
-    add_library(xrOPCODE SHARED)
-endif()
+add_library(xrOPCODE)
 
 target_sources(xrOPCODE PRIVATE
     OPC_AABBCollider.cpp
@@ -87,13 +78,14 @@ target_link_libraries(xrOPCODE
 )
 
 target_compile_definitions(xrOPCODE
+    PUBLIC
+    $<$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>:OPCODE_STATIC>
     PRIVATE
-    OPCODE_EXPORTS
+    $<$<BOOL:${BUILD_SHARED_LIBS}>:OPCODE_EXPORTS>
 )
 
 set_target_properties(xrOPCODE PROPERTIES
     PREFIX ""
-    POSITION_INDEPENDENT_CODE ON
 )
 
 target_precompile_headers(xrOPCODE
@@ -101,10 +93,8 @@ target_precompile_headers(xrOPCODE
     pch.hpp
 )
 
-if (NOT ANDROID)
-if (NOT STATIC_BUILD)
+if (BUILD_SHARED_LIBS AND NOT ANDROID)
     install(TARGETS xrOPCODE LIBRARY
         DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     )
 endif()
-endif ()

@@ -69,4 +69,7 @@ public:
 
 protected:
     CUIXml m_xml;
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION();
 };

@@ -1,9 +1,4 @@
-if (STATIC_BUILD)
-    add_library(xrGameSpy STATIC)
-else()
-    add_library(xrGameSpy SHARED)
-endif()
-
+add_library(xrGameSpy)
 
 target_sources_grouped(
     TARGET xrGameSpy
@@ -67,17 +62,15 @@ target_compile_definitions(xrGameSpy
 
 set_target_properties(xrGameSpy PROPERTIES
     PREFIX ""
-    POSITION_INDEPENDENT_CODE ON
 )
 
 target_precompile_headers(xrGameSpy
     PRIVATE
     stdafx.h
 )
-if (NOT ANDROID)
-if (NOT STATIC_BUILD)
+
+if (BUILD_SHARED_LIBS AND NOT ANDROID)
     install(TARGETS xrGameSpy LIBRARY
         DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     )
 endif()
-endif ()

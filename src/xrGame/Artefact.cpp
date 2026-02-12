@@ -72,7 +72,9 @@ void CArtefact::Load(LPCSTR section)
 
     if (pSettings->section_exist(pSettings->r_string(section, "hit_absorbation_sect")))
     {
-        m_ArtefactHitImmunities.LoadImmunities(pSettings->r_string(section, "hit_absorbation_sect"), pSettings);
+        // SOC vs CS/COP are inverted, convert to CS/COP format.
+        const bool is_soc = GMLib.GetLibraryVersion() <= GAMEMTL_VERSION_SOC;
+        m_ArtefactHitImmunities.LoadImmunities(pSettings->r_string(section, "hit_absorbation_sect"), pSettings, is_soc);
     }
     m_bCanSpawnZone = !!pSettings->line_exist("artefact_spawn_zones", section);
     m_af_rank = pSettings->read_if_exists<u8>(section, "af_rank", 0);
@@ -340,15 +342,9 @@ void CArtefact::UpdateXForm()
 
         // Get access to entity and its visual
         CEntityAlive* E = smart_cast<CEntityAlive*>(H_Parent());
-
         if (!E)
             return;
 
-        const CInventoryOwner* parent = smart_cast<const CInventoryOwner*>(E);
-        if (parent && parent->use_simplified_visual())
-            return;
-
-        VERIFY(E);
         IKinematics* V = smart_cast<IKinematics*>(E->Visual());
         VERIFY(V);
         if (CAttachableItem::enabled())

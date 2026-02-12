@@ -30,7 +30,7 @@
 #define BLEND_INC_SPEED 8.0f
 #define BLEND_DEC_SPEED 4.0f
 
-extern ENGINE_API int ps_disable_lens_flare;
+int ps_disable_lens_flare = 0;
 
 //------------------------------------------------------------------------------
 void CLensFlareDescriptor::SetSource(float fRadius, bool ign_color, pcstr tex_name, pcstr sh_name)
@@ -148,10 +148,10 @@ CLensFlareDescriptor::CLensFlareDescriptor(shared_str sect, CInifile const* pIni
 void CLensFlareDescriptor::OnDeviceCreate()
 {
     // shaders
-    m_Gradient.m_pRender->CreateShader(*m_Gradient.shader, *m_Gradient.texture);
-    m_Source.m_pRender->CreateShader(*m_Source.shader, *m_Source.texture);
+    m_Gradient.m_pRender->CreateShader(m_Gradient.shader.c_str(), m_Gradient.texture.c_str());
+    m_Source.m_pRender->CreateShader(m_Source.shader.c_str(), m_Source.texture.c_str());
     for (const auto& flare : m_Flares)
-        flare.m_pRender->CreateShader(*flare.shader, *flare.texture);
+        flare.m_pRender->CreateShader(flare.shader.c_str(), flare.texture.c_str());
 }
 
 void CLensFlareDescriptor::OnDeviceDestroy()

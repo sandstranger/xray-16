@@ -179,6 +179,9 @@ public:
     virtual ~CSE_Shape();
     virtual IServerEntityShape* shape() = 0;
     virtual void assign_shapes(CShapeData::shape_def* shapes, u32 cnt);
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION();
 };
 
 class CSE_Spectator : public CSE_Abstract
@@ -194,6 +197,9 @@ public:
     virtual void STATE_Read(NET_Packet& P, u16 size);
     virtual void STATE_Write(NET_Packet& P);
     SERVER_ENTITY_EDITOR_METHODS
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION(CSE_Abstract);
 };
 
 class CSE_Temporary : public CSE_Abstract
@@ -209,6 +215,9 @@ public:
     virtual void STATE_Read(NET_Packet& P, u16 size);
     virtual void STATE_Write(NET_Packet& P);
     SERVER_ENTITY_EDITOR_METHODS
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION(CSE_Abstract);
 };
 
 class CSE_PHSkeleton
@@ -242,6 +251,9 @@ public:
     virtual void STATE_Read(NET_Packet& P, u16 size);
     virtual void STATE_Write(NET_Packet& P);
     SERVER_ENTITY_EDITOR_METHODS
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION();
 };
 
 class CSE_AbstractVisual : public CSE_Abstract, public CSE_Visual
@@ -251,14 +263,17 @@ public:
     using inherited2 = CSE_Visual;
 
     CSE_AbstractVisual(LPCSTR caSection);
-    virtual ~CSE_AbstractVisual();
+    virtual             ~CSE_AbstractVisual();
     virtual CSE_Visual* visual();
-    LPCSTR getStartupAnimation();
-    virtual void UPDATE_Read(NET_Packet& P);
-    virtual void UPDATE_Write(NET_Packet& P);
-    virtual void STATE_Read(NET_Packet& P, u16 size);
-    virtual void STATE_Write(NET_Packet& P);
+    pcstr               getStartupAnimation() const;
+    virtual void        UPDATE_Read(NET_Packet& P);
+    virtual void        UPDATE_Write(NET_Packet& P);
+    virtual void        STATE_Read(NET_Packet& P, u16 size);
+    virtual void        STATE_Write(NET_Packet& P);
     SERVER_ENTITY_EDITOR_METHODS
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION(CSE_Visual, CSE_Abstract);
 };
 
 #ifndef AI_COMPILER

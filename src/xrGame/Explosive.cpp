@@ -321,8 +321,6 @@ float CExplosive::TestPassEffect(const Fvector& source_p, const Fvector& dir, fl
         return dist_factor;
     return shoot_factor * dist_factor;
 }
-
-extern ENGINE_API Fvector4 ps_ssfx_int_grass_params_2;
 void CExplosive::Explode()
 {
     VERIFY(0xffff != Initiator());
@@ -341,9 +339,6 @@ void CExplosive::Explode()
         DBG_DrawPoint(pos, 0.3f, color_xrgb(255, 0, 0));
     }
 #endif
-    // Interactive Grass FX
-    g_pGamePersistent->GrassBendersAddExplosion(cast_game_object()->ID(), pos, Fvector().set(0, -99, 0), 1.33f, ps_ssfx_int_grass_params_2.y, ps_ssfx_int_grass_params_2.x, m_fBlastRadius * 2.0f);
-
     //	Msg("---------CExplosive Explode [%d] frame[%d]",cast_game_object()->ID(), Device.dwFrame);
     OnBeforeExplosion();
 
@@ -363,7 +358,7 @@ void CExplosive::Explode()
     explode_matrix.c.set(pos);
 
     CParticlesObject* pStaticPG;
-    pStaticPG = CParticlesObject::Create(*m_sExplodeParticles, !m_bDynamicParticles);
+    pStaticPG = CParticlesObject::Create(m_sExplodeParticles.c_str(), !m_bDynamicParticles);
     if (m_bDynamicParticles)
         m_pExpParticle = pStaticPG;
     pStaticPG->UpdateParent(explode_matrix, vel);
@@ -393,8 +388,8 @@ void CExplosive::Explode()
         CCartridge cartridge;
         cartridge.param_s.kDist = 1.f;
         cartridge.param_s.kHit = 1.f;
-        //.		cartridge.param_s.kCritical			= 1.f;
         cartridge.param_s.kImpulse = 1.f;
+        cartridge.param_s.kPierce = 1.f;
         cartridge.param_s.kAP = 1.f;
         cartridge.param_s.fWallmarkSize = fWallmarkSize;
         cartridge.bullet_material_idx = GMLib.GetMaterialIdx(WEAPON_MATERIAL_NAME);

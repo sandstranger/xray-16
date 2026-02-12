@@ -9,11 +9,11 @@
 #include "xrPhysics/PhysicsExternalCommon.h"
 #include "PHSoundPlayer.h"
 #include "PhysicsShellHolder.h"
-#include "PHCommander.h"
+#include "xrPhysics/PHCommander.h"
 #include "xrPhysics/MathUtils.h"
 #include "xrPhysics/IPHWorld.h"
 
-#include "PHReqComparer.h"
+#include "xrPhysics/PHReqComparer.h"
 
 #include "Include/xrRender/FactoryPtr.h"
 #include "Include/xrRender/WallMarkArray.h"
@@ -254,7 +254,7 @@ void TContactShotMark(CDB::TRI* T, dContactGeom* c)
             {
                 SGameMtl* static_mtl = GMLib.GetMaterialByIdx(T->material);
                 VERIFY(static_mtl);
-                LPCSTR ps_name = *mtl_pair->CollideParticles[::Random.randI(0, mtl_pair->CollideParticles.size())];
+                LPCSTR ps_name = mtl_pair->CollideParticles[::Random.randI(0, mtl_pair->CollideParticles.size())].c_str();
                 play_particles<Pars>(vel_cret, data, c, b_invert_normal, static_mtl, ps_name);
             }
         }

@@ -1,11 +1,8 @@
 #pragma once
 
-#ifdef XRGAME_EXPORTS
-#include "xrUICore/XML/xrUIXmlParser.h"
-#else // XRGAME_EXPORTS
-#include "xrUIXmlParser.h"
 #include "Common/object_broker.h"
-#endif // XRGAME_EXPORTS
+
+#include "xrUICore/XML/xrUIXmlParser.h"
 
 // T_INIT -  класс где определена статическая InitXmlIdToIndex
 //          функция инициализации file_str и tag_name
@@ -90,7 +87,7 @@ const ITEM_DATA* CSXML_IdToIndex::GetById(const shared_str& str_id, bool no_asse
             Msg("[%d]=[%s]", i, *(*it).id);
 #endif
 
-        R_ASSERT3(no_assert, "item not found, id", *str_id);
+        R_ASSERT3(no_assert, "item not found, id", str_id.c_str());
         return nullptr;
     }
 

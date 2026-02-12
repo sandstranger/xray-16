@@ -84,6 +84,9 @@ public:
     virtual bool bfActive() = 0;
     virtual CSE_ALifeDynamicObject* tpfGetBestDetector() = 0;
 #endif
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION();
 };
 
 class CSE_ALifeGraphPoint : public CSE_Abstract
@@ -107,6 +110,9 @@ public:
     virtual void STATE_Read(NET_Packet& P, u16 size);
     virtual void STATE_Write(NET_Packet& P);
     SERVER_ENTITY_EDITOR_METHODS
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION(CSE_Abstract);
 };
 
 class CSE_ALifeObject : public CSE_Abstract, public CRandom
@@ -180,6 +186,9 @@ public:
     virtual void STATE_Read(NET_Packet& P, u16 size);
     virtual void STATE_Write(NET_Packet& P);
     SERVER_ENTITY_EDITOR_METHODS
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION(CSE_Abstract);
 };
 
 class CSE_ALifeGroupAbstract
@@ -210,6 +219,9 @@ public:
     virtual void STATE_Read(NET_Packet& P, u16 size);
     virtual void STATE_Write(NET_Packet& P);
     SERVER_ENTITY_EDITOR_METHODS
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION();
 };
 
 template <class __A>
@@ -315,6 +327,9 @@ public:
     virtual void STATE_Read(NET_Packet& P, u16 size);
     virtual void STATE_Write(NET_Packet& P);
     SERVER_ENTITY_EDITOR_METHODS
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION(CSE_ALifeObject);
 };
 
 class CSE_ALifeDynamicObjectVisual : public CSE_ALifeDynamicObject, public CSE_Visual
@@ -331,6 +346,9 @@ public:
     virtual void STATE_Read(NET_Packet& P, u16 size);
     virtual void STATE_Write(NET_Packet& P);
     SERVER_ENTITY_EDITOR_METHODS
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION(CSE_ALifeDynamicObject, CSE_Visual);
 };
 
 class CSE_ALifePHSkeletonObject : public CSE_ALifeDynamicObjectVisual, public CSE_PHSkeleton
@@ -351,6 +369,9 @@ public:
     virtual void STATE_Read(NET_Packet& P, u16 size);
     virtual void STATE_Write(NET_Packet& P);
     SERVER_ENTITY_EDITOR_METHODS
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION(CSE_ALifeDynamicObjectVisual, CSE_PHSkeleton);
 };
 
 class CSE_ALifeSpaceRestrictor : public CSE_ALifeDynamicObject, public CSE_Shape
@@ -371,6 +392,9 @@ public:
     virtual void STATE_Read(NET_Packet& P, u16 size);
     virtual void STATE_Write(NET_Packet& P);
     SERVER_ENTITY_EDITOR_METHODS
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION(CSE_ALifeDynamicObject, CSE_Shape);
 };
 
 class CSE_ALifeLevelChanger : public CSE_ALifeSpaceRestrictor
@@ -393,6 +417,9 @@ public:
     virtual void STATE_Read(NET_Packet& P, u16 size);
     virtual void STATE_Write(NET_Packet& P);
     SERVER_ENTITY_EDITOR_METHODS
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION(CSE_ALifeSpaceRestrictor);
 };
 
 class CSE_ALifeSmartZone : public CSE_ALifeSpaceRestrictor, public CSE_ALifeSchedulable
@@ -431,6 +458,9 @@ public:
     virtual void STATE_Read(NET_Packet& P, u16 size);
     virtual void STATE_Write(NET_Packet& P);
     SERVER_ENTITY_EDITOR_METHODS
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION(CSE_ALifeSpaceRestrictor, CSE_ALifeSchedulable);
 };
 
 class CSE_ALifeObjectPhysic : public CSE_ALifeDynamicObjectVisual, public CSE_PHSkeleton
@@ -497,6 +527,9 @@ public:
     virtual void STATE_Read(NET_Packet& P, u16 size);
     virtual void STATE_Write(NET_Packet& P);
     SERVER_ENTITY_EDITOR_METHODS
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION(CSE_ALifeDynamicObjectVisual, CSE_PHSkeleton);
 };
 
 class CSE_ALifeObjectHangingLamp : public CSE_ALifeDynamicObjectVisual, public CSE_PHSkeleton
@@ -563,6 +596,9 @@ public:
     virtual void STATE_Read(NET_Packet& P, u16 size);
     virtual void STATE_Write(NET_Packet& P);
     SERVER_ENTITY_EDITOR_METHODS
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION(CSE_ALifeDynamicObjectVisual, CSE_PHSkeleton);
 };
 
 class CSE_ALifeObjectProjector : public CSE_ALifeDynamicObjectVisual
@@ -578,6 +614,9 @@ public:
     virtual void STATE_Read(NET_Packet& P, u16 size);
     virtual void STATE_Write(NET_Packet& P);
     SERVER_ENTITY_EDITOR_METHODS
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION(CSE_ALifeDynamicObjectVisual);
 };
 
 class CSE_ALifeHelicopter : public CSE_ALifeDynamicObjectVisual, public CSE_Motion, public CSE_PHSkeleton
@@ -600,6 +639,9 @@ public:
     virtual void STATE_Read(NET_Packet& P, u16 size);
     virtual void STATE_Write(NET_Packet& P);
     SERVER_ENTITY_EDITOR_METHODS
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION(CSE_ALifeDynamicObjectVisual, CSE_Motion, CSE_PHSkeleton);
 };
 
 class CSE_ALifeCar : public CSE_ALifeDynamicObjectVisual, public CSE_PHSkeleton
@@ -640,6 +682,9 @@ public:
     virtual void STATE_Read(NET_Packet& P, u16 size);
     virtual void STATE_Write(NET_Packet& P);
     SERVER_ENTITY_EDITOR_METHODS
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION(CSE_ALifeDynamicObjectVisual, CSE_PHSkeleton);
 };
 
 class CSE_ALifeObjectBreakable : public CSE_ALifeDynamicObjectVisual
@@ -657,6 +702,9 @@ public:
     virtual void STATE_Read(NET_Packet& P, u16 size);
     virtual void STATE_Write(NET_Packet& P);
     SERVER_ENTITY_EDITOR_METHODS
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION(CSE_ALifeDynamicObjectVisual);
 };
 
 class CSE_ALifeObjectClimable : public CSE_Shape, public CSE_ALifeDynamicObject
@@ -680,6 +728,9 @@ public:
     virtual void STATE_Read(NET_Packet& P, u16 size);
     virtual void STATE_Write(NET_Packet& P);
     SERVER_ENTITY_EDITOR_METHODS
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION(CSE_Shape, CSE_Abstract);
 };
 
 class CSE_ALifeMountedWeapon : public CSE_ALifeDynamicObjectVisual
@@ -694,6 +745,9 @@ public:
     virtual void STATE_Read(NET_Packet& P, u16 size);
     virtual void STATE_Write(NET_Packet& P);
     SERVER_ENTITY_EDITOR_METHODS
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION(CSE_ALifeDynamicObjectVisual);
 };
 
 class CSE_ALifeStationaryMgun : public CSE_ALifeDynamicObjectVisual
@@ -728,6 +782,9 @@ public:
     virtual void STATE_Read(NET_Packet& P, u16 size);
     virtual void STATE_Write(NET_Packet& P);
     SERVER_ENTITY_EDITOR_METHODS
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION(CSE_ALifeSpaceRestrictor);
 };
 
 class CSE_ALifeInventoryBox : public CSE_ALifeDynamicObjectVisual
@@ -750,6 +807,9 @@ public:
     virtual void STATE_Read(NET_Packet& P, u16 size);
     virtual void STATE_Write(NET_Packet& P);
     SERVER_ENTITY_EDITOR_METHODS
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION(CSE_ALifeDynamicObjectVisual);
 };
 
 #pragma warning(pop)

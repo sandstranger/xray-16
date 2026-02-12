@@ -36,6 +36,10 @@
       <DelayLoadDLLs>AnselSDK$(PlatformArchitecture).dll;</DelayLoadDLLs>
       <AdditionalDependencies>AnselSDK$(PlatformArchitecture).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <Lib>
+      <DelayLoadDLLs>AnselSDK$(PlatformArchitecture).dll;</DelayLoadDLLs>
+      <AdditionalDependencies>AnselSDK$(PlatformArchitecture).lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="$(xrExternals)GameSpy\src\GameSpy\md5.h" />
@@ -59,6 +63,7 @@
     <ClInclude Include="..\xrServerEntities\object_factory_impl.h" />
     <ClInclude Include="..\xrServerEntities\object_factory_inline.h" />
     <ClInclude Include="..\xrServerEntities\object_factory_space.h" />
+    <ClInclude Include="..\xrServerEntities\object_factory_spawner.h" />
     <ClInclude Include="..\xrServerEntities\object_item_abstract.h" />
     <ClInclude Include="..\xrServerEntities\object_item_abstract_inline.h" />
     <ClInclude Include="..\xrServerEntities\object_item_client_server.h" />
@@ -431,6 +436,7 @@
     <ClInclude Include="ai\Monsters\States\monster_state_home_point_danger_inline.h" />
     <ClInclude Include="ai\Monsters\States\monster_state_home_point_rest.h" />
     <ClInclude Include="ai\Monsters\States\monster_state_home_point_rest_inline.h" />
+    <ClInclude Include="ai\monsters\states\monster_state_move.h" />
     <ClInclude Include="ai\Monsters\States\monster_state_panic.h" />
     <ClInclude Include="ai\Monsters\States\monster_state_panic_inline.h" />
     <ClInclude Include="ai\Monsters\States\monster_state_panic_run.h" />
@@ -918,7 +924,6 @@
     <ClInclude Include="PdaMsg.h" />
     <ClInclude Include="pda_space.h" />
     <ClInclude Include="PHCollisionDamageReceiver.h" />
-    <ClInclude Include="PHCommander.h" />
     <ClInclude Include="PHDebug.h" />
     <ClInclude Include="PHDestroyable.h" />
     <ClInclude Include="PHDestroyableNotificate.h" />
@@ -928,22 +933,15 @@
     <ClInclude Include="PhraseDialogDefs.h" />
     <ClInclude Include="PhraseDialogManager.h" />
     <ClInclude Include="PhraseScript.h" />
-    <ClInclude Include="PHReqComparer.h" />
-    <ClInclude Include="PHScriptCall.h" />
     <ClInclude Include="PHShellCreator.h" />
-    <ClInclude Include="PHSimpleCalls.h" />
     <ClInclude Include="PHSkeleton.h" />
     <ClInclude Include="PHSoundPlayer.h" />
     <ClInclude Include="PhysicObject.h" />
     <ClInclude Include="PhysicsGamePars.h" />
     <ClInclude Include="PhysicsShellHolder.h" />
     <ClInclude Include="PhysicsSkeletonObject.h" />
-    <ClInclude Include="physics_element_scripted.h" />
     <ClInclude Include="physics_game.h" />
-    <ClInclude Include="physics_joint_scripted.h" />
     <ClInclude Include="physics_shell_animated.h" />
-    <ClInclude Include="physics_shell_scripted.h" />
-    <ClInclude Include="physics_world_scripted.h" />
     <ClInclude Include="physic_item.h" />
     <ClInclude Include="physic_item_inline.h" />
     <ClInclude Include="player_account.h" />
@@ -1294,7 +1292,6 @@
     <ClInclude Include="ui\UILogsWnd.h" />
     <ClInclude Include="ui\UIMainIngameWnd.h" />
     <ClInclude Include="ui\UIMap.h" />
-    <ClInclude Include="ui\UIMapDesc.h" />
     <ClInclude Include="ui\UIMapFilters.h" />
     <ClInclude Include="ui\UIMapInfo.h" />
     <ClInclude Include="ui\UIMapLegend.h" />
@@ -1423,6 +1420,7 @@
       <PrecompiledHeaderFile>pch_script.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
+    <ClCompile Include="..\xrServerEntities\object_factory_spawner.cpp" />
     <ClCompile Include="..\xrServerEntities\object_item_script.cpp">
       <PrecompiledHeaderFile>pch_script.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
@@ -1470,10 +1468,6 @@
       <PrecompiledHeaderFile>pch_script.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
-    <ClCompile Include="..\xrServerEntities\script_sound_type_script.cpp">
-      <PrecompiledHeaderFile>pch_script.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
-    </ClCompile>
     <ClCompile Include="..\xrServerEntities\script_token_list.cpp" />
     <ClCompile Include="..\xrServerEntities\script_token_list_script.cpp">
       <PrecompiledHeaderFile>pch_script.h</PrecompiledHeaderFile>
@@ -1492,10 +1486,6 @@
       <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <ClCompile Include="..\xrServerEntities\xrServer_Objects_ALife_Items_script2.cpp">
-      <PrecompiledHeaderFile>pch_script.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
-    </ClCompile>
-    <ClCompile Include="..\xrServerEntities\xrServer_Objects_ALife_Items_script3.cpp">
       <PrecompiledHeaderFile>pch_script.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
@@ -1568,6 +1558,10 @@
     <ClCompile Include="ActorAnimation.cpp" />
     <ClCompile Include="ActorCameras.cpp" />
     <ClCompile Include="ActorCondition.cpp">
+      <PrecompiledHeaderFile>pch_script.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="ActorCondition_script.cpp">
       <PrecompiledHeaderFile>pch_script.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
@@ -2055,10 +2049,6 @@
       <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <ClCompile Include="console_commands_mp.cpp" />
-    <ClCompile Include="console_registrator_script.cpp">
-      <PrecompiledHeaderFile>pch_script.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
-    </ClCompile>
     <ClCompile Include="cover_evaluators.cpp" />
     <ClCompile Include="cover_manager.cpp" />
     <ClCompile Include="cover_point_script.cpp">
@@ -2142,10 +2132,6 @@
     </ClCompile>
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="EntityCondition.cpp" />
-    <ClCompile Include="EntityCondition_script.cpp">
-      <PrecompiledHeaderFile>pch_script.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
-    </ClCompile>
     <ClCompile Include="entity_alive.cpp">
       <PrecompiledHeaderFile>pch_script.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
@@ -2518,7 +2504,6 @@
       <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <ClCompile Include="PHCollisionDamageReceiver.cpp" />
-    <ClCompile Include="PHCommander.cpp" />
     <ClCompile Include="PHDebug.cpp" />
     <ClCompile Include="PHDestroyable.cpp" />
     <ClCompile Include="PHDestroyableNotificate.cpp" />
@@ -2538,16 +2523,7 @@
       <PrecompiledHeaderFile>pch_script.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
-    <ClCompile Include="PHScriptCall.cpp">
-      <PrecompiledHeaderFile>pch_script.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
-    </ClCompile>
     <ClCompile Include="PHShellCreator.cpp" />
-    <ClCompile Include="PHSimpleCalls.cpp" />
-    <ClCompile Include="PHSimpleCallsScript.cpp">
-      <PrecompiledHeaderFile>pch_script.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
-    </ClCompile>
     <ClCompile Include="PHSkeleton.cpp" />
     <ClCompile Include="PHSoundPlayer.cpp" />
     <ClCompile Include="PhysicObject.cpp">
@@ -2564,24 +2540,8 @@
       <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <ClCompile Include="PhysicsSkeletonObject.cpp" />
-    <ClCompile Include="physics_element_scripted.cpp">
-      <PrecompiledHeaderFile>pch_script.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
-    </ClCompile>
     <ClCompile Include="physics_game.cpp" />
-    <ClCompile Include="physics_joint_scripted.cpp">
-      <PrecompiledHeaderFile>pch_script.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
-    </ClCompile>
     <ClCompile Include="physics_shell_animated.cpp" />
-    <ClCompile Include="physics_shell_scripted.cpp">
-      <PrecompiledHeaderFile>pch_script.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
-    </ClCompile>
-    <ClCompile Include="physics_world_scripted.cpp">
-      <PrecompiledHeaderFile>pch_script.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
-    </ClCompile>
     <ClCompile Include="physic_item.cpp" />
     <ClCompile Include="player_account.cpp" />
     <ClCompile Include="player_hud.cpp" />
@@ -2744,10 +2704,6 @@
       <PrecompiledHeaderFile>pch_script.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
-    <ClCompile Include="script_lanim.cpp">
-      <PrecompiledHeaderFile>pch_script.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
-    </ClCompile>
     <ClCompile Include="script_monster_action.cpp" />
     <ClCompile Include="script_monster_action_script.cpp">
       <PrecompiledHeaderFile>pch_script.h</PrecompiledHeaderFile>
@@ -2779,10 +2735,6 @@
       <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <ClCompile Include="script_property_evaluator_wrapper.cpp">
-      <PrecompiledHeaderFile>pch_script.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
-    </ClCompile>
-    <ClCompile Include="script_render_device_script.cpp">
       <PrecompiledHeaderFile>pch_script.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
@@ -3205,7 +3157,6 @@
     <ClCompile Include="ui\UILogsWnd.cpp" />
     <ClCompile Include="ui\UIMainIngameWnd.cpp" />
     <ClCompile Include="ui\UIMap.cpp" />
-    <ClCompile Include="ui\UIMapDesc.cpp" />
     <ClCompile Include="ui\UIMapFilters.cpp" />
     <ClCompile Include="ui\UIMapInfo.cpp" />
     <ClCompile Include="ui\UIMapInfo_script.cpp">
@@ -3278,10 +3229,6 @@
     <ClCompile Include="ui\UIWarState.cpp" />
     <ClCompile Include="ui\UIWeightBar.cpp" />
     <ClCompile Include="ui\UIWheelMenu.cpp" />
-    <ClCompile Include="ui\UIWindow_script.cpp">
-      <PrecompiledHeaderFile>pch_script.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
-    </ClCompile>
     <ClCompile Include="ui\UIWpnParams.cpp">
       <PrecompiledHeaderFile>pch_script.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>

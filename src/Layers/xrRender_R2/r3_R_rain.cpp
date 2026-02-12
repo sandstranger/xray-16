@@ -50,10 +50,7 @@ static int facetable[6][4] =
 
 void render_rain::init()
 {
-    if (ps_ssfx_gloss_method == 0)
-        rain_factor = g_pGamePersistent->Environment().CurrentEnv.rain_density;
-    else
-        rain_factor = g_pGamePersistent->Environment().wetness_factor;
+    rain_factor = g_pGamePersistent->Environment().CurrentEnv.rain_density;
 
     o.active  = ps_r2_ls_flags.test(R3FLAG_DYN_WET_SURF);
     o.active &= rain_factor >= EPS_L;
@@ -88,10 +85,7 @@ void render_rain::calculate()
     // calculate view-frustum bounds in world space
     Fmatrix ex_project, ex_full, ex_full_inverse;
     {
-        float fRainFar = 250.f;
-        if (ps_ssfx_gloss_method == 0)
-            fRainFar = ps_r3_dyn_wet_surf_far;
-
+        const float fRainFar = ps_r3_dyn_wet_surf_far;
         ex_project.build_projection(deg2rad(Device.fFOV /* * Device.fASPECT*/), Device.fASPECT, VIEWPORT_NEAR, fRainFar);
         ex_full.mul(ex_project, Device.mView);
 #if defined(USE_DX11)
@@ -337,6 +331,12 @@ void render_rain::flush()
         RImplementation.release_context(context_id);
     }
 
+    if (!ps_r2_ls_flags.test(R3FLAG_DYN_WET_SURF))
+        return;
+
+    if (rain_factor < EPS_L)
+        return;
+
     auto& cmd_list_imm = RImplementation.get_imm_context().cmd_list;
 
 #if defined(USE_DX11)
@@ -351,18 +351,15 @@ void render_rain::flush()
     cmd_list_imm.set_xform_project(Device.mProject);
 
     // Accumulate
-    if (rain_factor >= EPS_L)
-    {
-        PIX_EVENT_CTX(cmd_list_imm, RainApply);
+    PIX_EVENT_CTX(cmd_list_imm, RainApply);
 
-        cmd_list_imm.set_pass_targets(
-            RImplementation.Target->rt_Color, /*rt_Normal*/
-            nullptr,
-            nullptr,
-            RImplementation.Target->rt_MSAADepth
-        );
-        RImplementation.Target->draw_rain(cmd_list_imm, RainLight);
-        RainLight.frame_render = Device.dwFrame;
-    }
+    cmd_list_imm.set_pass_targets(
+        RImplementation.Target->rt_Color, /*rt_Normal*/
+        nullptr,
+        nullptr,
+        RImplementation.Target->rt_MSAADepth
+    );
+    RImplementation.Target->draw_rain(cmd_list_imm, RainLight);
+    RainLight.frame_render = Device.dwFrame;
 }
 } // namespace xray::render::RENDER_NAMESPACE

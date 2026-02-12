@@ -111,7 +111,7 @@ void CAI_Stalker::reinit()
     //загрузка спецевической звуковой схемы для сталкера согласно m_SpecificCharacter
     sound().sound_prefix(SpecificCharacter().sound_voice_prefix());
 
-    LoadSounds(*cNameSect());
+    LoadSounds(cNameSect().c_str());
 
     m_pPhysics_support->in_Init();
 
@@ -292,17 +292,10 @@ void CAI_Stalker::reload(LPCSTR section)
     brain().setup(this);
 
     CCustomMonster::reload(section);
-    if (!already_dead())
-        CStepManager::reload(section);
-
-    //	if (!already_dead())
+    CStepManager::reload(section);
     CObjectHandler::reload(section);
-
-    if (!already_dead())
-        sight().reload(section);
-
-    if (!already_dead())
-        movement().reload(section);
+    sight().reload(section);
+    movement().reload(section);
 
     m_disp_walk_stand = pSettings->r_float(section, "disp_walk_stand");
     m_disp_walk_crouch = pSettings->r_float(section, "disp_walk_crouch");
@@ -315,11 +308,11 @@ void CAI_Stalker::reload(LPCSTR section)
 
     m_can_select_weapon = true;
 
-    LPCSTR queue_sect = READ_IF_EXISTS(pSettings, r_string, *cNameSect(), "fire_queue_section", nullptr);
+    LPCSTR queue_sect = READ_IF_EXISTS(pSettings, r_string, cNameSect().c_str(), "fire_queue_section", nullptr);
 
     if (!queue_sect || xr_strcmp(queue_sect, "") != 0 || !pSettings->section_exist(queue_sect))
     {
-        queue_sect = *cNameSect();
+        queue_sect = cNameSect().c_str();
     }
 
     const auto tryToRead = [&](pcstr lineToRead, u32 defaultValue) -> u32
@@ -617,7 +610,7 @@ bool CAI_Stalker::net_Spawn(CSE_Abstract* DC)
 
     if (SpecificCharacter().terrain_sect().size())
     {
-        movement().locations().Load(*SpecificCharacter().terrain_sect());
+        movement().locations().Load(SpecificCharacter().terrain_sect().c_str());
     }
 
     sight().update();
@@ -825,7 +818,7 @@ void CAI_Stalker::UpdateCL()
 {
     START_PROFILE("stalker")
     START_PROFILE("stalker/client_update")
-    VERIFY2(PPhysicsShell() || getEnabled(), *cName());
+    VERIFY2(PPhysicsShell() || getEnabled(), cName().c_str());
 
     if (g_Alive())
     {
@@ -914,7 +907,7 @@ void CAI_Stalker::shedule_Update(u32 DT)
 {
     START_PROFILE("stalker")
     START_PROFILE("stalker/schedule_update")
-    VERIFY2(getEnabled() || PPhysicsShell(), *cName());
+    VERIFY2(getEnabled() || PPhysicsShell(), cName().c_str());
 
     if (!CObjectHandler::planner().initialized())
     {
@@ -1199,9 +1192,6 @@ void CAI_Stalker::UpdateCamera()
 
 bool CAI_Stalker::can_attach(const CInventoryItem* inventory_item) const
 {
-    if (already_dead())
-        return (false);
-
     return (CObjectHandler::can_attach(inventory_item));
 }
 

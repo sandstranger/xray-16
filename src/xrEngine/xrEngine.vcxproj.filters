@@ -578,9 +578,6 @@
     <ClCompile Include="editor_base_input.cpp">
       <Filter>editor</Filter>
     </ClCompile>
-    <ClCompile Include="IGame_Persistent_Effects.cpp">
-      <Filter>Game API\Objects</Filter>
-    </ClCompile>
     <ClCompile Include="device.cpp">
       <Filter>Render\Execution &amp; 3D</Filter>
     </ClCompile>
@@ -614,6 +611,9 @@
     <ClCompile Include="Environment_editor.cpp">
       <Filter>Game API\Environment</Filter>
     </ClCompile>
+    <ClCompile Include="XR_IOConsole_script.cpp">
+      <Filter>Engine\Console</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ClientServer.txt" />
@@ -623,9 +623,6 @@
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="..\OpenXRay.natvis" />
-  </ItemGroup>
-  <ItemGroup>
-    <CopyFileToFolders Include="..\..\sdk\binaries\$(PlatformShortName)\discord_game_sdk.dll" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

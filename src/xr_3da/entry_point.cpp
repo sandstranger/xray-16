@@ -6,10 +6,9 @@
 
 #if defined(ANDROID)
 #include "SDL_main.h"
-#include <unistd.h>
 #endif
 
-#if defined(XR_PLATFORM_LINUX) || defined(XR_PLATFORM_BSD) || defined(XR_PLATFORM_APPLE)
+#if !defined(XR_PLATFORM_WINDOWS)
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -82,7 +81,6 @@ int APIENTRY WinMain(HINSTANCE inst, HINSTANCE prevInst, char* commandLine, int 
 
     return result;
 }
-#elif defined(XR_PLATFORM_LINUX) || defined(XR_PLATFORM_BSD) || defined(XR_PLATFORM_APPLE) || defined(ANDROID)
 #if ANDROID
 int SDL_main(int argc, char *argv[])
 #else
@@ -100,9 +98,9 @@ int main(int argc, char *argv[])
         int i;
         if(argc > 1)
         {
-            size_t sum = 0;
+            size_t sum = 1;
             for(i = 1; i < argc; ++i)
-                sum += strlen(argv[i]) + strlen(" \0");
+                sum += strlen(argv[i]) + 1;
 
             commandLine = (char*)xr_malloc(sum);
             ZeroMemory(commandLine, sum);
@@ -140,6 +138,4 @@ int main(int argc, char *argv[])
 
     return result;
 }
-#else
-#   error Select or add an implementation for your platform
 #endif

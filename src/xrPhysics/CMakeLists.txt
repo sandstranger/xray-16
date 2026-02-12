@@ -1,8 +1,4 @@
-if (STATIC_BUILD)
-    add_library(xrPhysics STATIC)
-else()
-    add_library(xrPhysics SHARED)
-endif()
+add_library(xrPhysics)
 
 target_sources_grouped(
     TARGET xrPhysics
@@ -74,6 +70,7 @@ target_sources_grouped(
     IPhysicsShellHolder.h
     PhysicsShell.cpp
     PhysicsShell.h
+    PhysicsShellScript.cpp
 )
 
 target_sources_grouped(
@@ -165,6 +162,20 @@ target_sources_grouped(
 
 target_sources_grouped(
     TARGET xrPhysics
+    NAME "Physics\\Base\\Objects\\PHCommander"
+    FILES
+    PHCommander.cpp
+    PHCommander.h
+    PHReqComparer.h
+    PHScriptCall.cpp
+    PHScriptCall.h
+    PHSimpleCalls.cpp
+    PHSimpleCalls.h
+    PHSimpleCallsScript.cpp
+)
+
+target_sources_grouped(
+    TARGET xrPhysics
     NAME "Physics\\Base\\Objects\\PHIsland"
     FILES
     PHIsland.cpp
@@ -237,15 +248,6 @@ target_sources_grouped(
     PHSimpleCharacter.cpp
     PHSimpleCharacter.h
     PHSimpleCharacterInline.h
-)
-
-target_sources_grouped(
-    TARGET xrPhysics
-    NAME "Physics\\Base\\Objects\\script"
-    FILES
-    iphysics_scripted.h
-    physics_scripted.cpp
-    physics_scripted.h
 )
 
 target_sources_grouped(
@@ -328,6 +330,7 @@ target_sources_grouped(
     PHItemList.h
     PHWorld.cpp
     PHWorld.h
+    PHWorldScript.cpp
     Physics.cpp
     Physics.h
 )
@@ -379,7 +382,8 @@ target_sources_grouped(
     tri-colliderknoopc/dTriSphere.cpp
     tri-colliderknoopc/dTriSphere.h
     tri-colliderknoopc/dxTriList.h
-    tri-colliderknoopc/TriPrimitiveCollideClassDef.h)
+    tri-colliderknoopc/TriPrimitiveCollideClassDef.h
+)
 
 target_sources_grouped(
     TARGET xrPhysics
@@ -388,7 +392,6 @@ target_sources_grouped(
     collisiondamagereceiver.cpp
     icollisiondamagereceiver.h
 )
-
 
 target_include_directories(xrPhysics
     PUBLIC
@@ -423,17 +426,15 @@ target_compile_definitions(xrPhysics
 
 set_target_properties(xrPhysics PROPERTIES
     PREFIX ""
-    POSITION_INDEPENDENT_CODE ON
 )
 
 target_precompile_headers(xrPhysics
     PRIVATE
     StdAfx.h
 )
-if (NOT ANDROID)
-if (NOT STATIC_BUILD)
+
+if (BUILD_SHARED_LIBS AND NOT ANDROID)
     install(TARGETS xrPhysics LIBRARY
         DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     )
 endif()
-endif ()

@@ -54,9 +54,9 @@ void Fvisual::Load(const char* N, IReader* data, u32 dwFlags)
 #endif
         // check for fast-vertices
 #if RENDER == R_R1
-        if (data->find_chunk(OGF_FASTPATH) && ps_r1_force_geomx)
+        if (RImplementation.IsFastGeomSupported() && data->find_chunk(OGF_FASTPATH) && ps_r1_force_geomx)
 #else
-        if (data->find_chunk(OGF_FASTPATH))
+        if (RImplementation.IsFastGeomSupported() && data->find_chunk(OGF_FASTPATH))
 #endif
         {
             destructor<IReader> geomdef(data->open_chunk(OGF_FASTPATH));
@@ -81,7 +81,7 @@ void Fvisual::Load(const char* N, IReader* data, u32 dwFlags)
             ID = def().r_u32();
             m_fast->iBase = def().r_u32();
             m_fast->iCount = def().r_u32();
-            m_fast->dwPrimitives = iCount / 3;
+            m_fast->dwPrimitives = m_fast->iCount / 3;
 
             VERIFY(nullptr == m_fast->p_rm_Indices);
             m_fast->p_rm_Indices = RImplementation.getIB(ID, true);

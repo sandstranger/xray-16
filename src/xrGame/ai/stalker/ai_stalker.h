@@ -403,8 +403,7 @@ public:
     IC Fvector weapon_shot_effector_direction(const Fvector& current) const;
     virtual void UpdateCamera();
     virtual bool can_attach(const CInventoryItem* inventory_item) const;
-    // because we don't want to use this feature for stalkers
-    virtual bool use_simplified_visual() const { return false; } //(already_dead());};
+
 #ifdef DEBUG
     void debug_planner(const script_planner* planner);
 #endif
@@ -812,6 +811,8 @@ public:
 
 private:
     ignored_touched_objects_type m_ignored_touched_objects;
+
+    DECLARE_SCRIPT_REGISTER_FUNCTION(CGameObject, CScriptActionPlannerExport);
 };
 
 #include "ai_stalker_inline.h"

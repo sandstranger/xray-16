@@ -8,20 +8,14 @@
 
 #pragma once
 
-#include "xrCore/xrCore.h"
-#include "xrScriptEngine/xrScriptEngine.hpp"
+#include "xrScriptEngine.hpp"
 
-struct lua_Debug;
-struct lua_State;
 class CScriptEngine;
 
 class XRSCRIPTENGINE_API CScriptStackTracker
 {
 protected:
-    enum consts
-    {
-        max_stack_size = u32(256),
-    };
+    static constexpr size_t max_stack_size = 256;
 
 protected:
     CScriptEngine* scriptEngine;

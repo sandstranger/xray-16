@@ -1,4 +1,4 @@
-add_library(xrGame SHARED)
+add_library(xrGame)
 
 target_sources(xrGame PRIVATE
     abstract_location_selector.h
@@ -35,6 +35,7 @@ target_sources(xrGame PRIVATE
     actor_communication.cpp
     ActorCondition.cpp
     ActorCondition.h
+    ActorCondition_script.cpp
     Actor.cpp
     actor_defs.h
     ActorEffector.cpp
@@ -335,7 +336,6 @@ target_sources(xrGame PRIVATE
     configs_dump_verifyer.h
     console_commands.cpp
     console_commands_mp.cpp
-    console_registrator_script.cpp
     ContextMenu.cpp
     ContextMenu.h
     control_action.h
@@ -471,7 +471,6 @@ target_sources(xrGame PRIVATE
     entity_alive_inline.h
     EntityCondition.cpp
     EntityCondition.h
-    EntityCondition_script.cpp
     Entity.cpp
     Entity.h
     ExoOutfit.cpp
@@ -895,8 +894,6 @@ target_sources(xrGame PRIVATE
     pda_space.h
     PHCollisionDamageReceiver.cpp
     PHCollisionDamageReceiver.h
-    PHCommander.cpp
-    PHCommander.h
     PHDebug.cpp
     PHDebug.h
     PHDestroyable.cpp
@@ -916,15 +913,9 @@ target_sources(xrGame PRIVATE
     Phrase.h
     PhraseScript.cpp
     PhraseScript.h
-    PHReqComparer.h
-    PHScriptCall.cpp
-    PHScriptCall.h
     PHShellCreator.cpp
     PHShellCreator.h
     ph_shell_interface.h
-    PHSimpleCalls.cpp
-    PHSimpleCalls.h
-    PHSimpleCallsScript.cpp
     PHSkeleton.cpp
     PHSkeleton.h
     PHSoundPlayer.cpp
@@ -935,25 +926,16 @@ target_sources(xrGame PRIVATE
     PhysicObject.cpp
     PhysicObject.h
     PhysicObject_script.cpp
-    physics_element_scripted.cpp
-    physics_element_scripted.h
     physics_game.cpp
     physics_game.h
     PhysicsGamePars.cpp
     PhysicsGamePars.h
-    physics_joint_scripted.cpp
-    physics_joint_scripted.h
     physics_shell_animated.cpp
     physics_shell_animated.h
     PhysicsShellHolder.cpp
     PhysicsShellHolder.h
-    #PhysicsShellScript.cpp
-    physics_shell_scripted.cpp
-    physics_shell_scripted.h
     PhysicsSkeletonObject.cpp
     PhysicsSkeletonObject.h
-    physics_world_scripted.cpp
-    physics_world_scripted.h
     player_account.cpp
     player_account.h
     player_hud.cpp
@@ -1098,7 +1080,6 @@ target_sources(xrGame PRIVATE
     script_hit.h
     script_hit_inline.h
     script_hit_script.cpp
-    script_lanim.cpp
     script_monster_action.cpp
     script_monster_action.h
     script_monster_action_inline.h
@@ -1126,7 +1107,6 @@ target_sources(xrGame PRIVATE
     script_property_evaluator_wrapper.cpp
     script_property_evaluator_wrapper.h
     script_property_evaluator_wrapper_inline.h
-    script_render_device_script.cpp
     script_sound_action.cpp
     script_sound_action.h
     script_sound_action_inline.h
@@ -2021,6 +2001,7 @@ target_sources(xrGame PRIVATE
     ai/monsters/states/monster_state_home_point_danger_inline.h
     ai/monsters/states/monster_state_home_point_rest.h
     ai/monsters/states/monster_state_home_point_rest_inline.h
+    ai/monsters/states/monster_state_move.h
     ai/monsters/states/monster_state_panic.h
     ai/monsters/states/monster_state_panic_inline.h
     ai/monsters/states/monster_state_panic_run.h
@@ -2252,8 +2233,6 @@ target_sources(xrGame PRIVATE
     ui/UIMainIngameWnd.cpp
     ui/UIMainIngameWnd.h
     ui/UIMap.cpp
-    ui/UIMapDesc.cpp
-    ui/UIMapDesc.h
     ui/UIMapFilters.cpp
     ui/UIMapFilters.h
     ui/UIMap.h
@@ -2372,7 +2351,6 @@ target_sources(xrGame PRIVATE
     ui/UIWeightBar.h
     ui/UIWheelMenu.cpp
     ui/UIWheelMenu.h
-    ui/UIWindow_script.cpp
     ui/UIWpnParams.cpp
     ui/UIWpnParams.h
     ui/UIXmlInit.cpp
@@ -2406,6 +2384,8 @@ target_sources(xrGame PRIVATE
     ../xrServerEntities/object_factory_register.cpp
     ../xrServerEntities/object_factory_script.cpp
     ../xrServerEntities/object_factory_space.h
+    ../xrServerEntities/object_factory_spawner.cpp
+    ../xrServerEntities/object_factory_spawner.h
     ../xrServerEntities/object_item_abstract.h
     ../xrServerEntities/object_item_abstract_inline.h
     ../xrServerEntities/object_item_client_server.h
@@ -2436,7 +2416,6 @@ target_sources(xrGame PRIVATE
     ../xrServerEntities/script_rtoken_list.h
     ../xrServerEntities/script_rtoken_list_inline.h
     ../xrServerEntities/script_rtoken_list_script.cpp
-    ../xrServerEntities/script_sound_type_script.cpp
     ../xrServerEntities/script_token_list.cpp
     ../xrServerEntities/script_token_list.h
     ../xrServerEntities/script_token_list_script.cpp
@@ -2469,15 +2448,14 @@ target_sources(xrGame PRIVATE
     ../xrServerEntities/xrServer_Objects_ALife.h
     ../xrServerEntities/xrServer_Objects_ALife_Items.cpp
     ../xrServerEntities/xrServer_Objects_ALife_Items.h
-    ../xrServerEntities/xrServer_Objects_ALife_Items_script2.cpp
-    ../xrServerEntities/xrServer_Objects_ALife_Items_script3.cpp
     ../xrServerEntities/xrServer_Objects_ALife_Items_script.cpp
+    ../xrServerEntities/xrServer_Objects_ALife_Items_script2.cpp
     ../xrServerEntities/xrServer_Objects_ALife_Monsters.cpp
     ../xrServerEntities/xrServer_Objects_ALife_Monsters.h
+    ../xrServerEntities/xrServer_Objects_ALife_Monsters_script.cpp
     ../xrServerEntities/xrServer_Objects_ALife_Monsters_script2.cpp
     ../xrServerEntities/xrServer_Objects_ALife_Monsters_script3.cpp
     ../xrServerEntities/xrServer_Objects_ALife_Monsters_script4.cpp
-    ../xrServerEntities/xrServer_Objects_ALife_Monsters_script.cpp
     ../xrServerEntities/xrServer_Objects_ALife_script2.cpp
     ../xrServerEntities/xrServer_Objects_ALife_script3.cpp
     ../xrServerEntities/xrServer_Objects_ALife_script.cpp
@@ -2532,18 +2510,13 @@ target_compile_definitions(xrGame
     XRGAME_EXPORTS
 )
 
-target_compile_options(xrGame
-    PRIVATE
-    -Wno-trigraphs
-)
-
-# E2K: hack for debug compile (MCST lcc compiler does not support a file > 4Gb, this is a bug in EDG frontend)
-if ((CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND PROJECT_PLATFORM_E2K)
+# E2K hack: MCST lcc compiler does not support object files greater than 4Gb due to a bug in EDG frontend
+if (CMAKE_CXX_COMPILER_ID MATCHES "LCC")
     target_compile_options(xrGame
         PRIVATE
         -g0
     )
-    message(STATUS "Build type is ${CMAKE_BUILD_TYPE}, so disable generation of debug info for xrGame module, because MCST lcc compiler does not support a file > 4 GB (this is a bug in EDG frontend).")
+    message("Debug information generation is disabled for xrGame, because MCST lcc compiler does not support object files greater than 4 GB (EDG frontend bug).")
 endif()
 
 if (ANDROID)
@@ -2558,8 +2531,9 @@ target_precompile_headers(xrGame
     PRIVATE
     $<$<COMPILE_LANGUAGE:CXX>:StdAfx.h>
 )
-if (NOT ANDROID)
-install(TARGETS xrGame LIBRARY
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-)
+
+if (BUILD_SHARED_LIBS AND NOT ANDROID)
+    install(TARGETS xrGame LIBRARY
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    )
 endif()

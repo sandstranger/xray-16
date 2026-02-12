@@ -84,7 +84,7 @@ void CGameTask::Load(const TASK_ID& id)
         return;
     }
 
-    const XML_NODE task_node = gameTaskXml.NavigateToNodeWithAttribute("game_task", "id", *id);
+    const XML_NODE task_node = gameTaskXml.NavigateToNodeWithAttribute("game_task", "id", id.c_str());
 
     THROW3(task_node, "game task id = ", id.c_str());
     gameTaskXml.SetLocalRoot(task_node);
@@ -128,11 +128,11 @@ void CGameTask::Load(const TASK_ID& id)
         {
             objective.m_icon_texture_name = gameTaskXml.Read(gameTaskXml.GetLocalRoot(), "icon", 0, nullptr);
             if (objective.m_icon_texture_name.size() &&
-                0 != xr_stricmp(*objective.m_icon_texture_name, "ui\\ui_icons_task"))
+                0 != xr_stricmp(objective.m_icon_texture_name.c_str(), "ui\\ui_icons_task"))
             {
-                objective.m_icon_rect = CUITextureMaster::GetTextureRect(*objective.m_icon_texture_name);
+                objective.m_icon_rect = CUITextureMaster::GetTextureRect(objective.m_icon_texture_name.c_str());
                 objective.m_icon_rect.rb.sub(objective.m_icon_rect.rb, objective.m_icon_rect.lt);
-                objective.m_icon_texture_name = CUITextureMaster::GetTextureFileName(*objective.m_icon_texture_name);
+                objective.m_icon_texture_name = CUITextureMaster::GetTextureFileName(objective.m_icon_texture_name.c_str());
             }
             else if (objective.m_icon_texture_name.size())
             {
@@ -577,34 +577,8 @@ void SGameTaskObjective::save(IWriter& stream)
     save_data(m_map_object_id, stream);
 }
 
-int g_dbg_load_pre_c5ef6c7_saves = 0;
-
 void SGameTaskObjective::load(IReader& stream)
 {
-    if (g_dbg_load_pre_c5ef6c7_saves) // XXX: to be removed
-    {
-        load_data(m_task_state, stream);
-        load_data(m_task_type, stream);
-
-        load_data(m_ReceiveTime, stream);
-        load_data(m_FinishTime, stream);
-        load_data(m_TimeToComplete, stream);
-        load_data(m_timer_finish, stream);
-
-        load_data(m_idx, stream);
-        load_data(m_Title, stream);
-        load_data(m_Description, stream);
-
-        load_data(m_pScriptHelper, stream);
-
-        load_data(m_icon_texture_name, stream);
-
-        load_data(m_map_hint, stream);
-        load_data(m_map_location, stream);
-        load_data(m_map_object_id, stream);
-        return;
-    }
-
     load_data(m_task_state, stream);
     load_data(m_task_type, stream);
 
@@ -646,17 +620,6 @@ void CGameTask::save(IWriter& stream)
 
 void CGameTask::load(IReader& stream)
 {
-    if (g_dbg_load_pre_c5ef6c7_saves)
-    {
-        load_data(m_ID, stream);
-        SGameTaskObjective::load(stream);
-        load_data(m_priority, stream);
-
-        CommitScriptHelperContents();
-        CreateMapLocation(true);
-        return;
-    }
-
     load_data(m_ID, stream);
     load_data(m_priority, stream);
     SGameTaskObjective::load(stream);
@@ -710,9 +673,9 @@ void SScriptTaskHelper::init_functors(xr_vector<shared_str>& v_src, task_state_f
 
     for (u32 idx = 0; it != it_e; ++it, ++idx)
     {
-        const bool functor_exists = GEnv.ScriptEngine->functor(*(*it), v_dest[idx]);
+        const bool functor_exists = GEnv.ScriptEngine->functor(it->c_str(), v_dest[idx]);
         if (!functor_exists)
-            Log("Cannot find script function described in task objective  ", *(*it));
+            Log("Cannot find script function described in task objective  ", it->c_str());
     }
 }
 

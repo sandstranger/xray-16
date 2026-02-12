@@ -11,7 +11,7 @@
 
 player_hud* g_player_hud = nullptr;
 extern ENGINE_API shared_str current_player_hud_sect;
-// clang-format off
+
 // --#SM+# Begin--
 constexpr float PITCH_OFFSET_R    = 0.0f;   // Насколько сильно ствол смещается вбок (влево) при вертикальных поворотах камеры
 constexpr float PITCH_OFFSET_N    = 0.0f;   // Насколько сильно ствол поднимается\опускается при вертикальных поворотах камеры
@@ -22,7 +22,6 @@ constexpr float ORIGIN_OFFSET_AIM = -0.03f; // (Для прицеливания)
 constexpr float TENDTO_SPEED      = 5.f;    // Скорость нормализации положения ствола
 constexpr float TENDTO_SPEED_AIM  = 8.f;    // (Для прицеливания)
 // --#SM+# End--
-// clang-format on
 
 float CalcMotionSpeed(const shared_str& anim_name, const float anim_speed)
 {
@@ -395,9 +394,9 @@ attachable_hud_item::attachable_hud_item(player_hud* parent, const shared_str& s
         m_visual_name = pSettings->r_string(m_sect_name, "visual");
     }
     R_ASSERT3(!m_visual_name.empty(), "Missing 'item_visual' from weapon hud section.", m_sect_name.c_str());
-    GEnv.Render->hud_loading = true;
+
     m_model = smart_cast<IKinematics*>(GEnv.Render->model_Create(m_visual_name.c_str()));
-    GEnv.Render->hud_loading = false;
+
     m_attach_place_idx = pSettings->read_if_exists<u16>(m_sect_name, "attach_place_idx", 0);
 
     IKinematicsAnimated* animatedHudItem;
@@ -547,9 +546,7 @@ void player_hud::load(const shared_str& player_hud_sect)
     }
 
     const shared_str& model_name = pSettings->r_string(m_sect_name, "visual");
-    GEnv.Render->hud_loading = true;
     m_model = smart_cast<IKinematicsAnimated*>(GEnv.Render->model_Create(model_name.c_str()));
-    GEnv.Render->hud_loading = false;
     load_ancors();
     // Msg("hands visual changed to [%s] [%s] [%s]", model_name.c_str(), b_reload ? "R" : "", m_attached_items[0] ? "Y" : "");
 

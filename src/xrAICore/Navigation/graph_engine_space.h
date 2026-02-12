@@ -9,6 +9,7 @@
 #pragma once
 
 #include "xrCore/xrCore.h"
+#include "xrScriptEngine/ScriptExporter.hpp"
 
 template <typename _condition_type, typename _value_type>
 class COperatorConditionAbstract;
@@ -84,4 +85,14 @@ using CNearestVertexParameters = SNearestVertex<_dist_type, _index_type, _iterat
 using CGameLevelParams = SGameLevel<_dist_type, _index_type, _iteration_type>;
 
 using CGameVertexParams = SGameVertex<_dist_type, _index_type, _iteration_type>;
+
+class XRAICORE_API CScriptWorldProperty
+{
+    DECLARE_SCRIPT_REGISTER_FUNCTION();
 };
+
+class XRAICORE_API CScriptWorldState
+{
+    DECLARE_SCRIPT_REGISTER_FUNCTION();
+};
+} // namespace GraphEngineSpace

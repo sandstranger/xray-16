@@ -17,7 +17,6 @@
 #include "clsid_game.h"
 
 // client entities includes
-#ifndef NO_XR_GAME
 #include "Actor.h"
 #include "Spectator.h"
 
@@ -176,20 +175,16 @@
 #include "actor_mp_server.h"
 #include "actor_mp_client.h"
 #include "smart_cover_object.h"
-#endif // NO_XR_GAME
 
-#ifndef NO_XR_GAME
 #define ADD(a, b, c, d) add<a, b>(c, d)
 #define ADD_MP(a, b, c, d, e, f) add(xr_new<CObjectItemClientServerSingleMp<a, b, c, d>>(e, f))
-#else
-#define ADD(a, b, c, d) add<b>(c, d)
-#endif
 
 void CObjectFactory::register_classes()
 {
+    using namespace xray;
+
     ZoneScoped;
 
-#ifndef NO_XR_GAME
     // Server Game type
     add<game_sv_Single>(CLSID_SV_GAME_SINGLE, "game_sv_single");
     add<game_sv_Deathmatch>(CLSID_SV_GAME_DEATHMATCH, "game_sv_deathmatch");
@@ -208,16 +203,11 @@ void CObjectFactory::register_classes()
     add<CUIGameTDM>(CLSID_GAME_UI_TEAMDEATHMATCH, "game_ui_team_deathmatch");
     add<CUIGameAHunt>(CLSID_GAME_UI_ARTEFACTHUNT, "game_ui_artefact_hunt");
     add<CUIGameCTA>(CLSID_GAME_UI_CAPTURETHEARTEFACT, "game_ui_capture_the_artefact");
-#endif // NO_XR_GAME
 
-#ifndef NO_XR_GAME
-    if (!ShadowOfChernobylMode)
-        ADD_MP(CActor, CActorMP, CSE_ALifeCreatureActor, CSE_ActorMP, CLSID_OBJECT_ACTOR, "actor");
-    else
-#endif
-    {
+    if (ShadowOfChernobylMode)
         ADD(CActor, CSE_ALifeCreatureActor, CLSID_OBJECT_ACTOR, "actor");
-    }
+    else
+        ADD_MP(CActor, CActorMP, CSE_ALifeCreatureActor, CSE_ActorMP, CLSID_OBJECT_ACTOR, "actor");
 
     // server entities
     add<CSE_ALifeGroupTemplate<CSE_ALifeMonsterBase>>(CLSID_AI_FLESH_GROUP, "flesh_group");
@@ -352,18 +342,14 @@ void CObjectFactory::register_classes()
     ADD(CHairsZone, CSE_ALifeZoneVisual, CLSID_Z_BFUZZ, "zone_bfuzz");
     ADD(CHairsZone, CSE_ALifeZoneVisual, CLSID_Z_RUSTYH, "zone_rusty_hair");
     ADD(CMosquitoBald, CSE_ALifeAnomalousZone, CLSID_Z_DEAD, "zone_dead");
+
     // We can't register both, since CLSID_LEVEL_CHANGER_S is created in COP scripts as "level_changer_s"
     // But in SOC scripts CLSID_LEVEL_CHANGER_S may be used as "level_changer"
-#ifndef NO_XR_GAME
     if (ShadowOfChernobylMode)
-    {
         ADD(CLevelChanger, CSE_ALifeLevelChanger, CLSID_LEVEL_CHANGER_S, "level_changer");
-    }
     else
-#endif // NO_XR_GAME
-    {
         ADD(CLevelChanger, CSE_ALifeLevelChanger, CLSID_LEVEL_CHANGER, "level_changer");
-    }
+
     ADD(CScriptZone, CSE_ALifeSpaceRestrictor, CLSID_SCRIPT_ZONE, "script_zone");
     ADD(CSmartZone, CSE_ALifeSmartZone, CLSID_SMART_ZONE, "smart_zone");
     ADD(CTeamBaseZone, CSE_ALifeTeamBaseZone, CLSID_Z_TEAM_BASE, "team_base_zone");
@@ -399,9 +385,8 @@ void CObjectFactory::register_classes()
     ADD(CHolderEntityObject, CSE_ALifeDynamicObjectVisual, CLSID_OBJECT_HOLDER_ENT, "obj_holder_ent");
 
     ADD(CInventoryBox, CSE_ALifeInventoryBox, CLSID_INVENTORY_BOX, "inventory_box");
-    ADD(smart_cover::object, CSE_SmartCover, TEXT2CLSID("SMRTCOVR"), "smart_cover");
+    ADD(smart_cover::object, CSE_SmartCover, make_clsid("SMRTCOVR"), "smart_cover");
 
-#ifndef NO_XR_GAME
     // hack, for dedicated server only
     // because we do not have scripts
     // and script functionality is not
@@ -409,36 +394,35 @@ void CObjectFactory::register_classes()
     if (!GEnv.isDedicatedServer)
         return;
 
-    ADD(CElectricBall, CSE_ALifeItemArtefact, TEXT2CLSID("SCRPTART"), "artefact_s");
-    //	ADD(CtaGameArtefact			,CSE_ALifeItemArtefact			,TEXT2CLSID("AF_CTA")			,"ctaartefact_s");
-    ADD(CTorch, CSE_ALifeItemTorch, TEXT2CLSID("TORCH_S"), "device_torch_s");
-    ADD(CHangingLamp, CSE_ALifeObjectHangingLamp, TEXT2CLSID("SO_HLAMP"), "hlamp_s");
-    ADD(CStalkerOutfit, CSE_ALifeItemCustomOutfit, TEXT2CLSID("E_STLK"), "equ_stalker_s");
-    ADD(CScope, CSE_ALifeItem, TEXT2CLSID("WP_SCOPE"), "wpn_scope_s");
-    ADD(CWeaponAK74, CSE_ALifeItemWeaponMagazinedWGL, TEXT2CLSID("WP_AK74"), "wpn_ak74_s");
-    ADD(CWeaponLR300, CSE_ALifeItemWeaponMagazined, TEXT2CLSID("WP_LR300"), "wpn_lr300_s");
-    ADD(CWeaponBinoculars, CSE_ALifeItemWeaponMagazined, TEXT2CLSID("WP_BINOC"), "wpn_binocular_s");
-    ADD(CWeaponBM16, CSE_ALifeItemWeaponShotGun, TEXT2CLSID("WP_BM16"), "wpn_bm16_s");
-    ADD(CWeaponGroza, CSE_ALifeItemWeaponMagazinedWGL, TEXT2CLSID("WP_GROZA"), "wpn_groza_s");
-    ADD(CWeaponSVD, CSE_ALifeItemWeaponMagazined, TEXT2CLSID("WP_SVD"), "wpn_svd_s");
-    ADD(CWeaponHPSA, CSE_ALifeItemWeaponMagazined, TEXT2CLSID("WP_HPSA"), "wpn_hpsa_s");
-    ADD(CWeaponKnife, CSE_ALifeItemWeapon, TEXT2CLSID("WP_KNIFE"), "wpn_knife_s");
-    ADD(CWeaponPM, CSE_ALifeItemWeaponMagazined, TEXT2CLSID("WP_PM"), "wpn_pm_s");
-    ADD(CWeaponRG6, CSE_ALifeItemWeaponShotGun, TEXT2CLSID("WP_RG6"), "wpn_rg6_s");
-    ADD(CWeaponRPG7, CSE_ALifeItemWeaponMagazined, TEXT2CLSID("WP_RPG7"), "wpn_rpg7_s");
-    ADD(CWeaponShotgun, CSE_ALifeItemWeaponShotGun, TEXT2CLSID("WP_SHOTG"), "wpn_shotgun_s");
-    ADD(CWeaponSVU, CSE_ALifeItemWeaponMagazined, TEXT2CLSID("WP_SVU"), "wpn_svu_s");
-    ADD(CWeaponUSP45, CSE_ALifeItemWeaponMagazined, TEXT2CLSID("WP_USP45"), "wpn_usp45_s");
-    ADD(CWeaponVal, CSE_ALifeItemWeaponMagazined, TEXT2CLSID("WP_VAL"), "wpn_val_s");
-    ADD(CWeaponVintorez, CSE_ALifeItemWeaponMagazined, TEXT2CLSID("WP_VINT"), "wpn_vintorez_s");
-    ADD(CWeaponWalther, CSE_ALifeItemWeaponMagazined, TEXT2CLSID("WP_WALTH"), "wpn_walther_s");
-    ADD(CHairsZone, CSE_ALifeZoneVisual, TEXT2CLSID("ZS_BFUZZ"), "zone_bfuzz_s");
-    ADD(CMosquitoBald, CSE_ALifeAnomalousZone, TEXT2CLSID("ZS_MBALD"), "zone_mbald_s");
-    ADD(CMincer, CSE_ALifeAnomalousZone, TEXT2CLSID("ZS_GALAN"), "zone_galant_s");
-    ADD(CMincer, CSE_ALifeAnomalousZone, TEXT2CLSID("ZS_MINCE"), "zone_mincer_s");
-    ADD(CAmebaZone, CSE_ALifeZoneVisual	, TEXT2CLSID("ZS_AMEBA"), "zone_ameba_s");
-    ADD(CRadioactiveZone, CSE_ALifeAnomalousZone, TEXT2CLSID("ZS_RADIO"), "zone_radio_s");
-    ADD(CNoGravityZone, CSE_ALifeAnomalousZone, TEXT2CLSID("ZS_NGRAV"), "zone_nograv_s");
-    ADD(CSpaceRestrictor, CSE_ALifeSpaceRestrictor, TEXT2CLSID("SPC_RS_S"), "script_restr");
-#endif // NO_XR_GAME
+    ADD(CElectricBall, CSE_ALifeItemArtefact, make_clsid("SCRPTART"), "artefact_s");
+    // ADD(CtaGameArtefact, CSE_ALifeItemArtefact, make_clsid("AF_CTA  "), "ctaartefact_s");
+    ADD(CTorch, CSE_ALifeItemTorch, make_clsid("TORCH_S "), "device_torch_s");
+    ADD(CHangingLamp, CSE_ALifeObjectHangingLamp, make_clsid("SO_HLAMP"), "hlamp_s");
+    ADD(CStalkerOutfit, CSE_ALifeItemCustomOutfit, make_clsid("E_STLK  "), "equ_stalker_s");
+    ADD(CScope, CSE_ALifeItem, make_clsid("WP_SCOPE"), "wpn_scope_s");
+    ADD(CWeaponAK74, CSE_ALifeItemWeaponMagazinedWGL, make_clsid("WP_AK74 "), "wpn_ak74_s");
+    ADD(CWeaponLR300, CSE_ALifeItemWeaponMagazined, make_clsid("WP_LR300"), "wpn_lr300_s");
+    ADD(CWeaponBinoculars, CSE_ALifeItemWeaponMagazined, make_clsid("WP_BINOC"), "wpn_binocular_s");
+    ADD(CWeaponBM16, CSE_ALifeItemWeaponShotGun, make_clsid("WP_BM16 "), "wpn_bm16_s");
+    ADD(CWeaponGroza, CSE_ALifeItemWeaponMagazinedWGL, make_clsid("WP_GROZA"), "wpn_groza_s");
+    ADD(CWeaponSVD, CSE_ALifeItemWeaponMagazined, make_clsid("WP_SVD  "), "wpn_svd_s");
+    ADD(CWeaponHPSA, CSE_ALifeItemWeaponMagazined, make_clsid("WP_HPSA "), "wpn_hpsa_s");
+    ADD(CWeaponKnife, CSE_ALifeItemWeapon, make_clsid("WP_KNIFE"), "wpn_knife_s");
+    ADD(CWeaponPM, CSE_ALifeItemWeaponMagazined, make_clsid("WP_PM   "), "wpn_pm_s");
+    ADD(CWeaponRG6, CSE_ALifeItemWeaponShotGun, make_clsid("WP_RG6  "), "wpn_rg6_s");
+    ADD(CWeaponRPG7, CSE_ALifeItemWeaponMagazined, make_clsid("WP_RPG7 "), "wpn_rpg7_s");
+    ADD(CWeaponShotgun, CSE_ALifeItemWeaponShotGun, make_clsid("WP_SHOTG"), "wpn_shotgun_s");
+    ADD(CWeaponSVU, CSE_ALifeItemWeaponMagazined, make_clsid("WP_SVU  "), "wpn_svu_s");
+    ADD(CWeaponUSP45, CSE_ALifeItemWeaponMagazined, make_clsid("WP_USP45"), "wpn_usp45_s");
+    ADD(CWeaponVal, CSE_ALifeItemWeaponMagazined, make_clsid("WP_VAL  "), "wpn_val_s");
+    ADD(CWeaponVintorez, CSE_ALifeItemWeaponMagazined, make_clsid("WP_VINT "), "wpn_vintorez_s");
+    ADD(CWeaponWalther, CSE_ALifeItemWeaponMagazined, make_clsid("WP_WALTH"), "wpn_walther_s");
+    ADD(CHairsZone, CSE_ALifeZoneVisual, make_clsid("ZS_BFUZZ"), "zone_bfuzz_s");
+    ADD(CMosquitoBald, CSE_ALifeAnomalousZone, make_clsid("ZS_MBALD"), "zone_mbald_s");
+    ADD(CMincer, CSE_ALifeAnomalousZone, make_clsid("ZS_GALAN"), "zone_galant_s");
+    ADD(CMincer, CSE_ALifeAnomalousZone, make_clsid("ZS_MINCE"), "zone_mincer_s");
+    ADD(CAmebaZone, CSE_ALifeZoneVisual	, make_clsid("ZS_AMEBA"), "zone_ameba_s");
+    ADD(CRadioactiveZone, CSE_ALifeAnomalousZone, make_clsid("ZS_RADIO"), "zone_radio_s");
+    ADD(CNoGravityZone, CSE_ALifeAnomalousZone, make_clsid("ZS_NGRAV"), "zone_nograv_s");
+    ADD(CSpaceRestrictor, CSE_ALifeSpaceRestrictor, make_clsid("SPC_RS_S"), "script_restr");
 }

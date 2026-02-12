@@ -1,8 +1,9 @@
 #include"pch.hpp"
+
 #include "UIListWnd.h"
-//.#include "uiscrollbar.h"
-#include "Cursor/UICursor.h"
+#include "ScrollBar/UIScrollBar.h"
 #include "Windows/UIFrameLineWnd.h"
+#include "Cursor/UICursor.h"
 
 //#define ACTIVE_BACKGROUND			"ui\\ui_pop_up_active_back"
 //#define ACTIVE_BACKGROUND_WIDTH	16
@@ -57,7 +58,7 @@ void CUIListWnd::InitListWnd(Fvector2 pos, Fvector2 size, float item_height)
     AttachChild(m_ScrollBar);
 
     if (!!m_scrollbar_profile)
-        m_ScrollBar->InitScrollBar(Fvector2().set(size.x, 0.0f), size.y, false, *m_scrollbar_profile);
+        m_ScrollBar->InitScrollBar(Fvector2().set(size.x, 0.0f), size.y, false, m_scrollbar_profile.c_str());
     else
         m_ScrollBar->InitScrollBar(Fvector2().set(size.x, 0.0f), size.y, false);
 
@@ -650,8 +651,8 @@ void CUIListWnd::create_active_back()
         return;
 
     m_ActiveBackgroundFrame = xr_new<CUIFrameLineWnd>("Active background frame");
-    m_ActiveBackgroundFrame->InitFrameLineWnd("ui_listline", Fvector2().set(0.0f, 0.0f),
-                                              Fvector2().set(GetWidth(), 18.0f));
+    m_ActiveBackgroundFrame->SetWndSize({ GetWidth(), 18.0f });
+    m_ActiveBackgroundFrame->InitTexture("ui_listline");
 }
 
 void CUIListWnd::destroy_active_back()

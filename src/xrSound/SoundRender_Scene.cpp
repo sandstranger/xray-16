@@ -2,7 +2,6 @@
 
 #include "Common/LevelStructure.hpp"
 #include "xrCDB/Intersect.hpp"
-#include "xrMaterialSystem/GameMtlLib.h"
 
 #include "SoundRender_Core.h"
 #include "SoundRender_Scene.h"
@@ -95,7 +94,7 @@ void CSoundRender_Scene::set_geometry_som(IReader* I)
 
     // Create AABB-tree
     geom_SOM = xr_new<CDB::MODEL>();
-    geom_SOM->build(CL.getV(), int(CL.getVS()), CL.getT(), int(CL.getTS()));
+    geom_SOM->build(CL.getV(), CL.getVS(), CL.getT(), CL.getTS());
 }
 
 void CSoundRender_Scene::set_geometry_env(IReader* I)
@@ -327,10 +326,7 @@ float CSoundRender_Scene::get_occlusion(const Fvector& P, float R, Fvector* occ)
                 occ[0].set(V[T.verts[0]]);
                 occ[1].set(V[T.verts[1]]);
                 occ[2].set(V[T.verts[2]]);
-
-                const SGameMtl* mtl = GMLib.GetMaterialByIdx(T.material);
-                const float occlusion = fis_zero(mtl->fSndOcclusionFactor) ? 0.1f : mtl->fSndOcclusionFactor;
-                occ_value = psSoundOcclusionScale * occlusion;
+                occ_value = psSoundOcclusionScale;
             }
         }
     }

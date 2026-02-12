@@ -9,10 +9,8 @@
 #include "game_sv_item_respawner.h"
 #if defined(XR_PLATFORM_WINDOWS)
 #include "xrNetServer/NET_Server.h"
-#elif defined(XR_PLATFORM_LINUX) || defined(XR_PLATFORM_BSD) || defined(XR_PLATFORM_APPLE)
+#else // XXX: multiplayer on Linux
 #include "xrNetServer/empty/NET_Server.h"
-#else
-#   error Select of add implementation for your platform
 #endif
 
 #define MAX_PLAYERS_COUNT 32
@@ -274,4 +272,7 @@ public:
     virtual void DumpOnlineStatistic(){};
 
     bool CheckNewPlayer(xrClientData* CL);
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION(game_GameState);
 };

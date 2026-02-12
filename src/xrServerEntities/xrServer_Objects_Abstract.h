@@ -62,13 +62,16 @@ public:
     void visual_write(NET_Packet& P);
 
     void set_visual(LPCSTR name, bool load = true);
-    LPCSTR get_visual() const { return *visual_name; }
+    LPCSTR get_visual() const { return visual_name.c_str(); }
 
 #ifndef MASTER_GOLD
     virtual void FillProps(LPCSTR pref, PropItemVec& items);
 #endif
 
     virtual CSE_Visual* visual() = 0;
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION();
 };
 
 class CSE_Motion
@@ -87,13 +90,16 @@ public:
     void motion_write(NET_Packet& P);
 
     void set_motion(LPCSTR name);
-    LPCSTR get_motion() const { return *motion_name; }
+    LPCSTR get_motion() const { return motion_name.c_str(); }
 
 #ifndef MASTER_GOLD
     virtual void FillProps(LPCSTR pref, PropItemVec& items);
 #endif
 
     virtual CSE_Motion* motion() = 0;
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION();
 };
 
 class XR_NOVTABLE IServerEntityLEOwner

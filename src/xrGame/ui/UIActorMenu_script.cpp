@@ -13,7 +13,6 @@
 #include "UICellItem.h"
 #include "ai_space.h"
 #include "xrScriptEngine/script_engine.hpp"
-#include "xrScriptEngine/ScriptExporter.hpp"
 #include "xrUICore/TabControl/UITabControl.h"
 #include "xrGame/ui/UIMainIngameWnd.h"
 #include "eatable_item.h"
@@ -105,7 +104,7 @@ void CUIActorMenu::CurModeToScript()
 template<class T>
 class enum_dummy {};
 
-SCRIPT_EXPORT(CUIActorMenu, (CUIDialogWnd),
+void CUIActorMenu::script_register(lua_State* luaState)
 {
     using namespace luabind;
 
@@ -136,26 +135,8 @@ SCRIPT_EXPORT(CUIActorMenu, (CUIDialogWnd),
             .def("ShowDialog", &CUIActorMenu::ShowDialog)
             .def("HideDialog", &CUIActorMenu::HideDialog)
             .def("ToSlot", &CUIActorMenu::ToSlotScript)
-            .def("ToBelt", &CUIActorMenu::ToBeltScript)
-    ];
+            .def("ToBelt", &CUIActorMenu::ToBeltScript),
 
-    using namespace luabind;
-
-    module(luaState, "ActorMenu")
-    [
-        def("get_pda_menu", +[](){ return &CurrentGameUI()->GetPdaMenu(); }),
-        def("get_actor_menu", +[](){ return &CurrentGameUI()->GetActorMenu(); }),
-        def("get_menu_mode", +[](){ return CurrentGameUI()->GetActorMenu().GetMenuMode(); }),
-        def("get_maingame", +[](){ return CurrentGameUI()->UIMainIngameWnd; })
-    ];
-});
-
-SCRIPT_EXPORT(CUIPdaWnd, (CUIDialogWnd),
-{
-    using namespace luabind;
-
-    module(luaState)
-    [
         class_<CUIPdaWnd, CUIDialogWnd>("CUIPdaWnd")
             .def(constructor<>())
             .def("IsShown", &CUIPdaWnd::IsShown)
@@ -167,4 +148,12 @@ SCRIPT_EXPORT(CUIPdaWnd, (CUIDialogWnd),
             .def("GetActiveSection", &CUIPdaWnd::GetActiveSection)
             .def("GetTabControl", &CUIPdaWnd::GetTabControl)
     ];
-});
+
+    module(luaState, "ActorMenu")
+    [
+        def("get_pda_menu", +[](){ return &CurrentGameUI()->GetPdaMenu(); }),
+        def("get_actor_menu", +[](){ return &CurrentGameUI()->GetActorMenu(); }),
+        def("get_menu_mode", +[](){ return CurrentGameUI()->GetActorMenu().GetMenuMode(); }),
+        def("get_maingame", +[](){ return CurrentGameUI()->UIMainIngameWnd; })
+    ];
+}

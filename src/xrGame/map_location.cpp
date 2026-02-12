@@ -234,7 +234,7 @@ void CMapLocation::InitUserSpot(const shared_str& level_name, const Fvector& pos
 
     if (ai().get_alife())
     {
-        const CGameGraph::SLevel& level = ai().game_graph().header().level(*level_name);
+        const CGameGraph::SLevel& level = ai().game_graph().header().level(level_name.c_str());
         float min_dist = 128; // flt_max;
 
         GameGraph::_GRAPH_ID n = ai().game_graph().header().vertex_count();
@@ -253,7 +253,7 @@ void CMapLocation::InitUserSpot(const shared_str& level_name, const Fvector& pos
         }
         if (!ai().game_graph().vertex(m_cached.m_graphID))
         {
-            Msg("qweasdd! Cannot assign game vertex for CUserDefinedMapLocation [map=%s]", *level_name);
+            Msg("qweasdd! Cannot assign game vertex for CUserDefinedMapLocation [map=%s]", level_name.c_str());
             R_ASSERT(ai().game_graph().vertex(m_cached.m_graphID));
         }
     }
@@ -338,7 +338,7 @@ void CMapLocation::CalcLevelName()
 
 bool CMapLocation::Update() // returns actual
 {
-    R_ASSERT(m_cached.m_updatedFrame != Device.dwFrame);
+    R_ASSERT1_CURE(m_cached.m_updatedFrame != Device.dwFrame, return m_cached.m_Actuality);
 
     if (m_flags.test(eTTL))
     {
@@ -504,7 +504,7 @@ void CMapLocation::UpdateSpot(CUICustomMap* map, CMapSpot* sp)
                 {
                     //					Msg("%d-%s",(*it),ai().game_graph().vertex(*it));
                     Msg("[%d] level[%s]", (*it),
-                        *ai().game_graph().header().level(ai().game_graph().vertex(*it)->level_id()).name());
+                        ai().game_graph().header().level(ai().game_graph().vertex(*it)->level_id()).name().c_str());
                 }
                 Msg("- Available LevelChangers:");
                 xr_vector<CLevelChanger *>::iterator lit, lit_e;
@@ -515,7 +515,7 @@ void CMapLocation::UpdateSpot(CUICustomMap* map, CMapSpot* sp)
                     Msg("[%d]", gid);
                     Fvector p = ai().game_graph().vertex(gid)->level_point();
                     Msg("lch_name=%s pos=%f %f %f",
-                        *ai().game_graph().header().level(ai().game_graph().vertex(gid)->level_id()).name(), p.x, p.y,
+                        ai().game_graph().header().level(ai().game_graph().vertex(gid)->level_id()).name().c_str(), p.x, p.y,
                         p.z);
                 }
             };
@@ -532,7 +532,7 @@ void CMapLocation::UpdateSpot(CUICustomMap* map, CMapSpot* sp)
                 xr_vector<u32>::reverse_iterator it_e = map_point_path.rend();
                 for (; (it != it_e) && (!bDone); ++it)
                 {
-                    if (*ai().game_graph().header().level(ai().game_graph().vertex(*it)->level_id()).name() ==
+                    if (ai().game_graph().header().level(ai().game_graph().vertex(*it)->level_id()).name().c_str() ==
                         Level().name())
                         break;
                 }
@@ -674,7 +674,8 @@ pcstr CMapLocation::GetHint() const
 
 CMapSpotPointer* CMapLocation::GetSpotPointer(CMapSpot* sp)
 {
-    R_ASSERT(sp);
+    R_ASSERT1_CURE(sp, return nullptr);
+
     if (!PointerEnabled())
     {
         return NULL;
@@ -697,7 +698,8 @@ CMapSpotPointer* CMapLocation::GetSpotPointer(CMapSpot* sp)
 
 CMapSpot* CMapLocation::GetSpotBorder(CMapSpot* sp)
 {
-    R_ASSERT(sp);
+    R_ASSERT1_CURE(sp, return nullptr);
+
     auto& uiXml = CMapManager::m_uiSpotXml;
     if (PointerEnabled())
     {
@@ -769,7 +771,7 @@ Fvector2 CMapLocation::SpotSize()
 }
 
 CRelationMapLocation::CRelationMapLocation(const shared_str& type, u16 object_id, u16 pInvOwnerActorID)
-    : CMapLocation(*type, object_id), m_last_relation()
+    : CMapLocation(type.c_str(), object_id), m_last_relation()
 {
     m_curr_spot_name = type;
     m_pInvOwnerActorID = pInvOwnerActorID;
@@ -827,7 +829,7 @@ bool CRelationMapLocation::Update()
 
     if (m_curr_spot_name != sname)
     {
-        LoadSpot(*sname);
+        LoadSpot(sname.c_str());
         m_curr_spot_name = sname;
     }
     // update visibility
@@ -922,6 +924,6 @@ void CRelationMapLocation::UpdateLevelMap(CUICustomMap* map)
 void CRelationMapLocation::Dump()
 {
     inherited::Dump();
-    Msg("--CRelationMapLocation m_curr_spot_name=[%s]", *m_curr_spot_name);
+    Msg("--CRelationMapLocation m_curr_spot_name=[%s]", m_curr_spot_name.c_str());
 }
 #endif

@@ -7,12 +7,11 @@
 
 #include "inventory_item_object.h"
 
-class CScope : public CInventoryItemObject
+class CScope final : public CInventoryItemObject
 {
-private:
+protected:
     typedef CInventoryItemObject inherited;
 
-public:
-    CScope();
-    virtual ~CScope();
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION(CGameObject);
 };

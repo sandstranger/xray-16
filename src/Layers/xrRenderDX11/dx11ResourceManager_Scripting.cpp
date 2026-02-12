@@ -6,7 +6,7 @@
 #include "Layers/xrRender/blender_recorder.h"
 //	adopt_compiler don't have = operator And it can't have = operator
 #include "xrScriptEngine/script_engine.hpp"
-#include "luabind/return_reference_to_policy.hpp"
+#include "xrScriptEngine/script_space.hpp"
 #include "xrCore/Threading/ScopeLock.hpp"
 
 #ifdef DEBUG
@@ -25,11 +25,11 @@ public:
         return RImplementation.o.msaa_alphatest == CRender::MSAA_ATEST_DX10_0_ATOC;
     }
 
-	LPCSTR _get_level()
-	{
-		const shared_str level_name = g_pGameLevel->name();
-		return level_name.c_str();
-	}
+    LPCSTR _get_level()
+    {
+        const shared_str level_name = g_pGameLevel->name();
+        return level_name.c_str();
+    }
 };
 
 // wrapper
@@ -578,8 +578,8 @@ ShaderElement* CBlender_Compile::_lua_Compile(LPCSTR namesp, LPCSTR name)
     RS.Invalidate();
 
     // Compile
-    LPCSTR t_0 = *L_textures[0] ? *L_textures[0] : "null";
-    LPCSTR t_1 = (L_textures.size() > 1) ? *L_textures[1] : "null";
+    LPCSTR t_0 = L_textures[0].c_str() ? L_textures[0].c_str() : "null";
+    LPCSTR t_1 = (L_textures.size() > 1) ? L_textures[1].c_str() : "null";
     LPCSTR t_d = detail_texture ? detail_texture : "null";
     const object shader = RImplementation.Resources->ScriptEngine.name_space(namesp);
     const functor<void> element = (object)shader[name];

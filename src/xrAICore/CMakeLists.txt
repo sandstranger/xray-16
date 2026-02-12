@@ -1,4 +1,4 @@
-add_library(xrAICore SHARED)
+add_library(xrAICore)
 
 target_sources_grouped(
     TARGET xrAICore
@@ -28,7 +28,6 @@ target_sources_grouped(
     TARGET xrAICore
     NAME "AI\\Component\\ProblemSolver\\ConditionState\\ScriptWorldState"
     FILES
-    Components/script_world_state.h
     Components/script_world_state_script.cpp
 )
 
@@ -52,8 +51,6 @@ target_sources_grouped(
     TARGET xrAICore
     NAME "AI\\Component\\ProblemSolver\\OperatorCondition\\ScriptWorldProperty"
     FILES
-    Components/script_world_property.h
-    Components/script_world_property_inline.h
     Components/script_world_property_script.cpp
 )
 
@@ -316,8 +313,8 @@ target_precompile_headers(xrAICore
     PRIVATE
     pch.hpp
 )
-if (NOT ANDROID)
-install(TARGETS xrAICore LIBRARY
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-)
-endif ()
+if (BUILD_SHARED_LIBS AND NOT ANDROID)
+    install(TARGETS xrAICore LIBRARY
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    )
+endif()

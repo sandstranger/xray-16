@@ -1,16 +1,17 @@
 #include "stdafx.h"
+
 #include "ISpatial.h"
+
+#include "xrCore/_fbox.h"
+#include "xrCore/Threading/Lock.hpp"
+#include "xrCore/Threading/ScopeLock.hpp"
+
 #include "xrEngine/Engine.h"
-#include "xrEngine/Render.h"
+
 #ifdef DEBUG
 #include "xrEngine/xr_object.h"
 #include "xrEngine/PS_instance.h"
 #endif
-#include "xrEngine/device.h"
-#include "xrEngine/GameFont.h"
-#include "xrEngine/PerformanceAlert.hpp"
-#include "xrCore/Threading/Lock.hpp"
-#include "xrCore/Threading/ScopeLock.hpp"
 
 Fvector c_spatial_offset[8] = {
     {-1, -1, -1}, {1, -1, -1}, {-1, 1, -1}, {1, 1, -1}, {-1, -1, 1}, {1, -1, 1}, {-1, 1, 1}, {1, 1, 1}};
@@ -290,7 +291,7 @@ void ISpatial_DB::insert(ISpatial* S)
             // and is not available to xrCDB due to source code organization
             xrDebug::Fatal(DEBUG_INFO, "Invalid PS or OTHER spatial position{%3.2f,%3.2f,%3.2f} or radius{%3.2f}",
                 VPUSH(spatialData.sphere.P), spatialData.sphere.R);
-#endif // ifndef XR_PLATFORM_LINUX
+#endif
         }
     }
 #endif

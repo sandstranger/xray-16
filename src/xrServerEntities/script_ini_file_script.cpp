@@ -7,11 +7,9 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #include "pch_script.h"
-#include "script_ini_file.h"
-#include "xrScriptEngine/ScriptExporter.hpp"
-#include "xrScriptEngine/Functor.hpp"
 
-CScriptIniFile* get_system_ini() { return (CScriptIniFile*)pSettings; }
+#include "script_ini_file.h"
+#include "xrScriptEngine/Functor.hpp"
 
 bool r_line(const CScriptIniFile* self, pcstr S, int L, luabind::string& N, luabind::string& V)
 {
@@ -67,11 +65,7 @@ CScriptIniFile* reload_system_ini()
 }
 //Alundaio: END
 
-#ifdef XRGAME_EXPORTS
-CScriptIniFile* get_game_ini() { return (CScriptIniFile*)pGameIni; }
-#endif
-
-static void CScriptIniFile_Export(lua_State* luaState)
+void CScriptIniFile::script_register(lua_State* luaState)
 {
     using namespace luabind;
     using namespace luabind::policy;
@@ -139,14 +133,22 @@ static void CScriptIniFile_Export(lua_State* luaState)
             // XXX: uncomment after we check that out_value policy is working
             //.def("r_line", &::r_line2, policy_list<out_value<4>, out_value<5>>())
             ,
-#ifdef XRGAME_EXPORTS
-            def("game_ini", &get_game_ini),
-#endif
-            //Alundaio: extend
+
+            def("system_ini", +[]()
+            {
+                return (CScriptIniFile*)pSettings;
+            }),
+            def("game_ini", +[]()
+            {
+                return (CScriptIniFile*)pGameIni;
+            }),
+            def("openxray_ini", +[]()
+            {
+                return (CScriptIniFile*)pSettingsOpenXRay;
+            }),
+
             def("reload_system_ini", &reload_system_ini),
-            //Alundaio:: END
-            def("system_ini", &get_system_ini), def("create_ini_file", &create_ini_file, adopt<0>())
+
+            def("create_ini_file", &create_ini_file, adopt<0>())
     ];
 }
-
-SCRIPT_EXPORT_FUNC(CScriptIniFile, (), CScriptIniFile_Export);

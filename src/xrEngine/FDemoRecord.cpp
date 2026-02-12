@@ -97,8 +97,8 @@ pcstr GetFontTexName(pcstr section)
 
 CDemoRecord::CDemoRecord(const char* name, float life_time)
     : CEffectorCam(cefDemo, life_time /*,false*/),
-      m_speed(speed_0),
-      m_angle_speed(speed_0),
+      m_speed(speed_1),
+      m_angle_speed(speed_1),
       m_Font(pSettings->r_string(DEMO_RECORD_HELP_FONT, "shader"), GetFontTexName(DEMO_RECORD_HELP_FONT))
 {
     Device.seqRender.Add(this, REG_PRIORITY_LOW - 1000);
@@ -257,9 +257,9 @@ void CDemoRecord::MakeLevelMapProcess()
 
         string_path tmp;
         if (m_iLMScreenshotFragment == -1)
-            xr_sprintf(tmp, sizeof(tmp), "map_%s", *g_pGameLevel->name());
+            xr_sprintf(tmp, sizeof(tmp), "map_%s", g_pGameLevel->name().c_str());
         else
-            xr_sprintf(tmp, sizeof(tmp), "map_%s#%d", *g_pGameLevel->name(), m_iLMScreenshotFragment);
+            xr_sprintf(tmp, sizeof(tmp), "map_%s#%d", g_pGameLevel->name().c_str(), m_iLMScreenshotFragment);
 
         if (m_iLMScreenshotFragment != -1)
         {
@@ -523,6 +523,10 @@ void CDemoRecord::IR_OnKeyboardPress(int dik)
 
     case kSCREENSHOT:
         MakeScreenshot();
+        break;
+
+    case kEDITOR:
+        Device.editor().SwitchToNextState();
         break;
 
     case kQUIT:

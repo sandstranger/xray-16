@@ -12,13 +12,19 @@ class dxUIShader : public IUIShader
     friend class CRender;
 
 public:
-    virtual ~dxUIShader() { ; }
     virtual void Copy(IUIShader& _in);
     virtual void create(LPCSTR sh, LPCSTR tex = nullptr);
     virtual bool inited() { return hShader; }
     virtual void destroy();
 
+    bool operator==(const IUIShader& other) const override;
+
+    CTexture* GetBaseTexture() const;
+    bool GetBaseTextureResolution(Fvector2& res) override;
+    xrImTextureData GetImGuiTextureId() override;
+
 private:
     ref_shader hShader;
+    shared_str baseTexture{ "s_base" };
 };
 } // namespace xray::render::RENDER_NAMESPACE

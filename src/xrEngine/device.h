@@ -15,19 +15,21 @@
 #include "xrCore/fastdelegate.h"
 #include "xrCore/ModuleLookup.hpp"
 
-#define VIEWPORT_NEAR 0.2f
-#define HUD_VIEWPORT_NEAR 0.05f
-
 #define DEVICE_RESET_PRECACHE_FRAME_COUNT 10
 
 #include "editor_base.h"
 #include "Include/xrRender/FactoryPtr.h"
 #include "Render.h"
 
+#include "xrScriptEngine/ScriptExporter.hpp"
+
 #include <SDL.h>
 
 // refs
 class Task;
+
+constexpr float VIEWPORT_NEAR = 0.2f;
+constexpr float HUD_VIEWPORT_NEAR = 0.05f;
 
 class ENGINE_API CRenderDevice : public IWindowHandler
 {
@@ -303,6 +305,9 @@ private:
 
     ImGuiContext* m_imgui_context{};
     IImGuiRender* m_imgui_render{};
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION();
 };
 
 extern ENGINE_API CRenderDevice Device;

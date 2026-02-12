@@ -23,12 +23,11 @@ private:
     typedef CGameObject inherited;
 
 private:
-    cover const* m_cover;
+    cover const* m_cover{};
     float m_enter_min_enemy_distance;
     float m_exit_min_enemy_distance;
 
 public:
-    virtual void Load(LPCSTR section);
     virtual bool feel_touch_on_contact(IGameObject*) { return FALSE; }
     virtual bool use(CGameObject* who_use) { return false; }
     virtual bool net_Spawn(CSE_Abstract* DC);
@@ -50,6 +49,9 @@ public:
     IC float const& enter_min_enemy_distance() const;
     IC float const& exit_min_enemy_distance() const;
     IC cover const& get_cover() const;
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION(CGameObject);
 };
 
 } // namespace smart_cover

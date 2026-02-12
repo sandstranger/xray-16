@@ -2,10 +2,9 @@
 
 #include "xr_level_controller.h"
 
-#include "xrScriptEngine/ScriptExporter.hpp"
+#include "xrScriptEngine/script_space.hpp"
 
-// clang-format off
-SCRIPT_EXPORT(KeyBindings, (),
+void key_binding_registrator::script_register(lua_State* luaState)
 {
     class EnumGameActionsContexts {};
     class EnumGameActions {};
@@ -16,6 +15,8 @@ SCRIPT_EXPORT(KeyBindings, (),
     [
         def("dik_to_bind", +[](int dik) -> int { return GetBindedAction(dik); }),
         def("dik_to_bind", +[](int dik, int ctx) -> int { return GetBindedAction(dik, (EKeyContext)ctx); }),
+        def("bind_to_dik", +[](int action) { return GetActionDik((EGameActions)action);}),
+        def("bind_to_dik", +[](int action, int idx) { return GetActionDik((EGameActions)action, idx);}),
 
         class_<EnumGameActionsContexts>("key_bindings_context")
             .enum_("context")
@@ -528,5 +529,4 @@ SCRIPT_EXPORT(KeyBindings, (),
                 value("GAMEPAD_DPAD_TOUCHPAD",      int(XR_CONTROLLER_BUTTON_TOUCHPAD))
         ]
     ];
-});
-// clang-format on
+}

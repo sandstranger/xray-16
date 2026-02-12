@@ -1,4 +1,4 @@
-add_library(xrEngine SHARED)
+add_library(xrEngine)
 
 target_sources_grouped(
     TARGET xrEngine
@@ -29,6 +29,7 @@ target_sources_grouped(
     XR_IOConsole_callback.cpp
     XR_IOConsole_control.cpp
     XR_IOConsole_get.cpp
+    XR_IOConsole_script.cpp
 )
 
 target_sources_grouped(
@@ -203,7 +204,6 @@ target_sources_grouped(
     IGame_ObjectPool.h
     IGame_Persistent.cpp
     IGame_Persistent.h
-    IGame_Persistent_Effects.cpp
     pure_relcase.cpp
     pure_relcase.h
     xr_object.h
@@ -399,6 +399,14 @@ target_sources_grouped(
 #    xrLoadSurface.cpp
 #)
 
+target_sources(xrEngine
+    PRIVATE
+    ClientServer.txt
+    "Effects description.txt"
+    features.txt
+    TODO.txt
+)
+
 target_include_directories(xrEngine
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}"
@@ -422,9 +430,10 @@ target_link_libraries(xrEngine
     xrScriptEngine
     xrNetServer
     xrImGui
-    ${OPENAL_LIBRARY}
+    OpenAL::OpenAL
     Ogg::Ogg
     Theora::Theora
+    SDL2::SDL2
 )
 
 target_compile_definitions(xrEngine
@@ -443,8 +452,8 @@ target_precompile_headers(xrEngine
     PRIVATE
     stdafx.h
 )
-if (NOT ANDROID)
-install(TARGETS xrEngine LIBRARY
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-)
-endif ()
+if (BUILD_SHARED_LIBS AND NOT ANDROID)
+    install(TARGETS xrEngine LIBRARY
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    )
+endif()

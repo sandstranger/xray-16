@@ -7,11 +7,12 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #include "pch.hpp"
+
 #include "patrol_path_params.h"
 #include "patrol_path_storage.h"
-#include "xrScriptEngine/script_engine.hpp"
-#include "xrScriptEngine/DebugMacros.hpp" // for THROW3 // XXX: move debug macros to xrCore
 #include "AISpaceBase.hpp"
+
+#include "xrScriptEngine/script_engine.hpp"
 
 CPatrolPathParams::CPatrolPathParams(LPCSTR caPatrolPathToGo, EPatrolStartType tPatrolPathStart,
     EPatrolRouteType tPatrolPathStop, bool bRandom, u32 index)
@@ -41,7 +42,7 @@ const Fvector& CPatrolPathParams::point(u32 index) const
     if (!m_path->vertex(index))
     {
         GEnv.ScriptEngine->script_log(LuaMessageType::Error,
-            "Can't get information about patrol point number %d in the patrol way %s", index, *m_path_name);
+            "Can't get information about patrol point number %d in the patrol way %s", index, m_path_name.c_str());
         index = (*m_path->vertices().begin()).second->vertex_id();
     }
     VERIFY(m_path->vertex(index));
@@ -83,7 +84,7 @@ Flags32 CPatrolPathParams::flags(u32 index) const
 LPCSTR CPatrolPathParams::name(u32 index) const
 {
     VERIFY(m_path->vertex(index));
-    return (*m_path->vertex(index)->data().name());
+    return m_path->vertex(index)->data().name().c_str();
 }
 
 bool CPatrolPathParams::terminal(u32 index) const

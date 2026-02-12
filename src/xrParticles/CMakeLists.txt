@@ -1,4 +1,4 @@
-add_library(xrParticles SHARED)
+add_library(xrParticles)
 
 target_sources_grouped(
     TARGET xrParticles
@@ -57,7 +57,8 @@ target_precompile_headers(xrParticles
 )
 if (NOT ANDROID)
 
-install(TARGETS xrParticles LIBRARY
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-)
-endif ()
+if (BUILD_SHARED_LIBS AND NOT ANDROID)
+    install(TARGETS xrParticles LIBRARY
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    )
+endif()

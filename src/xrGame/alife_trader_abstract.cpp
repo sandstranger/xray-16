@@ -31,12 +31,10 @@ void CSE_ALifeTraderAbstract::spawn_supplies()
     CSE_ALifeItemPDA* pda = smart_cast<CSE_ALifeItemPDA*>(abstract);
     pda->m_original_owner = base()->ID;
 
-#ifdef XRGAME_EXPORTS
     character_profile();
     m_SpecificCharacter = shared_str();
     m_community_index = NO_COMMUNITY_INDEX;
     pda->m_specific_character = specific_character();
-#endif
 
     if (m_SpecificCharacter.size())
     {
@@ -49,7 +47,7 @@ void CSE_ALifeTraderAbstract::spawn_supplies()
         {
 #pragma warning(push)
 #pragma warning(disable : 4238)
-            IReader reader((void*)(*dynamic_object->m_ini_string), xr_strlen(dynamic_object->m_ini_string));
+            IReader reader((void*)dynamic_object->m_ini_string.c_str(), xr_strlen(dynamic_object->m_ini_string));
             CInifile ini(&reader, FS.get_path("$game_config$")->m_Path);
 #pragma warning(pop)
 

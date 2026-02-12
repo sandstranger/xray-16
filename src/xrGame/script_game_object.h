@@ -99,7 +99,7 @@ class CScriptMonsterHitInfo;
 class CScriptBinderObject;
 class CCoverPoint;
 class CScriptIniFile;
-class cphysics_shell_scripted;
+class CPhysicsShell;
 class CHelicopter;
 class CHangingLamp;
 class CHolderCustom;
@@ -365,8 +365,8 @@ public:
     void DropItemAndTeleport(CScriptGameObject* pItem, Fvector position);
     void ForEachInventoryItems(const luabind::functor<void>& functor);
     void TransferItem(CScriptGameObject* pItem, CScriptGameObject* pForWho);
-    void TransferMoney(int money, CScriptGameObject* pForWho);
-    void GiveMoney(int money);
+    void TransferMoney(u32 money, CScriptGameObject* pForWho);
+    void GiveMoney(u32 money);
     u32 Money();
     void MakeItemActive(CScriptGameObject* pItem);
 
@@ -631,7 +631,7 @@ public:
 
     Fvector bone_position(LPCSTR bone_name) const;
     bool is_body_turning() const;
-    cphysics_shell_scripted* get_physics_shell() const;
+    CPhysicsShell* get_physics_shell() const;
     u16 get_bone_id(LPCSTR bone_name) const;
     bool weapon_strapped() const;
     bool weapon_unstrapped() const;
@@ -947,6 +947,9 @@ public:
     //-Alundaio
 
     doors::door* m_door;
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION();
 };
 
 extern void sell_condition(CScriptIniFile* ini_file, LPCSTR section);

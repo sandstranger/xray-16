@@ -4,7 +4,6 @@
 #include "xrServer.h"
 #include "xrMessages.h"
 #include "game_cl_base.h"
-#include "PHCommander.h"
 #include "NET_Queue.h"
 #include "MainMenu.h"
 #include "space_restriction_manager.h"
@@ -21,6 +20,7 @@
 #include "xrNetServer/NET_Messages.h"
 
 #include "xrPhysics/PhysicsCommon.h"
+#include "xrPhysics/PHCommander.h"
 
 const int max_objects_size = 2 * 1024;
 const int max_objects_size_in_save = 8 * 1024;
@@ -252,7 +252,7 @@ u32 CLevel::Objects_net_Save(NET_Packet* _Packet, u32 start, u32 max_object_size
             if (size >= 65536)
             {
                 xrDebug::Fatal(DEBUG_INFO, "Object [%s][%d] exceed network-data limit\n size=%d, Pend=%d, Pstart=%d",
-                    *P->cName(), P->ID(), size, Packet.w_tell(), position);
+                    P->cName().c_str(), P->ID(), size, Packet.w_tell(), position);
             }
 #endif
             Packet.w_chunk_close16(position);
@@ -545,7 +545,7 @@ void CLevel::ClearAllObjects()
             ParentFound = true;
 //-------------------------------------------------------------
 #ifdef DEBUG
-            Msg("Rejection of %s[%d] from %s[%d]", *(pObj->cNameSect()), pObj->ID(), *(pObj->H_Parent()->cNameSect()),
+            Msg("Rejection of %s[%d] from %s[%d]", pObj->cNameSect().c_str(), pObj->ID(), pObj->H_Parent()->cNameSect().c_str(),
                 pObj->H_Parent()->ID());
 #endif
         };
@@ -583,7 +583,7 @@ void CLevel::ClearAllObjects()
         ParentFound = true;
 //-------------------------------------------------------------
 #ifdef DEBUG
-        Msg("Destruction of %s[%d]", *(pObj->cNameSect()), pObj->ID());
+        Msg("Destruction of %s[%d]", pObj->cNameSect().c_str(), pObj->ID());
 #endif
     };
     ProcessGameEvents();
@@ -623,10 +623,10 @@ void CLevel::net_OnChangeSelfName(NET_Packet* P)
         return;
     string64 NewName;
     P->r_stringZ(NewName);
-    if (!strstr(*m_caClientOptions, "/name="))
+    if (!strstr(m_caClientOptions.c_str(), "/name="))
     {
         string1024 tmpstr;
-        xr_strcpy(tmpstr, *m_caClientOptions);
+        xr_strcpy(tmpstr, m_caClientOptions.c_str());
         xr_strcat(tmpstr, "/name=");
         xr_strcat(tmpstr, NewName);
         m_caClientOptions = tmpstr;
@@ -634,10 +634,10 @@ void CLevel::net_OnChangeSelfName(NET_Packet* P)
     else
     {
         string1024 tmpstr;
-        xr_strcpy(tmpstr, *m_caClientOptions);
+        xr_strcpy(tmpstr, m_caClientOptions.c_str());
         *(strstr(tmpstr, "name=") + 5) = 0;
         xr_strcat(tmpstr, NewName);
-        pcstr ptmp = strchr(strstr(*m_caClientOptions, "name="), '/');
+        pcstr ptmp = strchr(strstr(m_caClientOptions.c_str(), "name="), '/');
         if (ptmp)
             xr_strcat(tmpstr, ptmp);
         m_caClientOptions = tmpstr;

@@ -3,9 +3,6 @@
 #include "IInputReceiver.h"
 #include "Include/xrRender/ImGuiRender.h"
 
-#define IMGUI_DISABLE_OBSOLETE_KEYIO
-#define IMGUI_DISABLE_OBSOLETE_FUNCTIONS
-#define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui.h>
 
 namespace xray::editor
@@ -111,6 +108,7 @@ private:
 
 private:
     visible_state m_state{};
+    bool m_tool_added{};
 
     struct ImGuiBackend
     {

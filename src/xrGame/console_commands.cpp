@@ -19,6 +19,7 @@
 #include "Actor_Flags.h"
 #include "CustomZone.h"
 #include "xrScriptEngine/script_engine.hpp"
+#include "xrScriptEngine/script_profiler.hpp"
 #include "xrScriptEngine/script_process.hpp"
 #include "xrServer_Objects.h"
 #include "ui/UIMainIngameWnd.h"
@@ -167,11 +168,12 @@ static void full_memory_stats()
     GEnv.Render->ResourcesGetMemoryUsage(m_base, c_base, m_lmaps, c_lmaps);
     log_vminfo();
     size_t _process_heap = ::Memory.mem_usage();
-    int _eco_strings = (int)g_pStringContainer->stat_economy();
+    const auto [_eco_strings_bytes, _eco_strings_count] = g_pStringContainer->stat_economy();
     int _eco_smem = (int)g_pSharedMemoryContainer->stat_economy();
     Msg("* [ render ]: textures[%d K]", (m_base + m_lmaps) / 1024);
     Msg("* [ x-ray  ]: process heap[%u K]", _process_heap / 1024);
-    Msg("* [ x-ray  ]: economy: strings[%d K], smem[%d K]", _eco_strings / 1024, _eco_smem);
+    Msg("* [ x-ray  ]: shared strings: memory[%ld K], count[%lu]", _eco_strings_bytes / 1024, _eco_strings_count);
+    Msg("* [ x-ray  ]: shared memory[%ld K]", _eco_smem);
 #ifdef FS_DEBUG
     Msg("* [ x-ray  ]: file mapping: memory[%d K], count[%d]", g_file_mapped_memory / 1024, g_file_mapped_count);
     dump_file_mappings();
@@ -1400,13 +1402,13 @@ public:
                 l_iErrorCode = lua_pcall(GEnv.ScriptEngine->lua(), 0, 0, 0);
                 if (l_iErrorCode)
                 {
-                    GEnv.ScriptEngine->print_output(GEnv.ScriptEngine->lua(), *m_script_name, l_iErrorCode);
+                    GEnv.ScriptEngine->print_output(GEnv.ScriptEngine->lua(), m_script_name.c_str(), l_iErrorCode);
                     GEnv.ScriptEngine->on_error(GEnv.ScriptEngine->lua());
                     return;
                 }
             }
 
-            GEnv.ScriptEngine->print_output(GEnv.ScriptEngine->lua(), *m_script_name, l_iErrorCode);
+            GEnv.ScriptEngine->print_output(GEnv.ScriptEngine->lua(), m_script_name.c_str(), l_iErrorCode);
         }
     } // void	Execute
 
@@ -1755,7 +1757,7 @@ public:
 
         Msg("bones for model \"%s\"", arguments);
         for (u16 i = 0, n = kinematics->LL_BoneCount(); i < n; ++i)
-            Msg("%s", *kinematics->LL_GetData(i).name);
+            Msg("%s", kinematics->LL_GetData(i).name.c_str());
 
         GEnv.Render->model_Delete(visual);
     }
@@ -2226,9 +2228,9 @@ void CCC_RegisterCommands()
     CMD3(CCC_Mask, "ai_use_smart_covers", &psAI_Flags, aiUseSmartCovers);
     CMD3(CCC_Mask, "ai_use_smart_covers_animation_slots", &psAI_Flags, (u32)aiUseSmartCoversAnimationSlot);
     CMD4(CCC_Float, "ai_smart_factor", &g_smart_cover_factor, 0.f, 1000000.f);
-    CMD3(CCC_Mask, "lua_debug", &g_LuaDebug, 1);
 #endif // MASTER_GOLD
 
+    CMD3(CCC_Mask, "lua_debug", &g_LuaDebug, 1);
     CMD4(CCC_Integer, "lua_dump_depth", &g_LuaDumpDepth, 0, 16);
 
     CMD1(CCC_LuaProfiler, CCC_LuaProfiler::COMMAND_LUA_PROFILER_STATUS);
@@ -2617,9 +2619,6 @@ void CCC_RegisterCommands()
     CMD3(CCC_String, "slot_1", g_quick_use_slots[1], 32);
     CMD3(CCC_String, "slot_2", g_quick_use_slots[2], 32);
     CMD3(CCC_String, "slot_3", g_quick_use_slots[3], 32);
-
-    extern int g_dbg_load_pre_c5ef6c7_saves;
-    CMD4(CCC_Integer, "dbg_load_pre_c5ef6c7_saves", &g_dbg_load_pre_c5ef6c7_saves, 0, 1); //Alundaio
 
     CMD4(CCC_Integer, "keypress_on_start", &g_keypress_on_start, 0, 1);
     CMD1(CCC_UI_Time_Factor, "ui_time_factor");

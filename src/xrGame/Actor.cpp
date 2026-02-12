@@ -89,11 +89,6 @@ constexpr float default_feedback_duration = 0.2f;
 
 extern float cammera_into_collision_shift;
 extern int g_first_person_death;
-extern ENGINE_API Fvector4 ps_ssfx_hud_drops_1;
-extern ENGINE_API Fvector4 ps_r2_mask_control;
-extern ENGINE_API Fvector ps_r2_drops_control;
-extern ENGINE_API float ps_ssfx_gloss_factor;
-extern ENGINE_API Fvector3 ps_ssfx_gloss_minmax;
 
 string32 ACTOR_DEFS::g_quick_use_slots[4] = {};
 // skeleton
@@ -421,10 +416,10 @@ void CActor::Load(LPCSTR section)
             }
         }
 
-        sndDie[0].create(strconcat(buf, *cName(), "\\die0"), st_Effect, SOUND_TYPE_MONSTER_DYING);
-        sndDie[1].create(strconcat(buf, *cName(), "\\die1"), st_Effect, SOUND_TYPE_MONSTER_DYING);
-        sndDie[2].create(strconcat(buf, *cName(), "\\die2"), st_Effect, SOUND_TYPE_MONSTER_DYING);
-        sndDie[3].create(strconcat(buf, *cName(), "\\die3"), st_Effect, SOUND_TYPE_MONSTER_DYING);
+        sndDie[0].create(strconcat(buf, cName().c_str(), "\\die0"), st_Effect, SOUND_TYPE_MONSTER_DYING);
+        sndDie[1].create(strconcat(buf, cName().c_str(), "\\die1"), st_Effect, SOUND_TYPE_MONSTER_DYING);
+        sndDie[2].create(strconcat(buf, cName().c_str(), "\\die2"), st_Effect, SOUND_TYPE_MONSTER_DYING);
+        sndDie[3].create(strconcat(buf, cName().c_str(), "\\die3"), st_Effect, SOUND_TYPE_MONSTER_DYING);
 
         m_HeavyBreathSnd.create(
             pSettings->r_string(section, "heavy_breath_snd"), st_Effect, SOUND_TYPE_MONSTER_INJURING);
@@ -1056,75 +1051,6 @@ float CActor::currentFOV()
     }
 }
 
-// Currently WIP
-// Visor Rain Drops
-void CActor::UpdateVisorRainDrops()
-{
-    float visorBuildSpeed = 4.f;
-    float visorDryingSpeed = 8.f;
-    float rainFactor = g_pGamePersistent->Environment().CurrentEnv.rain_density;
-    static u32 dropsUpdateTime = 0;
-    bool isInHideout = g_pGamePersistent->IsActorInHideout();
-
-    if (rainFactor > 0.f)
-    {
-        if (!isInHideout)
-        {
-            if (ps_r2_drops_control.x < 0.1f) // jump start the rain effect when we move out of cover
-                ps_r2_drops_control.x = 0.1f;
-
-            if (ps_r2_drops_control.x < 0.5f)
-                ps_r2_drops_control.x += (visorBuildSpeed * Device.fTimeDelta) / 100.f;
-            else if (Device.dwTimeGlobal > dropsUpdateTime)
-            {
-                ps_r2_drops_control.x += .0025f;
-                dropsUpdateTime = Device.dwTimeGlobal + 1000;
-            }
-        }
-        else
-        {
-            ps_r2_drops_control.x -= (visorDryingSpeed * Device.fTimeDelta) / 100.f;
-        }
-    }
-    else
-    {
-        ps_r2_drops_control.x -= (visorDryingSpeed * Device.fTimeDelta) / 100.f;
-    }
-
-    clamp(ps_r2_drops_control.x, 0.f, 1.f);
-
-    if ((rainFactor > 0.f && !isInHideout) || fsimilar(ps_r2_drops_control.x, 0.f, 0.05f))
-        ps_r2_drops_control.z = m_dropsIntensity / 2.f;
-}
-
-// Visor Condition, Reflection
-void CActor::UpdateVisor()
-{
-    PIItem pVisor = inventory().ItemFromSlot(HELMET_SLOT);
-    if (!pVisor)
-    {
-        auto pOutfit = smart_cast<CCustomOutfit*>(inventory().ItemFromSlot(OUTFIT_SLOT));
-        if (pOutfit && !pOutfit->bIsHelmetAvaliable) // if our outfit blocks the helmet, it probably includes it's own helmet
-            pVisor = pOutfit->cast_inventory_item();
-    }
-
-    if (pVisor)
-    {
-        float condition = 1.1f - pVisor->GetCondition();
-        ps_r2_mask_control.x = round(condition * 10.f);
-        // TODO: dont hardcode these
-        // and add cracking sounds when the condition changes
-        ps_r2_mask_control.y = 1.f;
-        ps_r2_mask_control.z = 1.f;
-    }
-    else
-    {
-        ps_r2_mask_control.x = 0.f;
-        ps_r2_mask_control.y = 0.f;
-        ps_r2_mask_control.z = 0.f;
-    }
-}
-
 void CActor::UpdateCL()
 {
     if (g_Alive() && Level().CurrentViewEntity() == this)
@@ -1293,9 +1219,6 @@ void CActor::UpdateCL()
 
     if (psActorFlags.test(AF_MULTI_ITEM_PICKUP))
         m_bPickupMode = false;
-
-    UpdateVisorRainDrops();
-    UpdateVisor();
 }
 
 float NET_Jump = 0;
@@ -1577,7 +1500,7 @@ void CActor::shedule_Update(u32 DT)
                 }
                 else if (m_pVehicleWeLookingAt)
                 {
-                    m_sDefaultObjAction = m_pVehicleWeLookingAt->m_sUseAction != nullptr ? m_pVehicleWeLookingAt->m_sUseAction : m_sCarCharacterUseAction;
+                    m_sDefaultObjAction = m_pVehicleWeLookingAt->m_sUseAction ? m_pVehicleWeLookingAt->m_sUseAction : m_sCarCharacterUseAction;
                 }
                 else if (m_pObjectWeLookingAt && m_pObjectWeLookingAt->cast_inventory_item() &&
                     m_pObjectWeLookingAt->cast_inventory_item()->CanTake())
@@ -2016,10 +1939,10 @@ float CActor::HitArtefactsOnBelt(float hit_power, ALife::EHitType hit_type)
     return hit_power;
 }
 
-float CActor::GetProtection_ArtefactsOnBelt(ALife::EHitType hit_type)
+float CActor::GetProtection_ArtefactsOnBelt(ALife::EHitType hit_type) const
 {
     float sum = 0.0f;
-    for (auto& it : inventory().m_belt)
+    for (const auto& it : inventory().m_belt)
     {
         const auto artefact = smart_cast<CArtefact*>(it);
         if (artefact)
@@ -2141,7 +2064,7 @@ void CActor::OnDifficultyChanged()
     conditions().LoadImmunities(tmp, pSettings);
     // hit probability
     strconcat(sizeof(tmp), tmp, "hit_probability_", diff_name);
-    m_hit_probability = pSettings->r_float(*cNameSect(), tmp);
+    m_hit_probability = pSettings->r_float(cNameSect().c_str(), tmp);
     // two hits death parameters
     strconcat(sizeof(tmp), tmp, "actor_thd_", diff_name);
     conditions().LoadTwoHitsDeathParams(tmp);

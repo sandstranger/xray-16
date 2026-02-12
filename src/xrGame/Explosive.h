@@ -119,12 +119,12 @@ protected:
     //Время, через которое надо сделать взрывчатку невиимой, если она не становится невидимой во время взрыва
     float m_fExplodeHideDurationMax;
     //флаг состояния взрыва
-    enum
+    enum : u8
     {
-        flExploding = 1 << 0,
+        flExploding       = 1 << 0,
         flExplodEventSent = 1 << 1,
-        flReadyToExplode = 1 << 2,
-        flExploded = 1 << 3
+        flReadyToExplode  = 1 << 2,
+        flExploded        = 1 << 3,
     };
     Flags8 m_explosion_flags;
     ///////////////////////////////////////////////
@@ -167,6 +167,9 @@ protected:
     {
         shared_str effect_sect_name;
     } effector;
+
+private:
+    DECLARE_SCRIPT_REGISTER_FUNCTION();
 };
 
 void random_point_in_object_box(Fvector& out_pos, IGameObject* obj);
