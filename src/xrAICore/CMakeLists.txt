@@ -1,3 +1,7 @@
+if (ANDROID)
+    add_compile_options(-include "${CMAKE_CURRENT_SOURCE_DIR}/pch.hpp")
+endif ()
+
 add_library(xrAICore)
 
 target_sources_grouped(
@@ -274,6 +278,7 @@ target_sources_grouped(
     Navigation/PatrolPath/patrol_path_storage_inline.h
 )
 
+if (NOT ANDROID)
 target_sources_grouped(
     TARGET xrAICore
     NAME "Kernel"
@@ -281,13 +286,12 @@ target_sources_grouped(
     pch.cpp
     pch.hpp
 )
+endif ()
 
-
-target_include_directories(xrAICore
-    PRIVATE
+include_directories(
     "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${CMAKE_SOURCE_DIR}/src"
-    "${CMAKE_SOURCE_DIR}/sdk/include"
+    "${XRAY16_SOURCE_DIR}/src"
+    "${XRAY16_SOURCE_DIR}/sdk/include"
 )
 
 target_link_libraries(xrAICore
@@ -312,9 +316,11 @@ target_precompile_headers(xrAICore
         PRIVATE
         pch.hpp
 )
-endif ()
-if (BUILD_SHARED_LIBS AND NOT ANDROID)
+
+if (BUILD_SHARED_LIBS)
     install(TARGETS xrAICore LIBRARY
-        DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+            DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     )
 endif()
+endif ()
+

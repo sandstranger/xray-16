@@ -12,8 +12,6 @@ target_sources(xrRenderPC_R4 PRIVATE
     r4_shaders.cpp
     R_Backend_LOD.cpp
     R_Backend_LOD.h
-    stdafx.cpp
-    stdafx.h
     xrRender_R4.cpp
 )
 
@@ -48,6 +46,10 @@ target_precompile_headers(xrRenderPC_R4
     PRIVATE
     stdafx.h
 )
+else ()
+    target_compile_options(xrRenderPC_R4 PRIVATE
+            -include ${CMAKE_CURRENT_SOURCE_DIR}/stdafx.h
+    )
 endif ()
 
 if (BUILD_SHARED_LIBS AND NOT ANDROID)

@@ -1,3 +1,10 @@
+if (ANDROID)
+    add_compile_options(
+            $<$<COMPILE_LANGUAGE:CXX>:-include>
+            $<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/StdAfx.h>
+    )
+endif ()
+
 add_library(xrGame)
 
 target_sources(xrGame PRIVATE
@@ -1384,8 +1391,6 @@ target_sources(xrGame PRIVATE
     static_obstacles_avoider.cpp
     static_obstacles_avoider.h
     static_obstacles_avoider_inline.h
-    StdAfx.cpp
-    StdAfx.h
     steering_behaviour_alignment.h
     steering_behaviour_base.h
     steering_behaviour_base_inline.h
@@ -2473,13 +2478,13 @@ target_sources(xrGame PRIVATE
 target_include_directories(xrGame
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${CMAKE_SOURCE_DIR}/src"
-    "${CMAKE_SOURCE_DIR}/src/xrCore"
-    "${CMAKE_SOURCE_DIR}/src/xrServerEntities"
-    "${CMAKE_SOURCE_DIR}/Externals/GameSpy/src"
-    "${CMAKE_SOURCE_DIR}/Externals/ode/include"
-    "${CMAKE_SOURCE_DIR}/Externals/OpenAutomate/inc"
-    "${CMAKE_SOURCE_DIR}/sdk/include"
+    "${XRAY16_SOURCE_DIR}/src"
+    "${XRAY16_SOURCE_DIR}/src/xrCore"
+    "${XRAY16_SOURCE_DIR}/src/xrServerEntities"
+    "${XRAY16_SOURCE_DIR}/Externals/GameSpy/src"
+    "${XRAY16_SOURCE_DIR}/Externals/ode/include"
+    "${XRAY16_SOURCE_DIR}/Externals/OpenAutomate/inc"
+    "${XRAY16_SOURCE_DIR}/sdk/include"
 )
 
 target_link_libraries(xrGame
@@ -2530,10 +2535,10 @@ else ()
             PRIVATE
             $<$<COMPILE_LANGUAGE:CXX>:StdAfx.h>
     )
+    if (BUILD_SHARED_LIBS)
+        install(TARGETS xrGame LIBRARY
+                DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        )
+    endif()
 endif ()
 
-if (BUILD_SHARED_LIBS AND NOT ANDROID)
-    install(TARGETS xrGame LIBRARY
-        DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-    )
-endif()

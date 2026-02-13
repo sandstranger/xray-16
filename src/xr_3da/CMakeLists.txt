@@ -25,7 +25,7 @@ set_property(
 
 target_include_directories(xr_3da
     PRIVATE
-    "${CMAKE_SOURCE_DIR}/src"
+    "${XRAY16_SOURCE_DIR}/src"
 )
 
 target_link_libraries(xr_3da
@@ -41,8 +41,8 @@ if (NOT ANDROID)
 set_target_properties(xr_3da PROPERTIES
     PREFIX ""
 )
+install(TARGETS xr_3da RUNTIME
+        DESTINATION "${CMAKE_INSTALL_BINDIR}"
+)
 endif ()
 
-install(TARGETS xr_3da RUNTIME
-    DESTINATION "${CMAKE_INSTALL_BINDIR}"
-)

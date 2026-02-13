@@ -1,3 +1,7 @@
+if (ANDROID)
+    add_compile_options(-include "${CMAKE_CURRENT_SOURCE_DIR}/stdafx.h")
+endif ()
+
 add_library(xrSound)
 
 target_sources_grouped(
@@ -70,8 +74,6 @@ target_sources_grouped(
     Sound.cpp
     Sound.h
     SoundRender.h
-    stdafx.cpp
-    stdafx.h
 )
 
 set_source_files_properties(guids.cpp PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
@@ -140,8 +142,8 @@ target_link_libraries(xrSound
 else ()
     target_include_directories(xrSound
             PRIVATE
-            "${CMAKE_SOURCE_DIR}/src"
-            "${CMAKE_SOURCE_DIR}/src/xrEngine"
+            "${XRAY16_SOURCE_DIR}/src"
+            "${XRAY16_SOURCE_DIR}/src/xrEngine"
             "${OPENAL_INCLUDE_DIR}"
             ${OGG_INCLUDE_DIR}
             ${VORBISFILE_INCLUDE_DIRS}
@@ -171,10 +173,10 @@ target_precompile_headers(xrSound
         PRIVATE
         stdafx.h
 )
-endif ()
-
-if (BUILD_SHARED_LIBS AND NOT ANDROID)
+if (BUILD_SHARED_LIBS)
     install(TARGETS xrSound LIBRARY
-        DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+            DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     )
 endif()
+endif ()
+

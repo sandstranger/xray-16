@@ -1,3 +1,7 @@
+if (ANDROID)
+    add_compile_options(-include "${CMAKE_CURRENT_SOURCE_DIR}/stdafx.h")
+endif ()
+
 add_library(xrCore)
 
 target_sources_grouped(
@@ -353,6 +357,7 @@ target_sources_grouped(
     os_clipboard.h
 )
 
+if (NOT ANDROID)
 target_sources_grouped(
     TARGET xrCore
     NAME "PCH"
@@ -360,6 +365,7 @@ target_sources_grouped(
     stdafx.cpp
     stdafx.h
 )
+endif ()
 
 target_sources_grouped(
     TARGET xrCore
@@ -455,17 +461,18 @@ target_include_directories(xrCore
 else ()
     target_include_directories(xrCore
             PUBLIC
-            "${CMAKE_SOURCE_DIR}/Externals/tracy/public"
-
+            "${XRAY16_SOURCE_DIR}/Externals/tracy/public"
             PRIVATE
             ${JPEG_INCLUDE_DIRS}
             ${LZO_INCLUDE_DIR}
+            ${GLOB_LIBRARY}
             ${LUA_INCLUDE_DIR}
             ${SDL2_INCLUDE_DIR}
+            ${GLOB_INCLUDE_DIR}
             "${CMAKE_CURRENT_SOURCE_DIR}"
-            "${CMAKE_SOURCE_DIR}/src"
-            "${CMAKE_SOURCE_DIR}/Externals"
-            "${CMAKE_SOURCE_DIR}/Externals/mimalloc/include"
+            "${XRAY16_SOURCE_DIR}/src"
+            "${XRAY16_SOURCE_DIR}/Externals"
+            "${XRAY16_SOURCE_DIR}/Externals/mimalloc/include"
     )
 endif ()
 
@@ -480,6 +487,7 @@ if (ANDROID)
             xrMiscMath
             ${LZO_LIBRARY}
             ${JPEG_LIBRARIES}
+            ${GLOB_LIBRARY}
     )
 else ()
     target_link_libraries(xrCore
@@ -532,10 +540,10 @@ if (NOT ANDROID)
             PRIVATE
             stdafx.h
     )
+    if (BUILD_SHARED_LIBS)
+        install(TARGETS xrCore LIBRARY
+                DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        )
+    endif()
 endif ()
 
-if (BUILD_SHARED_LIBS AND NOT ANDROID)
-    install(TARGETS xrCore LIBRARY
-        DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-    )
-endif()

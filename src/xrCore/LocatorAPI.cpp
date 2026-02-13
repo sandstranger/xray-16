@@ -15,7 +15,11 @@
 #include <sys/utime.h>
 #elif defined(XR_PLATFORM_POSIX)
 #include <SDL.h>
+#ifndef ANDROID
 #include <glob.h>
+#else
+#include "glob.h"
+#endif
 #endif
 
 #include "FS_internal.h"

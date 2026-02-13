@@ -1,3 +1,7 @@
+if (ANDROID)
+    add_compile_options(-include "${CMAKE_CURRENT_SOURCE_DIR}/pch.hpp")
+endif ()
+
 add_library(xrMiscMath STATIC)
 
 target_sources(xrMiscMath PRIVATE
@@ -6,13 +10,11 @@ target_sources(xrMiscMath PRIVATE
     vector.cpp
     vector3d_ext.cpp
     xrMiscMath.cpp
-    pch.hpp
-    pch.cpp
 )
 
 target_include_directories(xrMiscMath
-    PRIVATE
-    "${CMAKE_SOURCE_DIR}/src"
+        PRIVATE
+        "${XRAY16_SOURCE_DIR}/src"
 )
 
 set_target_properties(xrMiscMath PROPERTIES

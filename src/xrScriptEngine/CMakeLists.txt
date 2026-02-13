@@ -1,3 +1,7 @@
+if (ANDROID)
+    add_compile_options(-include "${CMAKE_CURRENT_SOURCE_DIR}/pch.hpp")
+endif ()
+
 add_library(xrScriptEngine)
 
 target_sources_grouped(
@@ -47,8 +51,6 @@ target_sources_grouped(
     TARGET xrScriptEngine
     NAME "Kernel"
     FILES
-    pch.cpp
-    pch.hpp
     xrScriptEngine.cpp
     xrScriptEngine.hpp
 )
@@ -87,8 +89,8 @@ target_sources_grouped(
 target_include_directories(xrScriptEngine
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${CMAKE_SOURCE_DIR}/src"
-    "${CMAKE_SOURCE_DIR}/Externals"
+    "${XRAY16_SOURCE_DIR}/src"
+    "${XRAY16_SOURCE_DIR}/Externals"
 )
 
 target_link_libraries(xrScriptEngine
@@ -113,10 +115,10 @@ target_precompile_headers(xrScriptEngine
         PRIVATE
         pch.hpp
 )
-endif ()
-
-if (BUILD_SHARED_LIBS AND NOT ANDROID)
+if (BUILD_SHARED_LIBS)
     install(TARGETS xrScriptEngine LIBRARY
-        DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+            DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     )
 endif()
+endif ()
+

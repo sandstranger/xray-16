@@ -1,11 +1,13 @@
+if (ANDROID)
+    add_compile_options(-include "${CMAKE_CURRENT_SOURCE_DIR}/StdAfx.h")
+endif ()
+
 add_library(xrPhysics)
 
 target_sources_grouped(
     TARGET xrPhysics
     NAME "Kernel"
     FILES
-    stdafx.cpp
-    StdAfx.h
     xrPhysics.cpp
     xrPhysics.h
 )
@@ -395,13 +397,13 @@ target_sources_grouped(
 
 target_include_directories(xrPhysics
     PUBLIC
-    "${CMAKE_SOURCE_DIR}/Externals"
+    "${XRAY16_SOURCE_DIR}/Externals"
 
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${CMAKE_SOURCE_DIR}/src"
-    "${CMAKE_SOURCE_DIR}/Externals/imgui"
-    "${CMAKE_SOURCE_DIR}/Externals/ode/include"
+    "${XRAY16_SOURCE_DIR}/src"
+    "${XRAY16_SOURCE_DIR}/Externals/imgui"
+    "${XRAY16_SOURCE_DIR}/Externals/ode/include"
 )
 
 target_link_libraries(xrPhysics
@@ -433,10 +435,10 @@ target_precompile_headers(xrPhysics
     PRIVATE
     StdAfx.h
 )
-endif ()
-
-if (BUILD_SHARED_LIBS AND NOT ANDROID)
+if (BUILD_SHARED_LIBS)
     install(TARGETS xrPhysics LIBRARY
-        DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+            DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     )
 endif()
+endif ()
+

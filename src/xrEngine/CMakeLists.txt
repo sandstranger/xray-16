@@ -1,3 +1,7 @@
+if (ANDROID)
+    add_compile_options(-include "${CMAKE_CURRENT_SOURCE_DIR}/stdafx.h")
+endif ()
+
 add_library(xrEngine)
 
 target_sources_grouped(
@@ -228,8 +232,6 @@ target_sources_grouped(
     defines.h
     embedded_resources_management.h
     mp_logging.h
-    stdafx.cpp
-    stdafx.h
     x_ray.cpp
     x_ray.h
 )
@@ -419,9 +421,9 @@ else ()
     target_include_directories(xrEngine
             PRIVATE
             "${CMAKE_CURRENT_SOURCE_DIR}"
-            "${CMAKE_SOURCE_DIR}/src"
-            "${CMAKE_SOURCE_DIR}/Externals/imgui"
-            "${CMAKE_SOURCE_DIR}/Externals/OpenAutomate/inc"
+            "${XRAY16_SOURCE_DIR}/src"
+            "${XRAY16_SOURCE_DIR}/Externals/imgui"
+            "${XRAY16_SOURCE_DIR}/Externals/OpenAutomate/inc"
             ${THEORA_INCLUDE_DIR}
             ${SDL2_INCLUDE_DIR}
             ${OPENAL_INCLUDE_DIR}
@@ -485,10 +487,10 @@ target_precompile_headers(xrEngine
         PRIVATE
         stdafx.h
 )
-endif ()
-
-if (BUILD_SHARED_LIBS AND NOT ANDROID)
+if (BUILD_SHARED_LIBS)
     install(TARGETS xrEngine LIBRARY
-        DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+            DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     )
 endif()
+endif ()
+

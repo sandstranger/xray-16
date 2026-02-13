@@ -1,3 +1,7 @@
+if (ANDROID)
+    add_compile_options(-include "${CMAKE_CURRENT_SOURCE_DIR}/pch.hpp")
+endif ()
+
 add_library(xrOPCODE)
 
 target_sources(xrOPCODE PRIVATE
@@ -63,14 +67,19 @@ target_sources(xrOPCODE PRIVATE
     OPC_Types.h
     OPC_VolumeCollider.cpp
     OPC_VolumeCollider.h
-    pch.cpp
-    pch.hpp
 )
 
+if (NOT ANDROID)
 target_include_directories(xrOPCODE
     PRIVATE
     "${CMAKE_SOURCE_DIR}/src"
 )
+else ()
+    target_include_directories(xrOPCODE
+            PRIVATE
+            "${XRAY16_SOURCE_DIR}/src"
+    )
+endif ()
 
 target_link_libraries(xrOPCODE
     PRIVATE
@@ -93,10 +102,10 @@ target_precompile_headers(xrOPCODE
     PRIVATE
     pch.hpp
 )
-endif ()
-
-if (BUILD_SHARED_LIBS AND NOT ANDROID)
+if (BUILD_SHARED_LIBS)
     install(TARGETS xrOPCODE LIBRARY
-        DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+            DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     )
 endif()
+endif ()
+

@@ -1,3 +1,7 @@
+if (ANDROID)
+    add_compile_options(-include "${CMAKE_CURRENT_SOURCE_DIR}/stdafx.h")
+endif ()
+
 add_library(xrParticles)
 
 target_sources_grouped(
@@ -5,8 +9,6 @@ target_sources_grouped(
     NAME "Kernel"
     FILES
     "psystem.h"
-    "stdafx.h"
-    "stdafx.cpp"
 )
 
 target_sources_grouped(
@@ -30,8 +32,8 @@ target_sources_grouped(
 
 target_include_directories(xrParticles
     PRIVATE
-    "${CMAKE_SOURCE_DIR}/src"
-    "${CMAKE_SOURCE_DIR}/Externals"
+    "${XRAY16_SOURCE_DIR}/src"
+    "${XRAY16_SOURCE_DIR}/Externals"
 )
 
 target_link_libraries(xrParticles
@@ -54,11 +56,11 @@ if (NOT ANDROID)
             PRIVATE
             stdafx.h
     )
+    if (BUILD_SHARED_LIBS)
+        install(TARGETS xrParticles LIBRARY
+                DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        )
+    endif()
 endif ()
 
 
-if (BUILD_SHARED_LIBS AND NOT ANDROID)
-    install(TARGETS xrParticles LIBRARY
-        DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-    )
-endif()

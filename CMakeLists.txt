@@ -22,10 +22,18 @@ include(XRay.Build)
 include(XRay.Packaging)
 
 if (ANDROID)
+    set(XRAY16_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
     include_directories(Externals)
+    include_directories("Externals/tracy/public")
+    include_directories(${OPENAL_INCLUDE_DIR}/AL
+            ${LUA_INCLUDE_DIR}
+            ${OGG_INCLUDE_DIR}
+            ${THEORA_INCLUDE_DIR}
+            ${SDL2_INCLUDE_DIR})
     include_directories(src)
     include_directories(res)
     include_directories(misc)
+    add_compile_definitions(XRCORE_API=)
 endif ()
 
 add_subdirectory(Externals)

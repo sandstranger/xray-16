@@ -1,3 +1,7 @@
+if (ANDROID)
+    add_compile_options(-include "${CMAKE_CURRENT_SOURCE_DIR}/stdafx.h")
+endif ()
+
 add_library(xrNetServer)
 
 target_sources(xrNetServer PRIVATE
@@ -19,8 +23,6 @@ target_sources(xrNetServer PRIVATE
     #NET_Server.cpp
     #NET_Server.h
     NET_Shared.h
-    stdafx.cpp
-    stdafx.h
     empty/NET_Client.cpp
     empty/NET_Client.h
     empty/NET_Server.cpp
@@ -30,7 +32,7 @@ target_sources(xrNetServer PRIVATE
 target_include_directories(xrNetServer
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${CMAKE_SOURCE_DIR}/src"
+    "${XRAY16_SOURCE_DIR}/src"
 )
 
 target_link_libraries(xrNetServer
@@ -51,11 +53,11 @@ target_precompile_headers(xrNetServer
         PRIVATE
         stdafx.h
 )
+if (BUILD_SHARED_LIBS AND NOT ANDROID)
+    install(TARGETS xrNetServer LIBRARY
+            DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    )
+endif()
 endif ()
 
 
-if (BUILD_SHARED_LIBS AND NOT ANDROID)
-    install(TARGETS xrNetServer LIBRARY
-        DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-    )
-endif()

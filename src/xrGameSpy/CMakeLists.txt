@@ -1,11 +1,13 @@
+if (ANDROID)
+    add_compile_options(-include "${CMAKE_CURRENT_SOURCE_DIR}/stdafx.h")
+endif ()
+
 add_library(xrGameSpy)
 
 target_sources_grouped(
     TARGET xrGameSpy
     NAME "Kernel"
     FILES
-    stdafx.cpp
-    stdafx.h
     xrGameSpy.cpp
     xrGameSpy.h
     xrGameSpy_MainDefs.h
@@ -40,11 +42,11 @@ target_sources_grouped(
 
 target_include_directories(xrGameSpy
     PRIVATE
-    "${CMAKE_SOURCE_DIR}/src"
-    "${CMAKE_SOURCE_DIR}/src/xrServerEntities"
-    "${CMAKE_SOURCE_DIR}/Externals/GameSpy/src"
-    "${CMAKE_SOURCE_DIR}/Externals/ode/include"
-    "${CMAKE_SOURCE_DIR}/Externals/OpenAutomate/inc"
+    "${XRAY16_SOURCE_DIR}/src"
+    "${XRAY16_SOURCE_DIR}/src/xrServerEntities"
+    "${XRAY16_SOURCE_DIR}/Externals/GameSpy/src"
+    "${XRAY16_SOURCE_DIR}/Externals/ode/include"
+    "${XRAY16_SOURCE_DIR}/Externals/OpenAutomate/inc"
 )
 
 target_link_libraries(xrGameSpy
@@ -69,10 +71,10 @@ target_precompile_headers(xrGameSpy
     PRIVATE
     stdafx.h
 )
-endif ()
-
 if (BUILD_SHARED_LIBS AND NOT ANDROID)
     install(TARGETS xrGameSpy LIBRARY
-        DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+            DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     )
 endif()
+endif ()
+

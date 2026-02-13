@@ -1,8 +1,10 @@
+if (ANDROID)
+    add_compile_options(-include "${CMAKE_CURRENT_SOURCE_DIR}/pch.hpp")
+endif ()
+
 add_library(xrUICore)
 
 target_sources(xrUICore PRIVATE
-    pch.cpp
-    pch.hpp
     ui_base.cpp
     ui_base.h
     ui_debug.cpp
@@ -125,7 +127,7 @@ target_sources(xrUICore PRIVATE
 target_include_directories(xrUICore
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${CMAKE_SOURCE_DIR}/src"
+    "${XRAY16_SOURCE_DIR}/src"
 )
 
 target_link_libraries(xrUICore
@@ -155,11 +157,11 @@ if (NOT ANDROID)
             pch.hpp
     )
 
+    if (BUILD_SHARED_LIBS)
+        install(TARGETS xrUICore LIBRARY
+                DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        )
+    endif()
 endif ()
 
 
-if (BUILD_SHARED_LIBS AND NOT ANDROID)
-    install(TARGETS xrUICore LIBRARY
-        DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-    )
-endif()
