@@ -81,6 +81,7 @@ int APIENTRY WinMain(HINSTANCE inst, HINSTANCE prevInst, char* commandLine, int 
 
     return result;
 }
+#else
 #if ANDROID
 int SDL_main(int argc, char *argv[])
 #else

@@ -6,9 +6,6 @@
 
 #include "glHW.h"
 #include "xrEngine/XR_IOConsole.h"
-#if ANDROID
-#include "osm_bridge.h"
-#endif
 
 namespace xray::render::RENDER_NAMESPACE
 {
@@ -91,7 +88,6 @@ void CHW::CreateDevice(SDL_Window* hWnd)
     }
     Caps.fTarget = D3DFMT_A8R8G8B8;
     Caps.fDepth = D3DFMT_D24S8;
-#ifndef ANDROID
     // Create the context
     m_context = SDL_GL_CreateContext(m_window);
     if (m_context == nullptr)
@@ -105,7 +101,6 @@ void CHW::CreateDevice(SDL_Window* hWnd)
         Log("! OpenGL: could not make context current:", SDL_GetError());
         return;
     }
-#endif
 
     int version;
     {
@@ -153,9 +148,6 @@ void CHW::CreateDevice(SDL_Window* hWnd)
 
 void CHW::DestroyDevice()
 {
-#if ANDROID
-    return;
-#endif
     CHK_GL(glDeleteFramebuffers(1, &pFB));
     pFB = 0;
 
@@ -185,10 +177,11 @@ void CHW::SetPrimaryAttributes(u32& windowFlags)
 {
 #if ANDROID
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+    windowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 #else
-    windowFlags |= SDL_WINDOW_OPENGL;
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 #endif
+    windowFlags |= SDL_WINDOW_OPENGL;
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
@@ -201,8 +194,8 @@ void CHW::SetPrimaryAttributes(u32& windowFlags)
     if (!strstr(Core.Params, "-no_gl_context"))
     {
 #if ANDROID
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 #else
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
@@ -266,12 +259,7 @@ void CHW::Present()
         0, 0, Device.dwWidth, Device.dwHeight,
         GL_COLOR_BUFFER_BIT, GL_NEAREST);
 #endif
-
-#if ANDROID
-    SwapSurfaceWindow();
-#else
     SDL_GL_SwapWindow(m_window);
-#endif
     CurrentBackBuffer = (CurrentBackBuffer + 1) % BackBufferCount;
 }
 

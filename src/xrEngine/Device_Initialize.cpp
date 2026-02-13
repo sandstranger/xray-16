@@ -47,24 +47,12 @@ void CRenderDevice::Initialize()
     {
 
 #if ANDROID
-        Uint32 flags = SDL_WINDOW_BORDERLESS | SDL_WINDOW_HIDDEN |
-                       SDL_WINDOW_RESIZABLE | SDL_WINDOW_FULLSCREEN_DESKTOP;
-        flags |= SDL_WINDOW_OPENGL;
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-        SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-        SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-        SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-        SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-        SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-        SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-        SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+        Uint32 flags = 0;
 #else
         Uint32 flags = SDL_WINDOW_BORDERLESS | SDL_WINDOW_HIDDEN |
             SDL_WINDOW_RESIZABLE;
-        GEnv.Render->ObtainRequiredWindowFlags(flags);
 #endif
+        GEnv.Render->ObtainRequiredWindowFlags(flags);
         int icon = IDI_ICON_COP;
         pcstr title = "S.T.A.L.K.E.R.: Call of Pripyat";
 
@@ -85,26 +73,16 @@ void CRenderDevice::Initialize()
         xr_strcpy(Core.ApplicationTitle, title);
         SetSDLSettings(title);
 #if ANDROID
-        int screenWidth, screenHeight;
-        SDL_DisplayMode current;
-        if (SDL_GetCurrentDisplayMode(0, &current) == 0) {
-            screenWidth = current.w;
-            screenHeight = current.h;
-            Log("CURRENT SCREEN WIDTH =", screenWidth);
-            Log("CURRENT SCREEN HEIGHT =", screenHeight);
-        } else {
-            Log("Can not get screen resolution");
-            SDL_Quit();
-            return;
-        }
-        m_sdlWnd = SDL_CreateWindow(title, 0, 0, screenWidth, screenHeight, flags);
+        m_sdlWnd = SDL_CreateWindow(title, 0, 0, 0, 0, flags);
 #else
         m_sdlWnd = SDL_CreateWindow(title, 0, 0, 640, 480, flags);
 #endif
         R_ASSERT3(m_sdlWnd, "Unable to create SDL window", SDL_GetError());
 
         SDL_SetWindowHitTest(m_sdlWnd, WindowHitTest, nullptr);
+#ifndef ANDROID
         SDL_SetWindowMinimumSize(m_sdlWnd, 256, 192);
+#endif
         xrDebug::SetWindowHandler(this);
         ExtractAndSetWindowIcon(m_sdlWnd, icon);
 

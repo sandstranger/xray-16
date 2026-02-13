@@ -273,13 +273,17 @@ CApplication::CApplication(pcstr commandLine, GameModule* game, const std::array
     TaskScheduler->Wait(inputTask);
     InitConsole();
 
-#if ANDROID
+/*#if ANDROID
     Device.Initialize();
-    Engine.Initialize(game, modules);	
+    Engine.Initialize(game, modules);
 #else
     Engine.Initialize(game, modules);
     Device.Initialize();
-#endif
+#endif*/
+
+    Engine.Initialize(game, modules);
+    Device.Initialize();
+
     Console->OnDeviceInitialize();
 
     execUserScript();
