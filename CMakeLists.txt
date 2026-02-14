@@ -36,6 +36,7 @@ if (ANDROID)
     include_directories(src)
     include_directories(res)
     include_directories(misc)
+    add_compile_options(-fPIC)
 endif ()
 
 add_subdirectory(Externals)

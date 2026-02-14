@@ -3,6 +3,7 @@ include_guard()
 set(CMAKE_CONFIGURATION_TYPES
   Debug
   Mixed
+  MinSizeRel
   Release
   ReleaseMasterGold
 )
@@ -22,9 +23,6 @@ else()
     message(DEBUG "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
     if (NOT CMAKE_BUILD_TYPE)
         message(WARNING "CMAKE_BUILD_TYPE isn't defined, setting it to ${XRAY_DEFAULT_BUILD_TYPE}.")
-        set(CMAKE_BUILD_TYPE ${XRAY_DEFAULT_BUILD_TYPE})
-    elseif (CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
-        message(WARNING "MinSizeRel is unsupported, CMAKE_BUILD_TYPE is set to ${XRAY_DEFAULT_BUILD_TYPE}.")
         set(CMAKE_BUILD_TYPE ${XRAY_DEFAULT_BUILD_TYPE})
     elseif (CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
         message(WARNING "RelWithDebInfo equals Release in OpenXRay. Please, use Release build type directly.")

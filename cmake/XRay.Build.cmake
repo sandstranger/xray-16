@@ -15,19 +15,19 @@ add_compile_definitions(
     $<$<CONFIG:Debug>:_DEBUG>
     $<$<CONFIG:Debug,Mixed>:DEBUG>
     $<$<CONFIG:Mixed>:MIXED>
-    $<$<CONFIG:Release,ReleaseMasterGold>:NDEBUG>
+    $<$<CONFIG:Release,MinSizeRel,ReleaseMasterGold>:NDEBUG>
     # Tracy profiler
     $<$<BOOL:${XRAY_ENABLE_TRACY}>:TRACY_ENABLE>
     $<$<BOOL:${XRAY_ENABLE_TRACY}>:TRACY_NO_FRAME_IMAGE>
     # Luabind
-    $<$<CONFIG:Release,ReleaseMasterGold>:LUABIND_NO_EXCEPTIONS>
-    $<$<CONFIG:Release,ReleaseMasterGold>:LUABIND_NO_ERROR_CHECKING>
+    $<$<CONFIG:Release,MinSizeRel,ReleaseMasterGold>:LUABIND_NO_EXCEPTIONS>
+    $<$<CONFIG:Release,MinSizeRel,ReleaseMasterGold>:LUABIND_NO_ERROR_CHECKING>
 )
 
 # Link-time optimization
 include(CheckIPOSupported)
 check_ipo_supported(RESULT LTO_IS_SUPPORTED)
-if (LTO_IS_SUPPORTED)
+if (LTO_IS_SUPPORTED AND NOT ANDROID)
     set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE ON)
     set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASEMASTERGOLD ON)
 endif()
@@ -66,6 +66,7 @@ message(DEBUG "           Global: ${CMAKE_CXX_FLAGS}")
 message(DEBUG "            Debug: ${CMAKE_CXX_FLAGS_DEBUG}")
 message(DEBUG "            Mixed: ${CMAKE_CXX_FLAGS_MIXED}")
 message(DEBUG "          Release: ${CMAKE_CXX_FLAGS_RELEASE}")
+message(DEBUG "       MinSizeRel: ${CMAKE_CXX_FLAGS_MINSIZEREL}")
 message(DEBUG "ReleaseMasterGold: ${CMAKE_CXX_FLAGS_RELEASEMASTERGOLD}")
 
 message(DEBUG)
@@ -74,6 +75,7 @@ message(DEBUG "           Global: ${CMAKE_C_FLAGS}")
 message(DEBUG "            Debug: ${CMAKE_C_FLAGS_DEBUG}")
 message(DEBUG "            Mixed: ${CMAKE_C_FLAGS_MIXED}")
 message(DEBUG "          Release: ${CMAKE_C_FLAGS_RELEASE}")
+message(DEBUG "       MinSizeRel: ${CMAKE_C_FLAGS_MINSIZEREL}")
 message(DEBUG "ReleaseMasterGold: ${CMAKE_C_FLAGS_RELEASEMASTERGOLD}")
 message(DEBUG)
 
