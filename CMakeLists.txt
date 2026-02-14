@@ -12,7 +12,12 @@ project(OpenXRay
     LANGUAGES CXX C
 )
 
-option(BUILD_SHARED_LIBS "Build shared libraries"     ${BUILD_SHARED_LIBS_DEFAULT_VALUE})
+if (NOT ANDROID)
+    option(BUILD_SHARED_LIBS "Build shared libraries"     ${BUILD_SHARED_LIBS_DEFAULT_VALUE})
+else ()
+    option(BUILD_SHARED_LIBS "Build shared libraries"     OFF)
+
+endif ()
 option(XRAY_USE_LUAJIT   "Use LuaJIT"                 ON)
 option(XRAY_USE_ASAN     "Use AddressSanitizer"       OFF)
 option(XRAY_ENABLE_TRACY "Enable tracy profiler"      OFF)
@@ -35,6 +40,7 @@ if (ANDROID)
     if(DEFINED CMAKE_BUILD_TYPE AND CMAKE_BUILD_TYPE STREQUAL "Debug")
         add_compile_options(-fno-lto)
     endif ()
+    add_compile_options(-fPIC)
 endif ()
 
 add_subdirectory(Externals)

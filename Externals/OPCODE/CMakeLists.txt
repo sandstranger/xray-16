@@ -93,12 +93,12 @@ target_compile_definitions(xrOPCODE
     $<$<BOOL:${BUILD_SHARED_LIBS}>:OPCODE_EXPORTS>
 )
 
-set_target_properties(xrOPCODE PROPERTIES
-    PREFIX ""
-)
-
 if (NOT ANDROID)
-target_precompile_headers(xrOPCODE
+    set_target_properties(xrOPCODE PROPERTIES
+            PREFIX ""
+    )
+
+    target_precompile_headers(xrOPCODE
     PRIVATE
     pch.hpp
 )

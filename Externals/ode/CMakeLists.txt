@@ -91,6 +91,7 @@ target_compile_definitions(xrODE
     "$<$<CONFIG:Release,ReleaseMasterGold>:dNODEBUG>"
 )
 
+if (NOT ANDROID)
 set_target_properties(xrODE PROPERTIES
     PREFIX ""
     UNITY_BUILD OFF
@@ -101,3 +102,4 @@ if (BUILD_SHARED_LIBS)
         DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     )
 endif()
+endif ()

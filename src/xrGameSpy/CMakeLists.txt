@@ -62,12 +62,12 @@ target_compile_definitions(xrGameSpy
     XRAY_DISABLE_GAMESPY_WARNINGS
 )
 
-set_target_properties(xrGameSpy PROPERTIES
-    PREFIX ""
-)
-
 if (NOT ANDROID)
-target_precompile_headers(xrGameSpy
+    set_target_properties(xrGameSpy PROPERTIES
+            PREFIX ""
+    )
+
+    target_precompile_headers(xrGameSpy
     PRIVATE
     stdafx.h
 )
