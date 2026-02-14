@@ -11,7 +11,6 @@
 #include "Common/object_broker.h"
 #include "script_value.h"
 
-IC CScriptValueContainer::~CScriptValueContainer() { clear(); }
 IC void CScriptValueContainer::add(CScriptValue* new_value)
 {
     const auto I = std::find_if(m_values.begin(), m_values.end(), [new_value](const CScriptValue* value)

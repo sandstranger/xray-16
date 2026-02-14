@@ -2387,6 +2387,7 @@ target_sources(xrGame PRIVATE
     ../xrServerEntities/object_factory_impl.h
     ../xrServerEntities/object_factory_inline.h
     ../xrServerEntities/object_factory_register.cpp
+    ../xrServerEntities/script_value_container_impl.cpp
     ../xrServerEntities/object_factory_script.cpp
     ../xrServerEntities/object_factory_space.h
     ../xrServerEntities/object_factory_spawner.cpp
