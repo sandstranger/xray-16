@@ -177,7 +177,6 @@ void CHW::SetPrimaryAttributes(u32& windowFlags)
 {
 #if ANDROID
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-    windowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 #else
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 #endif

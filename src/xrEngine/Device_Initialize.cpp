@@ -47,7 +47,7 @@ void CRenderDevice::Initialize()
     {
 
 #if ANDROID
-        Uint32 flags = 0;
+        Uint32 flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
 #else
         Uint32 flags = SDL_WINDOW_BORDERLESS | SDL_WINDOW_HIDDEN |
             SDL_WINDOW_RESIZABLE;
@@ -84,8 +84,9 @@ void CRenderDevice::Initialize()
         SDL_SetWindowMinimumSize(m_sdlWnd, 256, 192);
 #endif
         xrDebug::SetWindowHandler(this);
+#ifndef ANDROID
         ExtractAndSetWindowIcon(m_sdlWnd, icon);
-
+#endif
         TracySetProgramName(title);
     }
 

@@ -12,7 +12,11 @@ project(OpenXRay
     LANGUAGES CXX C
 )
 
-option(BUILD_SHARED_LIBS "Build shared libraries"     ${BUILD_SHARED_LIBS_DEFAULT_VALUE})
+if (NOT ANDROID)
+    option(BUILD_SHARED_LIBS "Build shared libraries"     ${BUILD_SHARED_LIBS_DEFAULT_VALUE})
+else ()
+    option(BUILD_SHARED_LIBS "Build shared libraries"     OFF)
+endif ()
 
 option(XRAY_USE_LUAJIT   "Use LuaJIT"                 ON)
 option(XRAY_USE_ASAN     "Use AddressSanitizer"       OFF)
@@ -24,7 +28,6 @@ include(XRay.Packaging)
 if (ANDROID)
     set(XRAY16_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
     include_directories(Externals)
-    include_directories("Externals/tracy/public")
     include_directories(${OPENAL_INCLUDE_DIR}/AL
             ${LUA_INCLUDE_DIR}
             ${OGG_INCLUDE_DIR}
@@ -33,7 +36,6 @@ if (ANDROID)
     include_directories(src)
     include_directories(res)
     include_directories(misc)
-    add_compile_definitions(XRCORE_API=)
 endif ()
 
 add_subdirectory(Externals)
