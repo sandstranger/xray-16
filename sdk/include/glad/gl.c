@@ -11710,7 +11710,9 @@ static int glad_gl_find_extensions_gl(void) {
     GLAD_GL_ARB_sampler_objects = glad_gl_has_extension(exts, exts_i, "GL_ARB_sampler_objects");
     GLAD_GL_ARB_seamless_cube_map = glad_gl_has_extension(exts, exts_i, "GL_ARB_seamless_cube_map");
     GLAD_GL_ARB_seamless_cubemap_per_texture = glad_gl_has_extension(exts, exts_i, "GL_ARB_seamless_cubemap_per_texture");
+#ifndef ANDROID
     GLAD_GL_ARB_separate_shader_objects = glad_gl_has_extension(exts, exts_i, "GL_ARB_separate_shader_objects");
+#endif
     GLAD_GL_ARB_shader_atomic_counter_ops = glad_gl_has_extension(exts, exts_i, "GL_ARB_shader_atomic_counter_ops");
     GLAD_GL_ARB_shader_atomic_counters = glad_gl_has_extension(exts, exts_i, "GL_ARB_shader_atomic_counters");
     GLAD_GL_ARB_shader_ballot = glad_gl_has_extension(exts, exts_i, "GL_ARB_shader_ballot");
@@ -11756,7 +11758,9 @@ static int glad_gl_find_extensions_gl(void) {
     GLAD_GL_ARB_texture_env_combine = glad_gl_has_extension(exts, exts_i, "GL_ARB_texture_env_combine");
     GLAD_GL_ARB_texture_env_crossbar = glad_gl_has_extension(exts, exts_i, "GL_ARB_texture_env_crossbar");
     GLAD_GL_ARB_texture_env_dot3 = glad_gl_has_extension(exts, exts_i, "GL_ARB_texture_env_dot3");
+#ifndef ANDROID
     GLAD_GL_ARB_texture_filter_anisotropic = glad_gl_has_extension(exts, exts_i, "GL_ARB_texture_filter_anisotropic");
+#endif
     GLAD_GL_ARB_texture_filter_minmax = glad_gl_has_extension(exts, exts_i, "GL_ARB_texture_filter_minmax");
     GLAD_GL_ARB_texture_float = glad_gl_has_extension(exts, exts_i, "GL_ARB_texture_float");
     GLAD_GL_ARB_texture_gather = glad_gl_has_extension(exts, exts_i, "GL_ARB_texture_gather");
@@ -11784,7 +11788,9 @@ static int glad_gl_find_extensions_gl(void) {
     GLAD_GL_ARB_vertex_array_bgra = glad_gl_has_extension(exts, exts_i, "GL_ARB_vertex_array_bgra");
     GLAD_GL_ARB_vertex_array_object = glad_gl_has_extension(exts, exts_i, "GL_ARB_vertex_array_object");
     GLAD_GL_ARB_vertex_attrib_64bit = glad_gl_has_extension(exts, exts_i, "GL_ARB_vertex_attrib_64bit");
+#ifndef ANDROID
     GLAD_GL_ARB_vertex_attrib_binding = glad_gl_has_extension(exts, exts_i, "GL_ARB_vertex_attrib_binding");
+#endif
     GLAD_GL_ARB_vertex_blend = glad_gl_has_extension(exts, exts_i, "GL_ARB_vertex_blend");
     GLAD_GL_ARB_vertex_buffer_object = glad_gl_has_extension(exts, exts_i, "GL_ARB_vertex_buffer_object");
     GLAD_GL_ARB_vertex_program = glad_gl_has_extension(exts, exts_i, "GL_ARB_vertex_program");

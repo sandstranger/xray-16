@@ -30,9 +30,15 @@ TextureFormatPairs TextureFormatList[] =
     //D3DFMT_A2B10G10R10 DXGI_FORMAT_R10G10B10A2
     {D3DFMT_A8B8G8R8, GL_RGBA8},
     //D3DFMT_X8B8G8R8 Not available
+#ifndef ANDROID
     {D3DFMT_G16R16, GL_RG16},
     //D3DFMT_A2R10G10B10 Not available
     {D3DFMT_A16B16G16R16, GL_RGBA16},
+#else
+    {D3DFMT_G16R16, GL_RG16_EXT},
+                //D3DFMT_A2R10G10B10 Not available
+    {D3DFMT_A16B16G16R16, GL_RGBA16_EXT},
+#endif
     //D3DFMT_A8P8 Not available
     //D3DFMT_P8 Not available
     {D3DFMT_L8, GL_R8}, // Note: Use .r swizzle in shader to duplicate red to other components to get D3D9 behavior.
@@ -42,7 +48,11 @@ TextureFormatPairs TextureFormatList[] =
     //D3DFMT_L6V5U5 Not available
     //D3DFMT_X8L8V8U8 Not available
     {D3DFMT_Q8W8V8U8, GL_RGBA8},
+#ifndef ANDROID
     {D3DFMT_V16U16, GL_RG16},
+#else
+    {D3DFMT_V16U16, GL_RG16_EXT},
+#endif
     //D3DFMT_W11V11U10 Not available
     //D3DFMT_A2W10V10U10 Not available
     //D3DFMT_UYVY Not available

@@ -15,8 +15,10 @@
 #include "xrParticles/psystem.h"
 
 #include "glad/gl.h"
+#ifndef ANDROID
 #include <SDL_opengl.h>
 #include <SDL_opengl_glext.h>
+#endif
 
 #define R_GL 0
 #define R_R1 1
