@@ -29,8 +29,11 @@ void CRT::create(LPCSTR Name, u32 w, u32 h, D3DFORMAT f, u32 SampleCount /*= 1*/
     dwWidth = w;
     dwHeight = h;
     fmt = f;
+#ifndef ANDROID
     sampleCount = SampleCount;
-
+#else
+    sampleCount = 1;
+#endif
     // Get caps
     GLint max_width, max_height;
 #ifdef XR_PLATFORM_APPLE
@@ -49,7 +52,11 @@ void CRT::create(LPCSTR Name, u32 w, u32 h, D3DFORMAT f, u32 SampleCount /*= 1*/
 
     RImplementation.Resources->Evict();
 
+#ifndef ANDROID
     target = (SampleCount > 1) ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
+#else
+    target = GL_TEXTURE_2D;
+#endif
     glGenTextures(1, &pRT);
     CHK_GL(glBindTexture(target, pRT));
 #ifndef ANDROID
@@ -59,7 +66,8 @@ void CRT::create(LPCSTR Name, u32 w, u32 h, D3DFORMAT f, u32 SampleCount /*= 1*/
     else
         CHK_GL(glTexStorage2D(GL_TEXTURE_2D, 1, glTextureUtils::ConvertTextureFormat(fmt), w, h));
 #else
-        CHK_GL(glTexStorage2D(GL_TEXTURE_2D, 1, glTextureUtils::ConvertTextureFormat(fmt), w, h));
+    GLenum internalFormat = glTextureUtils::ConvertTextureFormat(fmt);
+    glTexImage2D(GL_TEXTURE_2D, 1, internalFormat, w, h, 0, internalFormat, GL_UNSIGNED_BYTE, nullptr);
 #endif
     pTexture = RImplementation.Resources->_CreateTexture(Name);
     pTexture->surface_set(target, pRT);

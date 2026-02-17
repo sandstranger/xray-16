@@ -148,6 +148,7 @@
         if (!ignoreAlways && FAILED(hr_))\
             xrDebug::Fail(ignoreAlways, DEBUG_INFO, #expr, hr_);\
     } while (false)
+#ifndef ANDROID
 #define CHK_GL(expr)\
     do\
     {\
@@ -157,6 +158,9 @@
         if (!ignoreAlways && err != GL_NO_ERROR)\
             xrDebug::Fail(ignoreAlways, DEBUG_INFO, #expr, (long)err);\
     } while (false)
+#else
+#define CHK_GL(expr) expr
+#endif
 #else // DEBUG
 #define R_ASSERT1_CURE(expr, cure)\
     do\
