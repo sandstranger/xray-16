@@ -6,6 +6,7 @@
 
 #if defined(ANDROID)
 #include "SDL_main.h"
+#include <string>
 #endif
 
 #if !defined(XR_PLATFORM_WINDOWS)
@@ -14,6 +15,11 @@
 #include <stdio.h>
 #include <getopt.h>
 
+#endif
+
+#if ANDROID
+using namespace std;
+static string g_pathToDataFiles;
 #endif
 
 // Always request high performance GPU
@@ -89,7 +95,7 @@ int main(int argc, char *argv[])
 #endif
 {
 #if ANDROID
-    chdir(getenv("ANDROID_PATH"));
+    chdir(g_pathToDataFiles.c_str());
 #endif
     int result = EXIT_FAILURE;
 
@@ -139,4 +145,45 @@ int main(int argc, char *argv[])
 
     return result;
 }
+#endif
+
+#if ANDROID
+extern "C" {
+__attribute__((used)) __attribute__((visibility("default")))
+void onNativeResume() {
+}
+
+__attribute__((used)) __attribute__((visibility("default")))
+void onNativePause() {
+}
+
+__attribute__((used)) __attribute__((visibility("default")))
+bool needToShowScreenControls() {
+    return true;
+}
+
+__attribute__((used)) __attribute__((visibility("default")))
+bool needToInvokeMouseButtonsEvents(){
+    return true;
+}
+
+__attribute__((used)) __attribute__((visibility("default")))
+bool needToReInitGameControllers (){
+    return false;
+}
+
+__attribute__((used)) __attribute__((visibility("default")))
+void setPathToResources (const char *pathToDataFolder) {
+    g_pathToDataFiles = pathToDataFolder;
+}
+
+__attribute__((used)) __attribute__((visibility("default")))
+void setPathToSDLControllerDB (const char *pathToSDLControllerDB){
+}
+
+__attribute__((used)) __attribute__((visibility("default")))
+void setUseGLES2_0State (const bool useGLES2_0){
+}
+}
+
 #endif
