@@ -11710,7 +11710,9 @@ static int glad_gl_find_extensions_gl(void) {
     GLAD_GL_ARB_sampler_objects = glad_gl_has_extension(exts, exts_i, "GL_ARB_sampler_objects");
     GLAD_GL_ARB_seamless_cube_map = glad_gl_has_extension(exts, exts_i, "GL_ARB_seamless_cube_map");
     GLAD_GL_ARB_seamless_cubemap_per_texture = glad_gl_has_extension(exts, exts_i, "GL_ARB_seamless_cubemap_per_texture");
+#ifndef ANDROID
     GLAD_GL_ARB_separate_shader_objects = glad_gl_has_extension(exts, exts_i, "GL_ARB_separate_shader_objects");
+#endif
     GLAD_GL_ARB_shader_atomic_counter_ops = glad_gl_has_extension(exts, exts_i, "GL_ARB_shader_atomic_counter_ops");
     GLAD_GL_ARB_shader_atomic_counters = glad_gl_has_extension(exts, exts_i, "GL_ARB_shader_atomic_counters");
     GLAD_GL_ARB_shader_ballot = glad_gl_has_extension(exts, exts_i, "GL_ARB_shader_ballot");

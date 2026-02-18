@@ -36,8 +36,18 @@ BOOL R_constant_table::parse(void* _desc, u32 destination)
     for (GLint i = 0; i < uniformCount; i++)
     {
         GLint size;
+#if ANDROID
+        GLenum reg = 0;
+#else
         GLenum reg;
+#endif
         CHK_GL(glGetActiveUniform(program, i, maxLength, NULL, &size, &reg, name));
+
+#if ANDROID
+        if (reg == 0) {
+            continue;
+        }
+#endif
 
         // Remove index from arrays
         if (size > 1)
