@@ -11788,7 +11788,9 @@ static int glad_gl_find_extensions_gl(void) {
     GLAD_GL_ARB_vertex_array_bgra = glad_gl_has_extension(exts, exts_i, "GL_ARB_vertex_array_bgra");
     GLAD_GL_ARB_vertex_array_object = glad_gl_has_extension(exts, exts_i, "GL_ARB_vertex_array_object");
     GLAD_GL_ARB_vertex_attrib_64bit = glad_gl_has_extension(exts, exts_i, "GL_ARB_vertex_attrib_64bit");
+#ifndef ANDROID
     GLAD_GL_ARB_vertex_attrib_binding = glad_gl_has_extension(exts, exts_i, "GL_ARB_vertex_attrib_binding");
+#endif
     GLAD_GL_ARB_vertex_blend = glad_gl_has_extension(exts, exts_i, "GL_ARB_vertex_blend");
     GLAD_GL_ARB_vertex_buffer_object = glad_gl_has_extension(exts, exts_i, "GL_ARB_vertex_buffer_object");
     GLAD_GL_ARB_vertex_program = glad_gl_has_extension(exts, exts_i, "GL_ARB_vertex_program");
