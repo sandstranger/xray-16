@@ -40,7 +40,10 @@ private:
     float m_uiMipLODBias;
 
     GLuint m_samplerArray[CTexture::mtMaxCombinedShaderTextures];
-
+#if ANDROID
+    u32 m_minFilterD3D[CTexture::mtMaxCombinedShaderTextures];
+    u32 m_mipFilterD3D[CTexture::mtMaxCombinedShaderTextures];
+#endif    
 public:
     glState();
 

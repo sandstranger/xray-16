@@ -8,6 +8,13 @@ glState::glState()
     // Clear the sampler array
     memset(m_samplerArray, 0, CTexture::mtMaxCombinedShaderTextures * sizeof(GLuint));
 
+#if ANDROID
+    for (int i = 0; i < CTexture::mtMaxCombinedShaderTextures; ++i) {
+        m_minFilterD3D[i] = D3DTEXF_POINT;
+        m_mipFilterD3D[i] = D3DTEXF_LINEAR;
+    }
+#endif
+
     rasterizerCullMode = D3DCULL_CCW;
 
     m_pDepthStencilState.DepthEnable = TRUE;
@@ -53,7 +60,9 @@ void glState::Apply()
             {
                 CHK_GL(glSamplerParameterf(m_samplerArray[stage], GL_TEXTURE_MIN_LOD, 0.f));
                 CHK_GL(glSamplerParameterf(m_samplerArray[stage], GL_TEXTURE_MAX_LOD, FLT_MAX));
+#ifndef ANDROID
                 CHK_GL(glSamplerParameterf(m_samplerArray[stage], GL_TEXTURE_LOD_BIAS, ps_r__tf_Mipbias));
+#endif
             }
         }
     }
@@ -207,6 +216,7 @@ void glState::UpdateRenderState(u32 name, u32 value)
     }
 }
 
+#ifndef ANDROID
 void glState::UpdateSamplerState(u32 stage, u32 name, u32 value)
 {
     if (stage < 0 || stage >= CTexture::mtMaxCombinedShaderTextures)
@@ -259,11 +269,7 @@ void glState::UpdateSamplerState(u32 stage, u32 name, u32 value)
         break;
     case D3DSAMP_MAXANISOTROPY: /* DWORD maximum anisotropy */
         if (GLAD_GL_ARB_texture_filter_anisotropic || GLAD_GL_EXT_texture_filter_anisotropic) {
-#ifndef ANDROID
             CHK_GL(glSamplerParameteri(m_samplerArray[stage], GL_TEXTURE_MAX_ANISOTROPY, value));
-#else
-            CHK_GL(glSamplerParameteri(m_samplerArray[stage], GL_TEXTURE_MAX_ANISOTROPY_EXT, value));
-#endif
         }
         break;
     case XRDX11SAMP_COMPARISONFILTER:
@@ -278,4 +284,100 @@ void glState::UpdateSamplerState(u32 stage, u32 name, u32 value)
         break;
     }
 }
+#else
+    static GLint ConvertAddressMode(u32 d3dAddress) {
+        switch (d3dAddress) {
+            case D3DTADDRESS_WRAP:   return GL_REPEAT;
+            case D3DTADDRESS_MIRROR: return GL_MIRRORED_REPEAT;
+            case D3DTADDRESS_CLAMP:  return GL_CLAMP_TO_EDGE;
+            case D3DTADDRESS_BORDER: return GL_CLAMP_TO_BORDER;
+            default: return GL_REPEAT;
+        }
+    }
+
+    static GLint CombineMinFilter(u32 minD3D, u32 mipD3D) {
+        bool linearMin = (minD3D == D3DTEXF_LINEAR || minD3D == D3DTEXF_ANISOTROPIC);
+
+        switch (mipD3D) {
+            case D3DTEXF_NONE:
+                return linearMin ? GL_LINEAR : GL_NEAREST;
+
+            case D3DTEXF_POINT:
+                return linearMin ? GL_LINEAR_MIPMAP_NEAREST : GL_NEAREST_MIPMAP_NEAREST;
+
+            case D3DTEXF_LINEAR:
+            default:
+                return linearMin ? GL_LINEAR_MIPMAP_LINEAR : GL_NEAREST_MIPMAP_LINEAR;
+        }
+    }
+
+    void glState::UpdateSamplerState(u32 stage, u32 name, u32 value) {
+        if (stage >= CTexture::mtMaxCombinedShaderTextures)
+            return;
+
+        if (m_samplerArray[stage] == 0)
+            glGenSamplers(1, &m_samplerArray[stage]);
+
+        switch (name) {
+            case D3DSAMP_MINFILTER:
+                m_minFilterD3D[stage] = value;
+                {
+                    GLint combined = CombineMinFilter(m_minFilterD3D[stage], m_mipFilterD3D[stage]);
+                    CHK_GL(glSamplerParameteri(m_samplerArray[stage], GL_TEXTURE_MIN_FILTER, combined));
+                }
+                break;
+
+            case D3DSAMP_MIPFILTER:
+                m_mipFilterD3D[stage] = value;
+                {
+                    GLint combined = CombineMinFilter(m_minFilterD3D[stage], m_mipFilterD3D[stage]);
+                    CHK_GL(glSamplerParameteri(m_samplerArray[stage], GL_TEXTURE_MIN_FILTER, combined));
+                }
+                break;
+
+            case D3DSAMP_MAGFILTER:
+            {
+                GLint glMag = (value == D3DTEXF_LINEAR || value == D3DTEXF_ANISOTROPIC) ? GL_LINEAR : GL_NEAREST;
+                CHK_GL(glSamplerParameteri(m_samplerArray[stage], GL_TEXTURE_MAG_FILTER, glMag));
+            }
+                break;
+            case D3DSAMP_ADDRESSU:
+                CHK_GL(glSamplerParameteri(m_samplerArray[stage], GL_TEXTURE_WRAP_S, ConvertAddressMode(value)));
+                break;
+            case D3DSAMP_ADDRESSV:
+                CHK_GL(glSamplerParameteri(m_samplerArray[stage], GL_TEXTURE_WRAP_T, ConvertAddressMode(value)));
+                break;
+            case D3DSAMP_ADDRESSW:
+                CHK_GL(glSamplerParameteri(m_samplerArray[stage], GL_TEXTURE_WRAP_R, ConvertAddressMode(value)));
+                break;
+            case D3DSAMP_BORDERCOLOR:
+            {
+                GLuint color[] = {color_get_R(value), color_get_G(value), color_get_B(value), color_get_A(value)};
+                CHK_GL(glSamplerParameterIuiv(m_samplerArray[stage], GL_TEXTURE_BORDER_COLOR, color));
+            }
+                break;
+            case D3DSAMP_MIPMAPLODBIAS:
+                CHK_GL(glSamplerParameterf(m_samplerArray[stage], GL_TEXTURE_LOD_BIAS, *(float*)&value));
+                break;
+            case D3DSAMP_MAXMIPLEVEL:
+                CHK_GL(glSamplerParameteri(m_samplerArray[stage], GL_TEXTURE_MAX_LEVEL, value));
+                break;
+            case D3DSAMP_MAXANISOTROPY:
+                if (GLAD_GL_EXT_texture_filter_anisotropic) {
+                    CHK_GL(glSamplerParameteri(m_samplerArray[stage], GL_TEXTURE_MAX_ANISOTROPY_EXT, value));
+                }
+                break;
+            case XRDX11SAMP_COMPARISONFILTER:
+                CHK_GL(glSamplerParameteri(m_samplerArray[stage], GL_TEXTURE_COMPARE_MODE,
+                                           value ? GL_COMPARE_REF_TO_TEXTURE : GL_NONE));
+                break;
+            case XRDX11SAMP_COMPARISONFUNC:
+                CHK_GL(glSamplerParameteri(m_samplerArray[stage], GL_TEXTURE_COMPARE_FUNC, value));
+                break;
+            default:
+                VERIFY(!"Unhandled sampler state");
+                break;
+        }
+    }
+#endif
 } // namespace xray::render::RENDER_NAMESPACE
