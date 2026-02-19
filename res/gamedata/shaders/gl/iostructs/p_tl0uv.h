@@ -1,5 +1,5 @@
 
-out vec4 SV_Target;
+layout(location = COLOR) out vec4 SV_Target;
 
 layout(location = COLOR)		in float4	p_TL0uv_Color	; // COLOR;
 

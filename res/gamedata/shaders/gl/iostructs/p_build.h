@@ -1,5 +1,5 @@
 
-out vec4 SV_Target;
+layout(location = COLOR) out vec4 SV_Target;
 
 layout(location = TEXCOORD0)	in float2 	p_build_Tex0	; // TEXCOORD0;
 layout(location = TEXCOORD1)	in float2	p_build_Tex1	; // TEXCOORD1;

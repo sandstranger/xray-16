@@ -12233,12 +12233,19 @@ static int glad_gl_find_core_gl(void) {
     GLAD_GL_VERSION_3_3 = (major == 3 && minor >= 3) || major > 3;
     GLAD_GL_VERSION_4_0 = (major == 4 && minor >= 0) || major > 4;
     GLAD_GL_VERSION_4_1 = (major == 4 && minor >= 1) || major > 4;
+#ifndef ANDROID
     GLAD_GL_VERSION_4_2 = (major == 4 && minor >= 2) || major > 4;
     GLAD_GL_VERSION_4_3 = (major == 4 && minor >= 3) || major > 4;
     GLAD_GL_VERSION_4_4 = (major == 4 && minor >= 4) || major > 4;
     GLAD_GL_VERSION_4_5 = (major == 4 && minor >= 5) || major > 4;
     GLAD_GL_VERSION_4_6 = (major == 4 && minor >= 6) || major > 4;
-
+#else
+    GLAD_GL_VERSION_4_2 = 1;
+    GLAD_GL_VERSION_4_3 = 1;
+    GLAD_GL_VERSION_4_4 = 1;
+    GLAD_GL_VERSION_4_5 = 1;
+    GLAD_GL_VERSION_4_6 = 1;
+#endif
     return GLAD_MAKE_VERSION(major, minor);
 }
 

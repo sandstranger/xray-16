@@ -7,7 +7,7 @@
 #ifdef MSAA_OPTIMIZATION
 in int gl_SampleID;
 #endif
-out vec4 SV_Target;
+layout(location = COLOR) out vec4 SV_Target;
 
 layout(location = TEXCOORD0) in float4 tc;
 

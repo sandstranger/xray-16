@@ -1,4 +1,4 @@
-out vec4 SV_Target;
+layout(location = COLOR) out vec4 SV_Target;
 in vec4 gl_FragCoord;
 
 #ifdef MSAA_OPTIMIZATION

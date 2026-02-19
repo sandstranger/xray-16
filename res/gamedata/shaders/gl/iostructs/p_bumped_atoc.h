@@ -1,5 +1,5 @@
 
-out vec4 SV_Target;
+layout(location = COLOR) out vec4 SV_Target;
 
 #if defined(USE_R2_STATIC_SUN) && !defined(USE_LM_HEMI)
 layout(location = TEXCOORD0)	in float4	p_bumped_tcdh	; // TEXCOORD0;	// Texture coordinates,         w=sun_occlusion

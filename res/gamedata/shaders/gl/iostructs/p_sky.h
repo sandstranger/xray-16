@@ -1,6 +1,6 @@
 
-out vec4 SV_Target0;
-out vec4 SV_Target1;
+layout(location = COLOR0) out vec4 SV_Target0;
+layout(location = COLOR1) out vec4 SV_Target1;
 
 struct         v2p
 {

@@ -1,5 +1,5 @@
 
-out vec4 SV_Target;
+layout(location = COLOR) out vec4 SV_Target;
 #ifdef MSAA_OPTIMIZATION
 in int gl_SampleID;
 #endif

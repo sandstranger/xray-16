@@ -1,5 +1,5 @@
 
-out vec4 SV_Target;
+layout(location = COLOR) out vec4 SV_Target;
 #ifdef MSAA_OPTIMIZATION
 in int gl_SampleID;
 #endif
@@ -16,6 +16,8 @@ layout(location = TEXCOORD0)	in float3 	v2p_lightToPos	; // TEXCOORD0;		// light
 layout(location = TEXCOORD1)	in float3 	v2p_vPos		; // TEXCOORD1;		// position in camera space
 layout(location = TEXCOORD2)	in float 	v2p_fDensity	; // TEXCOORD2;		// plane density along Z axis
 //layout(location = TEXCOORD3)	in float2	v2p_tNoise 		; // TEXCOORD3;		// projective noise
+layout(location = TEXCOORD3)	in float3	v2p_clip0 		; 
+layout(location = TEXCOORD4)	in float3	v2p_clip1 		;
 
 #ifdef MSAA_OPTIMIZATION
 float4 _main ( v2p I, uint iSample );
@@ -25,6 +27,11 @@ float4 _main ( v2p I );
 
 void main()
 {
+  if (v2p_clip0.x < 0.0 || v2p_clip0.y < 0.0 || v2p_clip0.z < 0.0 ||
+        v2p_clip1.x < 0.0 || v2p_clip1.y < 0.0 || v2p_clip1.z < 0.0) {
+        discard;
+    }
+
 	v2p	I;
 	I.lightToPos = v2p_lightToPos;
 	I.vPos		= v2p_vPos;

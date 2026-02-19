@@ -1,5 +1,5 @@
 
-out vec4 SV_Target;
+layout(location = COLOR) out vec4 SV_Target;
 #ifdef GBUFFER_OPTIMIZATION
 in vec4 gl_FragCoord;
 #endif
