@@ -80,23 +80,39 @@ void CTexture::apply_theora(CBackend& cmd_list, u32 dwStage)
 
     if (pTheora->Update(m_play_time != 0xFFFFFFFF ? m_play_time : Device.dwTimeContinual))
     {
+#ifndef ANDROID
         u32* pBits;
+#endif
         u32 _w = pTheora->Width(true);
         u32 _h = pTheora->Height(true);
-
+#ifndef ANDROID
         // Clear and map buffer for writing
         glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pBuffer);
         CHK_GL(glBufferData(GL_PIXEL_UNPACK_BUFFER, _w * _h * 4, nullptr, GL_STREAM_DRAW)); // Invalidate buffer
         CHK_GL(pBits = (u32*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_WRITE_ONLY));
-
+#else
+        xr_vector<u32> tempBuffer;
+        tempBuffer.resize(_w * _h);
+        u32* pBits = tempBuffer.data();
+#endif
         // Write to the buffer and copy it to the texture
         int _pos = 0;
         pTheora->DecompressFrame(pBits, 0, _pos);
+#if ANDROID
+        u32 pixel_count = _w * _h;
+        for (u32 i = 0; i < pixel_count; i++)
+        {
+            u32 p = pBits[i];
+            pBits[i] = (p & 0xFF00FF00) | ((p & 0x00FF0000) >> 16) | ((p & 0x000000FF) << 16);
+        }
+
+        CHK_GL(glTexSubImage2D(desc, 0, 0, 0, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, pBits));
+#else
         CHK_GL(glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER));
         CHK_GL(glTexSubImage2D(desc, 0, 0, 0, _w, _h, GL_BGRA, GL_UNSIGNED_BYTE, nullptr));
-
-        // Unmap the buffer to restore normal texture functionality
+         // Unmap the buffer to restore normal texture functionality
         glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+#endif
     }
 };
 
@@ -195,11 +211,14 @@ void CTexture::Load()
             GLuint pTexture = 0;
             u32 _w = pTheora->Width(false);
             u32 _h = pTheora->Height(false);
-
+#ifndef ANDROID
             glGenBuffers(1, &pBuffer);
             glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pBuffer);
             CHK_GL(glBufferData(GL_PIXEL_UNPACK_BUFFER, flags.MemoryUsage, nullptr, GL_STREAM_DRAW));
             glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+#else
+            pBuffer = 0;
+#endif
 
             glGenTextures(1, &pTexture);
             glBindTexture(GL_TEXTURE_2D, pTexture);
