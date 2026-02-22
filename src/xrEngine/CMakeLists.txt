@@ -455,7 +455,7 @@ else ()
     target_link_libraries(xrEngine
             PUBLIC
             xrMiscMath
-            ${OPENGL_opengl_LIBRARY}
+            ${NG_GL4ES_LIBRARY}            
             log
             PRIVATE
             xrAPI
