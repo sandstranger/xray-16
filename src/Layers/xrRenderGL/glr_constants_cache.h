@@ -15,20 +15,25 @@ private:
         case RC_2x4:
             it[0].set(A._11, A._21, A._31, A._41);
             it[1].set(A._12, A._22, A._32, A._42);
+#ifndef ANDROID
             if (GLAD_GL_ARB_separate_shader_objects)
                 CHK_GL(glProgramUniformMatrix4x2fv(L.program, L.location, 1, GL_TRUE, (float*)&it));
             else
                 CHK_GL(glUniformMatrix4x2fv(L.location, 1, GL_TRUE, (float*)&it));
+#endif
             break;
 
         case RC_3x4:
             it[0].set(A._11, A._21, A._31, A._41);
             it[1].set(A._12, A._22, A._32, A._42);
             it[2].set(A._13, A._23, A._33, A._43);
+#ifndef ANDROID
             if (GLAD_GL_ARB_separate_shader_objects)
                 CHK_GL(glProgramUniformMatrix4x3fv(L.program, L.location, 1, GL_TRUE, (float*)&it));
-            else
-                CHK_GL(glUniformMatrix4x3fv(L.location, 1, GL_TRUE, (float*)&it));
+            else {
+                CHK_GL(glUniformMatrix4fv(L.location, 1, GL_TRUE, (float *) &it));
+            }
+#endif
             break;
 
         case RC_4x4:
@@ -36,10 +41,12 @@ private:
             it[1].set(A._12, A._22, A._32, A._42);
             it[2].set(A._13, A._23, A._33, A._43);
             it[3].set(A._14, A._24, A._34, A._44);
+#ifndef ANDROID
             if (GLAD_GL_ARB_separate_shader_objects)
                 CHK_GL(glProgramUniformMatrix4fv(L.program, L.location, 1, GL_TRUE, (float*)&it));
             else
                 CHK_GL(glUniformMatrix4fv(L.location, 1, GL_TRUE, (float*)&it));
+#endif
             break;
 
         default:
@@ -49,6 +56,7 @@ private:
             NODEFAULT;
 #endif
         }
+        CHK_GL(glUniformMatrix4fv(L.location, 1, GL_TRUE, (float*)&it));
     }
 
     ICF void set(R_constant* C, R_constant_load& L, const Fvector4& A)

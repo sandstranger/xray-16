@@ -32,7 +32,7 @@ layout(location = TEXCOORD1)		in float4	v_model_ind		; // (x=m-index0, y=m-index
 
 
 layout(location = TEXCOORD0)		out float2	v2p_model_tc0		; // TEXCOORD0;		// base
-layout(location = COLOR0)		out float3	v2p_model_c0		; // COLOR0;		// color
+layout(location = COLOR0)		out float4	v2p_model_c0		; // COLOR0;		// color
 
 v2p _main ( v_model v );
 
@@ -85,6 +85,6 @@ void main()
 #endif
 
 	v2p_model_tc0	= O.tc0;
-	v2p_model_c0	= O.c0;
+	v2p_model_c0	= float4(O.c0.x,O.c0.y,O.c0.z,0.0);
 	gl_Position	= O.hpos;
 }
