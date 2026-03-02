@@ -24,11 +24,6 @@ BOOL R_constant_table::parse(void* _desc, u32 destination)
 {
     GLuint program = *(GLuint*)_desc;
 
-    // Get the maximum length of the constant name and allocate a buffer for it
-    GLint maxLength;
-    CHK_GL(glGetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxLength));
-    GLchar* name = xr_alloc<GLchar>(maxLength + 1); // Null terminator
-
     // Iterate all uniforms and parse the entries for the constant table.
     GLint uniformCount;
     CHK_GL(glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &uniformCount));
@@ -36,18 +31,10 @@ BOOL R_constant_table::parse(void* _desc, u32 destination)
     for (GLint i = 0; i < uniformCount; i++)
     {
         GLint size;
-#if ANDROID
-        GLenum reg = 0;
-#else
         GLenum reg;
-#endif
-        CHK_GL(glGetActiveUniform(program, i, maxLength, NULL, &size, &reg, name));
-
-#if ANDROID
-        if (reg == 0) {
-            continue;
-        }
-#endif
+        char name[256];
+        GLsizei length;
+        glGetActiveUniform(program, i, sizeof(name), &length, &size, &reg, name);
 
         // Remove index from arrays
         if (size > 1)
@@ -188,7 +175,6 @@ BOOL R_constant_table::parse(void* _desc, u32 destination)
         return xr_strcmp(C1->name, C2->name) < 0;
     });
 
-    xr_free(name);
     return TRUE;
 }
 } // namespace xray::render::RENDER_NAMESPACE
