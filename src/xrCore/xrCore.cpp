@@ -350,42 +350,40 @@ void xrCore::_destroy()
 
 void SDLLogOutput(void* /*userdata*/, int category, SDL_LogPriority priority, const char* message)
 {
-#if DEBUG && ANDROID
-    return;
-#endif
     pcstr from;
-    switch (category)
-    {
-    case SDL_LOG_CATEGORY_APPLICATION:  from = "application"; break;
-    case SDL_LOG_CATEGORY_ERROR:        from = "error"; break;
-    case SDL_LOG_CATEGORY_ASSERT:       from = "assert"; break;
-    case SDL_LOG_CATEGORY_SYSTEM:       from = "system"; break;
-    case SDL_LOG_CATEGORY_AUDIO:        from = "audio"; break;
-    case SDL_LOG_CATEGORY_VIDEO:        from = "video"; break;
-    case SDL_LOG_CATEGORY_RENDER:       from = "render"; break;
-    case SDL_LOG_CATEGORY_INPUT:        from = "input"; break;
-    case SDL_LOG_CATEGORY_TEST:         from = "test"; break;
-    case SDL_LOG_CATEGORY_CUSTOM:       from = "custom"; break;
-    default:                            from = "unknown"; break;
+    switch (category) {
+        case SDL_LOG_CATEGORY_APPLICATION:  from = "application"; break;
+        case SDL_LOG_CATEGORY_ERROR:        from = "error"; break;
+        case SDL_LOG_CATEGORY_ASSERT:       from = "assert"; break;
+        case SDL_LOG_CATEGORY_SYSTEM:       from = "system"; break;
+        case SDL_LOG_CATEGORY_AUDIO:        from = "audio"; break;
+        case SDL_LOG_CATEGORY_VIDEO:        from = "video"; break;
+        case SDL_LOG_CATEGORY_RENDER:       from = "render"; break;
+        case SDL_LOG_CATEGORY_INPUT:        from = "input"; break;
+        case SDL_LOG_CATEGORY_TEST:         from = "test"; break;
+        case SDL_LOG_CATEGORY_CUSTOM:       from = "custom"; break;
+        default:                            from = "unknown"; break;
     }
 
     char mark;
     pcstr type;
-    switch (priority)
-    {
-    case SDL_LOG_PRIORITY_VERBOSE:      mark = '%'; type = "verbose"; break;
-    case SDL_LOG_PRIORITY_DEBUG:        mark = '#'; type = "debug"; break;
-    case SDL_LOG_PRIORITY_INFO:         mark = '='; type = "info"; break;
-    case SDL_LOG_PRIORITY_WARN:         mark = '~'; type = "warn"; break;
-    case SDL_LOG_PRIORITY_ERROR:        mark = '!'; type = "error"; break;
-    case SDL_LOG_PRIORITY_CRITICAL:     mark = '$'; type = "critical"; break;
-    default:                            mark = ' '; type = "unknown"; break;
+    switch (priority) {
+        case SDL_LOG_PRIORITY_VERBOSE:      mark = '%'; type = "verbose"; break;
+        case SDL_LOG_PRIORITY_DEBUG:        mark = '#'; type = "debug"; break;
+        case SDL_LOG_PRIORITY_INFO:         mark = '='; type = "info"; break;
+        case SDL_LOG_PRIORITY_WARN:         mark = '~'; type = "warn"; break;
+        case SDL_LOG_PRIORITY_ERROR:        mark = '!'; type = "error"; break;
+        case SDL_LOG_PRIORITY_CRITICAL:     mark = '$'; type = "critical"; break;
+        default:                            mark = ' '; type = "unknown"; break;
     }
 
-    static constexpr pcstr format = "%c [sdl][%s][%s]: %s";
-    const size_t size = sizeof(mark) + sizeof(from) + sizeof(type) + sizeof(format) + sizeof(message);
-    pstr buf = (pstr)xr_alloca(size);
+    int needed = snprintf(nullptr, 0, "%c [sdl][%s][%s]: %s", mark, from, type, message);
+    if (needed < 0) return;
 
-    xr_sprintf(buf, size, format, mark, from, type, message);
-    Log(buf);
+    char* buf = (char*)xr_malloc(needed + 1);
+    if (buf) {
+        snprintf(buf, needed + 1, "%c [sdl][%s][%s]: %s", mark, from, type, message);
+        Log(buf);
+        xr_free(buf);
+    }
 }
