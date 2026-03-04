@@ -83,7 +83,11 @@ void dxImGuiRender::OnDeviceCreate(ImGuiContext* context)
 #if defined(USE_DX11)
     ImGui_ImplDX11_Init(HW.pDevice, HW.get_context(CHW::IMM_CTX_ID));
 #elif defined(USE_OGL)
+#if ANDROID
+    ImGui_ImplOpenGL3_Init("#version 410");
+#else
     ImGui_ImplOpenGL3_Init();
+#endif
 #endif
 }
 void dxImGuiRender::OnDeviceDestroy()
