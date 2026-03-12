@@ -4,6 +4,11 @@
 #include <iostream>
 #include <fstream>
 #include <filesystem>
+
+#if ANDROID
+#include "shader_uniforms_parser.h"
+#endif
+
 namespace fs = std::filesystem;
 
 namespace xray::render::RENDER_NAMESPACE
@@ -133,10 +138,23 @@ static GLuint GLLinkMonolithicProgram(pcstr name, GLuint ps, GLuint vs, GLuint g
     // XXX: support caching for monolithic programs
     //if (HW.ShaderBinarySupported)
     //    CHK_GL(glProgramParameteri(program, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, (GLint)GL_TRUE));
+#if ANDROID
+    removeProgramFromCache(program);
+#endif
     CHK_GL(glAttachShader(program, ps));
+#if ANDROID
+    getUniformsFromShader(program,ps);
+#endif
     CHK_GL(glAttachShader(program, vs));
-    if (gs)
+#if ANDROID
+    getUniformsFromShader(program,vs);
+#endif
+    if (gs) {
         CHK_GL(glAttachShader(program, gs));
+#if ANDROID
+        getUniformsFromShader(program,gs);
+#endif
+    }
 #ifndef ANDROID
     CHK_GL(glBindFragDataLocation(program, 0, "SV_Target"));
     CHK_GL(glBindFragDataLocation(program, 0, "SV_Target0"));

@@ -3,6 +3,10 @@
 
 #include "../xrRender/r_constants.h"
 
+#if ANDROID
+#include "shader_uniforms_parser.h"
+#endif
+
 namespace xray::render::RENDER_NAMESPACE
 {
 static class cl_sampler : public R_constant_setup
@@ -56,7 +60,11 @@ BOOL R_constant_table::parse(void* _desc, u32 destination)
             type = RC_int;
 
         // Rindex,Rcount,Rlocation
+#ifndef ANDROID
         u16 r_index = i;
+#else
+        u16 r_index = getUniformIndex(program, name);
+#endif
         u16 r_type = u16(-1);
         GLuint r_location = glGetUniformLocation(program, name);
 

@@ -32,7 +32,8 @@ if (ANDROID)
             ${LUA_INCLUDE_DIR}
             ${OGG_INCLUDE_DIR}
             ${THEORA_INCLUDE_DIR}
-            ${SDL2_INCLUDE_DIR})
+            ${SDL2_INCLUDE_DIR}
+            ${NG_GL4ES_INCLUDE_DIR})
     include_directories(src)
     include_directories(res)
     include_directories(misc)
