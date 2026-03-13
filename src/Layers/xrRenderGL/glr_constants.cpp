@@ -96,7 +96,7 @@ BOOL R_constant_table::parse(void* _desc, u32 destination)
 #endif
     {
 #if ANDROID
-        const auto uniform_info = uniforms[i];
+        const auto& uniform_info = uniforms[i];
         const GLint size = uniform_info.size;
         const GLenum reg = uniform_info.reg;
         char *name = strdup(uniform_info.name.c_str());
