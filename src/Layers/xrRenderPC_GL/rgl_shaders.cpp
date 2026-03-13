@@ -360,13 +360,15 @@ HRESULT CRender::shader_compile(pcstr name, IReader* fs, pcstr pFunctionName,
         sh_name.append(static_cast<u32>(0));
     }
 
-#ifndef ANDROID
     // Soft particles
     {
+#ifndef ANDROID
         const bool useSoftParticles = RImplementation.o.advancedpp && ps_r2_ls_flags.test(R2FLAG_SOFT_PARTICLES);
+#else
+        const bool useSoftParticles = false;
+#endif
         appendShaderOption(useSoftParticles, "USE_SOFT_PARTICLES", "1");
     }
-#endif
 
     // Depth of field
     {
