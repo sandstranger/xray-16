@@ -143,16 +143,16 @@ static GLuint GLLinkMonolithicProgram(pcstr name, GLuint ps, GLuint vs, GLuint g
 #endif
     CHK_GL(glAttachShader(program, ps));
 #if ANDROID
-    getUniformsFromShader(program,ps);
+    parseUniformsFromShader(program,ps);
 #endif
     CHK_GL(glAttachShader(program, vs));
 #if ANDROID
-    getUniformsFromShader(program,vs);
+    parseUniformsFromShader(program,vs);
 #endif
     if (gs) {
         CHK_GL(glAttachShader(program, gs));
 #if ANDROID
-        getUniformsFromShader(program,gs);
+        parseUniformsFromShader(program,gs);
 #endif
     }
 #ifndef ANDROID

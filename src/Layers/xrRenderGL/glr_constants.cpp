@@ -5,10 +5,24 @@
 
 #if ANDROID
 #include "shader_uniforms_parser.h"
+#include <algorithm>
+#include <unordered_map>
+#include <vector>
+#include <string>
+
+using namespace std;
 #endif
 
 namespace xray::render::RENDER_NAMESPACE
 {
+#if ANDROID
+static struct uniform_info {
+    string name;
+    GLint size;
+    GLenum reg;
+};
+#endif
+
 static class cl_sampler : public R_constant_setup
 {
     void setup(CBackend& cmd_list, R_constant* C) override
@@ -23,6 +37,32 @@ static class cl_sampler : public R_constant_setup
     }
 } binder_sampler;
 
+#if ANDROID
+static void sortUniformsByNames(vector<uniform_info> &uniforms, const vector<string> &uniform_names) {
+    unordered_map<string, int> name_to_pos;
+    for (int i = 0; i < static_cast<int>(uniform_names.size()); ++i) {
+        name_to_pos[uniform_names[i]] = i;
+    }
+
+    stable_sort(uniforms.begin(), uniforms.end(),
+                [&name_to_pos](const uniform_info &a, const uniform_info &b) {
+        auto it_a = name_to_pos.find(a.name);
+        auto it_b = name_to_pos.find(b.name);
+        bool found_a = (it_a != name_to_pos.end());
+        bool found_b = (it_b != name_to_pos.end());
+
+        if (found_a && found_b) {
+            return it_a->second < it_b->second;
+        } else if (found_a) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    });
+}
+#endif
+
 // TODO: OGL: Use constant buffers like DX11.
 BOOL R_constant_table::parse(void* _desc, u32 destination)
 {
@@ -32,6 +72,10 @@ BOOL R_constant_table::parse(void* _desc, u32 destination)
     GLint uniformCount;
     CHK_GL(glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &uniformCount));
 
+#if ANDROID
+    vector<uniform_info> uniforms;
+    vector<string> uniform_names = getUniforms(program);
+
     for (GLint i = 0; i < uniformCount; i++)
     {
         GLint size;
@@ -39,7 +83,31 @@ BOOL R_constant_table::parse(void* _desc, u32 destination)
         char name[256];
         GLsizei length;
         glGetActiveUniform(program, i, sizeof(name), &length, &size, &reg, name);
+        uniforms.push_back({name, size, reg});
+    }
 
+    sortUniformsByNames(uniforms, uniform_names);
+#endif
+
+#if ANDROID
+    for (GLint i = 0; i < uniforms.size(); i++)
+#else
+    for (GLint i = 0; i < uniformCount; i++)
+#endif
+    {
+#if ANDROID
+        const auto uniform_info = uniforms[i];
+        const GLint size = uniform_info.size;
+        const GLenum reg = uniform_info.reg;
+        char *name = strdup(uniform_info.name.c_str());
+        GLsizei length;
+#else
+        GLint size;
+        GLenum reg;
+        char name[256];
+        GLsizei length;
+        glGetActiveUniform(program, i, sizeof(name), &length, &size, &reg, name);
+#endif
         // Remove index from arrays
         if (size > 1)
         {
@@ -60,13 +128,10 @@ BOOL R_constant_table::parse(void* _desc, u32 destination)
             type = RC_int;
 
         // Rindex,Rcount,Rlocation
-#ifndef ANDROID
         u16 r_index = i;
-#else
-        u16 r_index = getUniformIndex(program, name);
-#endif
         u16 r_type = u16(-1);
         GLuint r_location = glGetUniformLocation(program, name);
+        //    Msg("UNIFORM INDEX = %s %d", name, i);
 
         // TypeInfo + class
         BOOL bSkip = FALSE;
@@ -151,7 +216,12 @@ BOOL R_constant_table::parse(void* _desc, u32 destination)
             bSkip = TRUE;
             break;
         }
-        if (bSkip) continue;
+        if (bSkip) {
+#if ANDROID
+            free(name);
+#endif
+            continue;
+        }
 
         // We have determined all valuable info, search if constant already created
         ref_constant C = get(name);
@@ -177,6 +247,9 @@ BOOL R_constant_table::parse(void* _desc, u32 destination)
             L.location = r_location;
             L.program = program;
         }
+#if ANDROID
+       free(name);
+#endif
     }
     sort(table.begin(), table.end(), [](const ref_constant& C1, const ref_constant& C2)
     {
