@@ -131,7 +131,6 @@ BOOL R_constant_table::parse(void* _desc, u32 destination)
         u16 r_index = i;
         u16 r_type = u16(-1);
         GLuint r_location = glGetUniformLocation(program, name);
-        //    Msg("UNIFORM INDEX = %s %d", name, i);
 
         // TypeInfo + class
         BOOL bSkip = FALSE;
