@@ -83,6 +83,11 @@ BOOL R_constant_table::parse(void* _desc, u32 destination)
         char name[256];
         GLsizei length;
         glGetActiveUniform(program, i, sizeof(name), &length, &size, &reg, name);
+        if (size > 1)
+        {
+            char* str = strstr(name, "[0]");
+            if (str) *str = '\0';
+        }
         uniforms.push_back({name, size, reg});
     }
 
@@ -99,7 +104,7 @@ BOOL R_constant_table::parse(void* _desc, u32 destination)
         const auto& uniform_info = uniforms[i];
         const GLint size = uniform_info.size;
         const GLenum reg = uniform_info.reg;
-        char *name = strdup(uniform_info.name.c_str());
+        const char *name = uniform_info.name.c_str();
         GLsizei length;
 #else
         GLint size;
@@ -107,13 +112,13 @@ BOOL R_constant_table::parse(void* _desc, u32 destination)
         char name[256];
         GLsizei length;
         glGetActiveUniform(program, i, sizeof(name), &length, &size, &reg, name);
-#endif
         // Remove index from arrays
         if (size > 1)
         {
             char* str = strstr(name, "[0]");
             if (str) *str = '\0';
         }
+#endif
 
         u16 type = RC_float;
         if (GL_BOOL == reg ||
@@ -216,9 +221,6 @@ BOOL R_constant_table::parse(void* _desc, u32 destination)
             break;
         }
         if (bSkip) {
-#if ANDROID
-            free(name);
-#endif
             continue;
         }
 
@@ -246,9 +248,6 @@ BOOL R_constant_table::parse(void* _desc, u32 destination)
             L.location = r_location;
             L.program = program;
         }
-#if ANDROID
-       free(name);
-#endif
     }
     sort(table.begin(), table.end(), [](const ref_constant& C1, const ref_constant& C2)
     {
