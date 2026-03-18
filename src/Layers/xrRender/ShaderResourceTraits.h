@@ -7,6 +7,7 @@
 
 #if ANDROID
 #include "shader_uniforms_parser.h"
+#include "Layers/xrRenderGL/ShaderScriptParser.h"
 #endif
 
 namespace fs = std::filesystem;
@@ -166,6 +167,9 @@ static GLuint GLLinkMonolithicProgram(pcstr name, GLuint ps, GLuint vs, GLuint g
     CHK_GL(glDetachShader(program, vs));
     if (gs)
         CHK_GL(glDetachShader(program, gs));
+
+    ShaderScriptParser parser;
+    parser.ParseShaderSamplers(program,name);
 
     GLint status{};
     CHK_GL(glGetProgramiv(program, GL_LINK_STATUS, &status));

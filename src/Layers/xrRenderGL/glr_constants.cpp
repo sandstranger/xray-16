@@ -4,11 +4,10 @@
 #include "../xrRender/r_constants.h"
 
 #if ANDROID
-#include "shader_uniforms_parser.h"
 #include <algorithm>
-#include <unordered_map>
 #include <vector>
 #include <string>
+#include "Layers/xrRenderGL/ShaderScriptParser.h"
 
 using namespace std;
 #endif
@@ -74,7 +73,7 @@ BOOL R_constant_table::parse(void* _desc, u32 destination)
 
 #if ANDROID
     vector<uniform_info> uniforms;
-    vector<string> uniform_names = getUniforms(program);
+    const auto uniform_names = GetUniforms(program);
 
     for (GLint i = 0; i < uniformCount; i++)
     {
@@ -92,6 +91,7 @@ BOOL R_constant_table::parse(void* _desc, u32 destination)
     }
 
     sortUniformsByNames(uniforms, uniform_names);
+
 #endif
 
 #if ANDROID

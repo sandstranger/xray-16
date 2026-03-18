@@ -363,6 +363,8 @@ target_sources(xrRender_GL PRIVATE
     ../xrRenderGL/glTexture.cpp
     ../xrRenderGL/glTextureUtils.cpp
     ../xrRenderGL/glTextureUtils.h
+    ../xrRenderGL/ShaderScriptParser.h
+    ../xrRenderGL/ShaderScriptParser.cpp
     ../../Include/xrRender/animation_blend.h
     ../../Include/xrRender/animation_motion.h
     ../../Include/xrRender/DebugRender.h
