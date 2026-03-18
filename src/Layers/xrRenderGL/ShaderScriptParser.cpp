@@ -44,6 +44,7 @@ ShaderScriptParser::ShaderScriptParser()
 
 ShaderScriptParser::~ShaderScriptParser()
 {
+    Clear();
 }
 
 void ShaderScriptParser::Clear()

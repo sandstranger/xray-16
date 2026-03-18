@@ -52,12 +52,8 @@ static void sortUniformsByNames(vector<uniform_info> &uniforms, const vector<str
 
         if (found_a && found_b) {
             return it_a->second < it_b->second;
-        } else if (found_a) {
-            return true;
         }
-        else {
-            return false;
-        }
+        return found_a;
     });
 }
 #endif
