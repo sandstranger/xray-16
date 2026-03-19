@@ -29,6 +29,11 @@ f_deffer _main ( p_bumped I )
 # endif
 #endif
 
+	if (h < 0.0 || h > 1.0 || !(h == h)) h = 1.0;
+   	h = saturate(h);
+  
+  ms = saturate(ms);
+
 	O			= pack_gbuffer(
 								float4	(Ne, 										h		),
 								float4 	(I.position.xyz + Ne*S.height*def_virtualh, ms		),

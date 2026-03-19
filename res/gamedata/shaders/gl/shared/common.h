@@ -49,7 +49,6 @@ void	sincos(float x, out float s, out float c) { s = sin(x); c = cos(x); }
 #define texCUBE 	texture
 #define asuint		floatBitsToUint
 #define asfloat		uintBitsToFloat
-#define mask(m,a,b)	mix(b,a,m)
 
 // Semantics assignment, maximum 16 slots
 #define COLOR		0
@@ -137,6 +136,38 @@ float2 	calc_xz_wave 	(float2 dir2D, float frac)
 	float2  ctrl_A	= float2(0.0,		0.0	);
 	float2 	ctrl_B	= float2(dir2D.x,	dir2D.y	);
 	return  lerp	(ctrl_A, ctrl_B, frac);			//!This calculates tree wave. No changes made
+}
+
+float mask(bool m, float a, float b)
+{
+    return m ? a : b;
+}
+
+vec2 mask(bvec2 m, vec2 a, vec2 b)
+{
+    return vec2(
+        m.x ? a.x : b.x,
+        m.y ? a.y : b.y
+    );
+}
+
+vec3 mask(bvec3 m, vec3 a, vec3 b)
+{
+    return vec3(
+        m.x ? a.x : b.x,
+        m.y ? a.y : b.y,
+        m.z ? a.z : b.z
+    );
+}
+
+vec4 mask(bvec4 m, vec4 a, vec4 b)
+{
+    return vec4(
+        m.x ? a.x : b.x,
+        m.y ? a.y : b.y,
+        m.z ? a.z : b.z,
+        m.w ? a.w : b.w
+    );
 }
 
 #endif

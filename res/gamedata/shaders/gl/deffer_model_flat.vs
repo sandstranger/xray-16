@@ -19,14 +19,29 @@ v2p_flat _main( v_model I )
 #endif
 	
 	//  Hemi cube lighting
-	float3	Nw	= mul		(float3x3(m_W), float3(I.N));
-	float3  hc_pos	= float3(hemi_cube_pos_faces);
-	float3	hc_neg	= float3(hemi_cube_neg_faces);
-	float3  hc_mixed= mask(lessThan(Nw, float3(0)), hc_neg, hc_pos);
-	float	hemi_val= dot( hc_mixed, abs(Nw) );
-	hemi_val	= saturate(hemi_val);
+    vec3 n = I.N;
+    float n2 = dot(n, n);
+    n = (n2 > 1e-8) ? n * inversesqrt(n2) : vec3(0.0, 0.0, 1.0);
+    vec3 Nw = (mat3(m_W) * n);
+    float nw2 = dot(Nw, Nw);
+    Nw = (nw2 > 1e-8) ? Nw * inversesqrt(nw2) : vec3(0.0, 0.0, 1.0);
 
-	O.position	= float4(Pe, 	hemi_val);		//Use L_material.x for old behaviour;
+    vec3 hc_pos = vec3(hemi_cube_pos_faces);
+    vec3 hc_neg = vec3(hemi_cube_neg_faces);
+
+    vec3 hc_mixed = vec3(
+            (Nw.x < 0.0) ? hc_neg.x : hc_pos.x,
+            (Nw.y < 0.0) ? hc_neg.y : hc_pos.y,
+            (Nw.z < 0.0) ? hc_neg.z : hc_pos.z
+    );
+
+    float hemi_val = dot(hc_mixed, abs(Nw));
+    hemi_val = clamp(hemi_val, 0.0, 1.0);
+
+    if (isnan(hemi_val))
+        hemi_val = 1.0;
+
+    O.position = vec4(Pe, hemi_val);
 
 #if defined(USE_R2_STATIC_SUN) && !defined(USE_LM_HEMI)
 	O.tcdh.w	= L_material.y;							// (,,,dir-occlusion)

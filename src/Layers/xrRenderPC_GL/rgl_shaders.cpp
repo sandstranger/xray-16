@@ -404,12 +404,13 @@ HRESULT CRender::shader_compile(pcstr name, IReader* fs, pcstr pFunctionName,
     }
     else
         sh_name.append(static_cast<u32>(0));
-
+#ifndef ANDROID
     // Steep parallax
     {
         const bool steepParallax = RImplementation.o.advancedpp && ps_r2_ls_flags.test(R2FLAG_STEEP_PARALLAX);
         appendShaderOption(steepParallax, "ALLOW_STEEPPARALLAX", "1");
     }
+#endif
 
     // Geometry buffer optimization
     appendShaderOption(o.gbuffer_opt, "GBUFFER_OPTIMIZATION", "1");

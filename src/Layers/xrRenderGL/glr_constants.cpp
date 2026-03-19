@@ -39,7 +39,7 @@ static class cl_sampler : public R_constant_setup
 #if ANDROID
 static void sortUniformsByNames(vector<uniform_info> &uniforms, const vector<string> &uniform_names) {
     unordered_map<string, int> name_to_pos;
-    for (int i = 0; i < static_cast<int>(uniform_names.size()); ++i) {
+    for (int i = 0; i < uniform_names.size(); ++i) {
         name_to_pos[uniform_names[i]] = i;
     }
 
