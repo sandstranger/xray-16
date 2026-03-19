@@ -177,6 +177,9 @@ public: //	Public class members (must be encapsulated further)
     int last_slice{ -1 };
 
 private:
+#if ANDROID
+    xr_vector<u32> m_theoraBuffer;
+#endif
 #if defined(USE_DX11)
     ID3DBaseTexture* pSurface{};
     ID3DBaseTexture* pTempSurface{};

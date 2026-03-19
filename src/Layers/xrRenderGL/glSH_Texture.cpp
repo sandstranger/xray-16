@@ -7,6 +7,9 @@
 #include "xrEngine/tntQAVI.h"
 #endif
 #include "xrEngine/xrTheora_Surface.h"
+#if ANDROID && (defined(__ARM_NEON) || defined(__ARM_NEON__))
+#include "arm_neon.h"
+#endif
 
 #define PRIORITY_HIGH   12
 #define PRIORITY_NORMAL 8
@@ -91,21 +94,43 @@ void CTexture::apply_theora(CBackend& cmd_list, u32 dwStage)
         CHK_GL(glBufferData(GL_PIXEL_UNPACK_BUFFER, _w * _h * 4, nullptr, GL_STREAM_DRAW)); // Invalidate buffer
         CHK_GL(pBits = (u32*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_WRITE_ONLY));
 #else
-        xr_vector<u32> tempBuffer;
-        tempBuffer.resize(_w * _h);
-        u32* pBits = tempBuffer.data();
+        u32 pixel_count = _w * _h;
+        m_theoraBuffer.clear();
+        if (m_theoraBuffer.size() < pixel_count)
+            m_theoraBuffer.resize(pixel_count);
+
+        u32* pBits = m_theoraBuffer.data();
 #endif
         // Write to the buffer and copy it to the texture
         int _pos = 0;
         pTheora->DecompressFrame(pBits, 0, _pos);
 #if ANDROID
-        u32 pixel_count = _w * _h;
+#if defined(__ARM_NEON) || defined(__ARM_NEON__)
+        u32 i = 0;
+
+        for (; i + 15 < pixel_count; i += 16)
+        {
+            uint8x16x4_t rgba = vld4q_u8((uint8_t*)&pBits[i]);
+
+            uint8x16_t temp = rgba.val[0];
+            rgba.val[0] = rgba.val[2];
+            rgba.val[2] = temp;
+
+            vst4q_u8((uint8_t*)&pBits[i], rgba);
+        }
+
+        for (; i < pixel_count; i++)
+        {
+            u32 p = pBits[i];
+            pBits[i] = (p & 0xFF00FF00) | ((p & 0x00FF0000) >> 16) | ((p & 0x000000FF) << 16);
+        }
+#else
         for (u32 i = 0; i < pixel_count; i++)
         {
             u32 p = pBits[i];
             pBits[i] = (p & 0xFF00FF00) | ((p & 0x00FF0000) >> 16) | ((p & 0x000000FF) << 16);
         }
-
+#endif
         CHK_GL(glTexSubImage2D(desc, 0, 0, 0, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, pBits));
 #else
         CHK_GL(glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER));
